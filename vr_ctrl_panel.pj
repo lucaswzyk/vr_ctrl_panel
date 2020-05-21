@@ -156,7 +156,10 @@ workingDirectory = INPUT_DIR;
 //To export include paths to projects that depend on this project, specify
 //the include path in a list of two strings with the second entry equal to "all"
 
-addIncDirs = [ CGV_DIR."/libs", CGV_DIR."/3rd/glew/", CGV_DIR."/libs/delaunay" ];
+// add your NDAPI dir here instead of "C:/Users/CC42D/src/neurodigital/C_SDK/C++/x64"
+// use FORWARD slashes!
+
+addIncDirs = [ "C:/Users/CC42D/src/neurodigital/C_SDK/C++/x64", CGV_DIR."/libs", CGV_DIR."/3rd/glew/", CGV_DIR."/libs/delaunay" ];
 
 
 //additional preprocessor definitions for all configurations. By default the
@@ -194,7 +197,9 @@ addStaticDefines = [];
 //To export lib dirs to projects that depend on this project, specify
 //the lib dir in a list of two strings with the second entry equal to "all"
 
-//addLibDirs=["regular_lib_dir", ["exported_lib_dir", "all"] ];
+// add your NDAPI dir here instead of "C:/Users/CC42D/src/neurodigital/C_SDK/C++/x64"
+// use FORWARD slashes!
+addLibDirs=["C:/Users/CC42D/src/neurodigital/C_SDK/C++/x64"];
 
 
 //define a dependency by specification of a configuration specific library name either
@@ -226,7 +231,7 @@ addStaticDefines = [];
 // - "shared" ... dependency exported only to shared configurations 
 // - "all"    ... dependency exported to all configurations
 
-addDependencies = ["opengl"];
+addDependencies = ["NDAPI_x64","opengl"];
 
 
 //set the name of the definition file, in which the symbols are 
