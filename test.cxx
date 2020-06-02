@@ -4,7 +4,6 @@
 
 #include <cgv/base/register.h>
 #include <cgv/render/drawable.h>
-#include <cgv_gl/box_wire_renderer.h>
 #include <cgv_gl/gl/gl.h>
 
 #include "nd_handler.h"
@@ -60,28 +59,24 @@ public:
 		//hand h(NDAPISpace::LOC_RIGHT_HAND);
 		res = res && nd_handler::instance()->get_is_connected();
 
-		cgv::render::ref_box_wire_renderer(ctx, 1);
+		cgv::render::ref_rounded_cone_renderer(ctx, 1);
+		cgv::render::ref_sphere_renderer(ctx, 1);
 
 		return res;
 	}
 
 	void draw(cgv::render::context& ctx)
 	{
-		//cgv::render::box_wire_renderer& renderer = cgv::render::ref_box_wire_renderer(ctx);
-		//vector<cgv::render::render_types::vec3> extents = { .5, .5, .5 }, positions = { 0, 0, 0 };
-		//vector<cgv::math::quaternion<float>> rots = { cgv::math::quaternion<float>(0, 0, 0, 0) };
-		//renderer.set_position_array(ctx, positions);
-		//renderer.set_extent_array(ctx, extents);
-		//renderer.set_rotation_array(ctx, rots);
-
-		//renderer.validate_and_enable(ctx);
-		//glDrawArrays(GL_POINTS, 0, GLsizei(positions.size()));
-		//renderer.disable(ctx);
-
 		for each (hand h in hands)
 		{
 			h.draw(ctx);
 		}
+	}
+
+	void clear(cgv::render::context& ctx)
+	{
+		cgv::render::ref_rounded_cone_renderer(ctx, -1);
+		cgv::render::ref_sphere_renderer(ctx, -1);
 	}
 };
 

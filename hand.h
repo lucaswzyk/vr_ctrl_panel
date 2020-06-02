@@ -3,6 +3,8 @@
 #include <cgv/math/quaternion.h>
 #include <cgv/render/drawable.h>
 #include <cgv_gl/box_wire_renderer.h>
+#include <cgv_gl/rounded_cone_renderer.h>
+#include <cgv_gl/sphere_renderer.h>
 #include <cgv_gl/gl/gl.h>
 #include <iostream>
 
@@ -41,6 +43,7 @@ protected:
 		middle_mv_mat,
 		ring_mv_mat,
 		pinky_mv_mat;
+	cgv::render::sphere_render_style sphere_style;
 
 public:
 	hand() {}
@@ -109,18 +112,37 @@ public:
 	{
 		set_rotations();
 
-		draw_part(ctx, identity, palm_position, palm_extent, palm_rotation, true);
+		//draw_part(ctx, identity, palm_position, palm_extent, palm_rotation, true);
 
 		// enter palm coord system
 		ctx.push_modelview_matrix();
 		rotations[0].put_homogeneous_matrix(palm_rotation_mat);
 		ctx.mul_modelview_matrix(palm_rotation_mat);
 
-		draw_part(ctx, thumb_mv_mat, thumb_position, thumb_extent, thumb_rotation, false);
-		draw_part(ctx, index_mv_mat, index_position, index_extent, index_rotation, false);
-		draw_part(ctx, middle_mv_mat, middle_position, middle_extent, middle_rotation, false);
-		draw_part(ctx, ring_mv_mat, ring_position, ring_extent, ring_rotation, false);
-		draw_part(ctx, pinky_mv_mat, pinky_position, pinky_extent, pinky_rotation, false);
+		//cgv::render::rounded_cone_renderer rcr = cgv::render::ref_rounded_cone_renderer(ctx);
+		//cgv::render::rounded_cone_renderer::cone c;
+		//c.start = cgv::math::fvec<float, 4U>(0, 0, 0, 1);
+		//c.end = cgv::math::fvec<float, 4U>(0, 0, 1, 1);
+		//vector<cgv::render::rounded_cone_renderer::cone> cones;
+		//cones.push_back(c);
+		//rcr.set_cone_array(ctx, cones);
+		//rcr.validate_and_enable(ctx);
+		//glDrawArrays(GL_POINTS, 0, 1);
+		//rcr.disable(ctx);
+
+		sphere_style.radius = .1f;
+		cgv::render::sphere_renderer& sr = cgv::render::ref_sphere_renderer(ctx);
+		sr.set_render_style(sphere_style);
+		sr.set_position_array(ctx, palm_position);
+		sr.validate_and_enable(ctx);
+		glDrawArrays(GL_POINTS, 0, 1);
+		sr.disable(ctx);
+
+		//draw_part(ctx, thumb_mv_mat, thumb_position, thumb_extent, thumb_rotation, false);
+		//draw_part(ctx, index_mv_mat, index_position, index_extent, index_rotation, false);
+		//draw_part(ctx, middle_mv_mat, middle_position, middle_extent, middle_rotation, false);
+		//draw_part(ctx, ring_mv_mat, ring_position, ring_extent, ring_rotation, false);
+		//draw_part(ctx, pinky_mv_mat, pinky_position, pinky_extent, pinky_rotation, false);
 
 		// exit palm coord system
 		ctx.pop_modelview_matrix();
@@ -139,7 +161,6 @@ public:
 
 		cgv::math::fmat<float, 3, 3> index_mat;
 		index_rotation[0].put_matrix(index_mat);
-		cout << index_mat(1, 1) << endl;
 		if (index_mat(1, 1) < 0)
 		{
 			nd_handler* ndh = nd_handler::instance();
