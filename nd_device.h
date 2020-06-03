@@ -15,8 +15,8 @@ public:
 
 	nd_device(NDAPISpace::Location a_location)
 	{
-		nd_handler* ndh = nd_handler::instance();
-		id = ndh->get_device_id(a_location);
+		nd_handler& ndh = nd_handler::instance();
+		id = ndh.get_device_id(a_location);
 		if (id < 0)
 		{
 			"Error: could not find device.";
@@ -24,15 +24,15 @@ public:
 		}
 
 		location = a_location;
-		num_imus = ndh->get_number_of_imus(id);
+		num_imus = ndh.get_number_of_imus(id);
 
 		imu_vals = new NDAPISpace::imu_sensor_t[num_imus];
 	}
 
 	vector<cgv::math::quaternion<float>> get_cgv_rotations()
 	{
-		nd_handler* ndh = nd_handler::instance();
-		ndh->get_rotations(imu_vals, num_imus, id);
+		nd_handler& ndh = nd_handler::instance();
+		ndh.get_rotations(imu_vals, num_imus, id);
 
 		vector<cgv::math::quaternion<float>> cgv_rotations;
 		NDAPISpace::quaternion_t nd_quat;

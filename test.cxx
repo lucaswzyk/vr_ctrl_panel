@@ -11,6 +11,11 @@
 
 using namespace std;
 
+extern "C"
+{
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+
 class cgv_test
 	: public cgv::base::base,
 	  public cgv::render::drawable
@@ -39,9 +44,9 @@ public:
 	bool init(cgv::render::context& ctx)
 	{
 		bool res = true;
-		nd_handler* ndh = nd_handler::instance();
+		nd_handler& ndh = nd_handler::instance();
 
-		switch (ndh->get_app_mode())
+		switch (ndh.get_app_mode())
 		{
 		case nd_handler::BOTH_HANDS:
 			hands.push_back(hand(NDAPISpace::LOC_LEFT_HAND));
@@ -57,9 +62,9 @@ public:
 			break;
 		}
 		//hand h(NDAPISpace::LOC_RIGHT_HAND);
-		res = res && nd_handler::instance()->get_is_connected();
+		res = res && nd_handler::instance().get_is_connected();
 
-		cgv::render::ref_rounded_cone_renderer(ctx, 1);
+		//cgv::render::ref_rounded_cone_renderer(ctx, 1);
 		cgv::render::ref_sphere_renderer(ctx, 1);
 
 		return res;
@@ -75,7 +80,7 @@ public:
 
 	void clear(cgv::render::context& ctx)
 	{
-		cgv::render::ref_rounded_cone_renderer(ctx, -1);
+		//cgv::render::ref_rounded_cone_renderer(ctx, -1);
 		cgv::render::ref_sphere_renderer(ctx, -1);
 	}
 };

@@ -15,7 +15,6 @@ public:
 	};
 
 private:
-	static nd_handler* _instance;
 	bool is_connected;
 	mode app_mode;
 	NDAPISpace::NDAPI nd;
@@ -23,32 +22,28 @@ private:
 
 	nd_handler() { is_connected = connect(); }
 	nd_handler(const nd_handler&);
+	nd_handler& operator = (const nd_handler&);
 
 	bool connect();
 
-	class nd_guard
-	{
-	public:
-		~nd_guard()
-		{
-			if (NULL != nd_handler::_instance)
-			{
-				// does not throw exception if breakpoint inserted -> wait?
-				delete nd_handler::_instance;
-			}
-		}
-	};
 
 public:
-	static nd_handler* instance()
+	static nd_handler& instance()
 	{
-		static nd_guard guard;
-		if (!_instance)
-		{
-			_instance = new nd_handler();
-		}
-		
+		static nd_handler _instance;
 		return _instance;
+	}
+
+	~nd_handler() {
+		delete[] device_ids;
+		try
+		{
+			nd.~NDAPI();
+		}
+		catch (const std::exception& e)
+		{
+			cout << e.what();
+		}
 	}
 
 	bool get_is_connected() { return is_connected; }

@@ -1,7 +1,5 @@
 #include "nd_handler.h"
 
-nd_handler* nd_handler::_instance;
-
 bool nd_handler::connect()
 {
 	int res = nd.connectToServer();

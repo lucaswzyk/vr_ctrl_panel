@@ -21,6 +21,60 @@ class hand
 		PALM, THUMB0, THUMB1, INDEX, MIDDLE, RING, PINKY
 	};
 
+	struct joint_positions {
+		vector<cgv::render::render_types::vec3> positions;
+
+		void rotate(cgv::math::quaternion<float> rotation) 
+		{
+			for (size_t i = 0; i < positions.size(); i++)
+			{
+				rotation.rotate(positions[i]);
+			}
+		}
+
+		void translate(cgv::render::render_types::vec3 translation) 
+		{
+			for (size_t i = 0; i < positions.size(); i++)
+			{
+				positions[i] += translation;
+			}
+		}
+
+		void translate(float x, float y, float z)
+		{
+			translate(cgv::render::render_types::vec3(x, y, z));
+		}
+
+		void add_origin()
+		{
+			positions.push_back(cgv::render::render_types::vec3(0));
+		}
+
+		void append(joint_positions appendix)
+		{
+			for (size_t i = 0; i < appendix.positions.size(); i++)
+			{
+				positions.push_back(appendix.positions[i]);
+			}
+		}
+
+		static joint_positions join(joint_positions pos1, joint_positions pos2) 
+		{
+			joint_positions result;
+
+			for (size_t i = 0; i < pos1.positions.size(); i++)
+			{
+				result.positions.push_back(pos1.positions[i]);
+			}
+			for (size_t i = 0; i < pos2.positions.size(); i++)
+			{
+				result.positions.push_back(pos2.positions[i]);
+			}
+
+			return result;
+		}
+	};
+
 protected:
 	nd_device device;
 	vector<cgv::render::render_types::vec3> palm_extent, palm_position,
@@ -111,15 +165,86 @@ public:
 	void draw(cgv::render::context& ctx)
 	{
 		set_rotations();
+		rotations = device.get_cgv_rotations();
+
+		joint_positions thumb0, thumb1;
+		thumb1.add_origin();
+		thumb1.translate(0, 0, -3);
+		thumb1.rotate(rotations[NDAPISpace::IMULOC_THUMB1]);
+		thumb1.translate(0, 0, -4);
+		thumb0.add_origin();
+		thumb0.translate(0, 0, -4);
+		thumb0.rotate(rotations[NDAPISpace::IMULOC_THUMB0]);
+		thumb0.add_origin();
+		joint_positions thumb = joint_positions::join(thumb0, thumb1);
+		thumb.translate(-5, -3, 2.5);
+
+		joint_positions index;
+		index.add_origin();
+		index.translate(0, 0, -2);
+		index.add_origin();
+		index.translate(0, 0, -3);
+		index.add_origin();
+		index.translate(0, 0, -5);
+		index.rotate(rotations[NDAPISpace::IMULOC_INDEX]);
+		index.add_origin();
+		index.translate(-3.5, 0, -4);
+
+		joint_positions middle;
+		middle.add_origin();
+		middle.translate(0, 0, -2.5);
+		middle.add_origin();
+		middle.translate(0, 0, -3.5);
+		middle.add_origin();
+		middle.translate(0, 0, -5);
+		middle.rotate(rotations[NDAPISpace::IMULOC_MIDDLE]);
+		middle.add_origin();
+		middle.translate(-1, 0, -4.5);
+
+		rotations = device.get_cgv_rotations();
+		joint_positions ring;
+		ring.add_origin();
+		ring.translate(0, 0, -2.5);
+		ring.add_origin();
+		ring.translate(0, 0, -3.5);
+		ring.add_origin();
+		ring.translate(0, 0, -4.5);
+		ring.rotate(rotations[NDAPISpace::IMULOC_RING]);
+		ring.add_origin();
+		ring.translate(1.5, 0, -4);
+
+		rotations = device.get_cgv_rotations();
+		joint_positions pinky;
+		pinky.add_origin();
+		pinky.translate(0, 0, -2);
+		pinky.add_origin();
+		pinky.translate(0, 0, -2.5);
+		pinky.add_origin();
+		pinky.translate(0, 0, -4);
+		pinky.rotate(rotations[NDAPISpace::IMULOC_PINKY]);
+		pinky.add_origin();
+		pinky.translate(4, 0, -4);
+
+		joint_positions hand;
+		hand.add_origin();
+		hand.append(thumb);
+		hand.append(index);
+		hand.append(middle);
+		hand.append(ring);
+		hand.append(pinky);
+		hand.rotate(rotations[NDAPISpace::IMULOC_PALM]);
+
+		cgv::render::sphere_renderer& sr = cgv::render::ref_sphere_renderer(ctx);
+		sr.set_position_array(ctx, hand.positions);
+		sr.validate_and_enable(ctx);
+		glDrawArrays(GL_POINTS, 0, hand.positions.size());
+		sr.disable(ctx);
 
 		//draw_part(ctx, identity, palm_position, palm_extent, palm_rotation, true);
 
 		// enter palm coord system
-		ctx.push_modelview_matrix();
-		rotations[0].put_homogeneous_matrix(palm_rotation_mat);
-		ctx.mul_modelview_matrix(palm_rotation_mat);
 
-		//cgv::render::rounded_cone_renderer rcr = cgv::render::ref_rounded_cone_renderer(ctx);
+		//cgv::render::rounded_cone_renderer& rcr = cgv::render::ref_rounded_cone_renderer(ctx);
 		//cgv::render::rounded_cone_renderer::cone c;
 		//c.start = cgv::math::fvec<float, 4U>(0, 0, 0, 1);
 		//c.end = cgv::math::fvec<float, 4U>(0, 0, 1, 1);
@@ -130,22 +255,12 @@ public:
 		//glDrawArrays(GL_POINTS, 0, 1);
 		//rcr.disable(ctx);
 
-		sphere_style.radius = .1f;
-		cgv::render::sphere_renderer& sr = cgv::render::ref_sphere_renderer(ctx);
-		sr.set_render_style(sphere_style);
-		sr.set_position_array(ctx, palm_position);
-		sr.validate_and_enable(ctx);
-		glDrawArrays(GL_POINTS, 0, 1);
-		sr.disable(ctx);
-
 		//draw_part(ctx, thumb_mv_mat, thumb_position, thumb_extent, thumb_rotation, false);
 		//draw_part(ctx, index_mv_mat, index_position, index_extent, index_rotation, false);
 		//draw_part(ctx, middle_mv_mat, middle_position, middle_extent, middle_rotation, false);
 		//draw_part(ctx, ring_mv_mat, ring_position, ring_extent, ring_rotation, false);
 		//draw_part(ctx, pinky_mv_mat, pinky_position, pinky_extent, pinky_rotation, false);
 
-		// exit palm coord system
-		ctx.pop_modelview_matrix();
 	}
 
 	void set_rotations()
@@ -163,8 +278,8 @@ public:
 		index_rotation[0].put_matrix(index_mat);
 		if (index_mat(1, 1) < 0)
 		{
-			nd_handler* ndh = nd_handler::instance();
-			ndh->set_index_pulse();
+			nd_handler& ndh = nd_handler::instance();
+			ndh.set_index_pulse();
 		}
 	}
 
