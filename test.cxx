@@ -4,7 +4,6 @@
 
 #include <cgv/base/register.h>
 #include <cgv/render/drawable.h>
-#include <cgv_gl/gl/gl.h>
 
 #include "nd_handler.h"
 #include "hand.h"
@@ -18,7 +17,8 @@ extern "C"
 
 class cgv_test
 	: public cgv::base::base,
-	  public cgv::render::drawable
+	  public cgv::render::drawable,
+	  public cgv::gui::event_handler
 {
 protected:
 	string hello;
@@ -43,6 +43,7 @@ public:
 
 	bool init(cgv::render::context& ctx)
 	{
+		cgv::gui::connect_vr_server(false);
 		bool res = true;
 		nd_handler& ndh = nd_handler::instance();
 
@@ -67,6 +68,8 @@ public:
 		//cgv::render::ref_rounded_cone_renderer(ctx, 1);
 		cgv::render::ref_sphere_renderer(ctx, 1);
 
+		//cgv::gui::connect_vr_server(true);
+
 		return res;
 	}
 
@@ -82,6 +85,29 @@ public:
 	{
 		//cgv::render::ref_rounded_cone_renderer(ctx, -1);
 		cgv::render::ref_sphere_renderer(ctx, -1);
+	}
+
+	// Inherited via event_handler
+	virtual bool handle(cgv::gui::event& e) override
+	{
+		if ((e.get_flags() & cgv::gui::EF_VR) == 0)
+		{
+			return false;
+		}
+
+		if (e.get_kind() == cgv::gui::EID_POSE)
+		{
+			cgv::gui::vr_pose_event& vrpe = static_cast<cgv::gui::vr_pose_event&>(e);
+			cgv::render::render_types::vec3 origin = vrpe.get_position();
+			hands[0].set_origin(origin);
+			return true;
+		}
+
+		return false;
+	}
+
+	virtual void stream_help(std::ostream& os) override
+	{
 	}
 };
 

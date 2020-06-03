@@ -1,5 +1,13 @@
 #pragma once
 
+#include <cgv/base/node.h>
+#include <cgv/signal/rebind.h>
+#include <cgv/gui/event_handler.h>
+#include <cgv/math/ftransform.h>
+#include <cgv/utils/scan.h>
+#include <cgv/utils/options.h>
+#include <cgv/gui/provider.h>
+
 #include <cgv/math/quaternion.h>
 #include <cgv/render/drawable.h>
 #include <cgv_gl/box_wire_renderer.h>
@@ -8,13 +16,20 @@
 #include <cgv_gl/gl/gl.h>
 #include <iostream>
 
+#include <vr/vr_driver.h>
+#include <cg_vr/vr_server.h>
+#include <cgv/gui/event_handler.h>
+
 #include "nd_device.h"
 #include "nd_handler.h"
 
 using namespace std;
 
 class hand
-	: public cgv::render::drawable
+	: public cgv::base::node,
+	public cgv::render::drawable,
+	public cgv::gui::event_handler,
+	public cgv::gui::provider
 {
 	enum hand_parts
 	{
@@ -24,7 +39,7 @@ class hand
 	struct joint_positions {
 		vector<cgv::render::render_types::vec3> positions;
 
-		void rotate(cgv::math::quaternion<float> rotation) 
+		void rotate(cgv::math::quaternion<float> rotation)
 		{
 			for (size_t i = 0; i < positions.size(); i++)
 			{
@@ -32,7 +47,7 @@ class hand
 			}
 		}
 
-		void translate(cgv::render::render_types::vec3 translation) 
+		void translate(cgv::render::render_types::vec3 translation)
 		{
 			for (size_t i = 0; i < positions.size(); i++)
 			{
@@ -58,7 +73,7 @@ class hand
 			}
 		}
 
-		static joint_positions join(joint_positions pos1, joint_positions pos2) 
+		static joint_positions join(joint_positions pos1, joint_positions pos2)
 		{
 			joint_positions result;
 
@@ -77,94 +92,110 @@ class hand
 
 protected:
 	nd_device device;
-	vector<cgv::render::render_types::vec3> palm_extent, palm_position,
-		thumb_position, thumb_extent,
-		index_position, index_extent,
-		middle_position, middle_extent,
-		ring_position, ring_extent,
-		pinky_position, pinky_extent;
-	vector<cgv::math::quaternion<float>> rotations,
-		palm_rotation,
-		thumb_rotation,
-		index_rotation,
-		middle_rotation,
-		ring_rotation,
-		pinky_rotation;
-	cgv::math::fmat<float, 4, 4> identity,
-		palm_rotation_mat,
-		thumb_mv_mat,
-		index_mv_mat,
-		middle_mv_mat,
-		ring_mv_mat,
-		pinky_mv_mat;
+	cgv::render::render_types::vec3 origin;
+	vector<cgv::math::quaternion<float>> rotations;
+	cgv::math::fmat<float, 4, 4> identity, palm_rotation_mat;
 	cgv::render::sphere_render_style sphere_style;
 
+	void on_device_change(void* kit_handle, bool attach)
+	{
+		void* last_kit_handle = 0;
+		if (attach) {
+			if (last_kit_handle == 0) {
+				vr::vr_kit* kit_ptr = vr::get_vr_kit(kit_handle);
+				if (kit_ptr) {
+					last_kit_handle = kit_handle;
+					//left_deadzone_and_precision = kit_ptr->get_controller_throttles_and_sticks_deadzone_and_precision(0);
+					//cgv::gui::ref_vr_server().provide_controller_throttles_and_sticks_deadzone_and_precision(kit_handle, 0, &left_deadzone_and_precision);
+					//post_recreate_gui();
+				}
+			}
+		}
+		else {
+			if (kit_handle == last_kit_handle) {
+				last_kit_handle = 0;
+				//post_recreate_gui();
+			}
+		}
+	}
+
 public:
-	hand() {}
+	hand() {
+	}
 
 	hand(NDAPISpace::Location location)
 	{
+		connect(cgv::gui::ref_vr_server().on_device_change, this, &hand::on_device_change);
 		device = nd_device(location);
 		set_geometry();
 	}
 
+	string get_type_name(void) const
+	{
+		return "hand";
+	}
+
+	void set_origin(cgv::render::render_types::vec3 new_origin)
+	{
+		origin = new_origin;
+	}
+
 	void set_geometry()
 	{
-		// palm
-		palm_position.push_back(cgv::render::render_types::vec3(0, 0, 0));
-		palm_extent.push_back(cgv::render::render_types::vec3(.4, .1, .5));
-		palm_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
-		
-		// thumb
-		thumb_position.push_back(cgv::render::render_types::vec3(0));
-		thumb_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.5));
-		thumb_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
-		thumb_mv_mat.identity();
-		thumb_mv_mat(0, 3) = -.2;
-		thumb_mv_mat(1, 3) = -.05;
-		thumb_mv_mat(2, 3) = .15;
+		//// palm
+		//palm_position.push_back(cgv::render::render_types::vec3(0, 0, 0));
+		//palm_extent.push_back(cgv::render::render_types::vec3(.4, .1, .5));
+		//palm_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
 
-		// index
-		index_position.push_back(cgv::render::render_types::vec3(0));
-		index_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.6));
-		index_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
-		index_mv_mat.identity();
-		index_mv_mat(0, 3) = -.1;
-		index_mv_mat(1, 3) = -.05;
-		index_mv_mat(2, 3) = -.25;
+		//// thumb
+		//thumb_position.push_back(cgv::render::render_types::vec3(0));
+		//thumb_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.5));
+		//thumb_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
+		//thumb_mv_mat.identity();
+		//thumb_mv_mat(0, 3) = -.2;
+		//thumb_mv_mat(1, 3) = -.05;
+		//thumb_mv_mat(2, 3) = .15;
 
-		// middle
-		middle_position.push_back(cgv::render::render_types::vec3(0));
-		middle_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.6));
-		middle_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
-		middle_mv_mat.identity();
-		middle_mv_mat(1, 3) = -.05;
-		middle_mv_mat(2, 3) = -.25;
+		//// index
+		//index_position.push_back(cgv::render::render_types::vec3(0));
+		//index_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.6));
+		//index_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
+		//index_mv_mat.identity();
+		//index_mv_mat(0, 3) = -.1;
+		//index_mv_mat(1, 3) = -.05;
+		//index_mv_mat(2, 3) = -.25;
 
-		// ring
-		ring_position.push_back(cgv::render::render_types::vec3(0));
-		ring_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.6));
-		ring_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
-		ring_mv_mat.identity();
-		ring_mv_mat(0, 3) = .1;
-		ring_mv_mat(1, 3) = -.05;
-		ring_mv_mat(2, 3) = -.25;
-		
-		// pinky
-		pinky_position.push_back(cgv::render::render_types::vec3(0));
-		pinky_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.6));
-		pinky_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
-		pinky_mv_mat.identity();
-		pinky_mv_mat(0, 3) = .2;
-		pinky_mv_mat(1, 3) = -.05;
-		pinky_mv_mat(2, 3) = -.25;
+		//// middle
+		//middle_position.push_back(cgv::render::render_types::vec3(0));
+		//middle_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.6));
+		//middle_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
+		//middle_mv_mat.identity();
+		//middle_mv_mat(1, 3) = -.05;
+		//middle_mv_mat(2, 3) = -.25;
+
+		//// ring
+		//ring_position.push_back(cgv::render::render_types::vec3(0));
+		//ring_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.6));
+		//ring_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
+		//ring_mv_mat.identity();
+		//ring_mv_mat(0, 3) = .1;
+		//ring_mv_mat(1, 3) = -.05;
+		//ring_mv_mat(2, 3) = -.25;
+
+		//// pinky
+		//pinky_position.push_back(cgv::render::render_types::vec3(0));
+		//pinky_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.6));
+		//pinky_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
+		//pinky_mv_mat.identity();
+		//pinky_mv_mat(0, 3) = .2;
+		//pinky_mv_mat(1, 3) = -.05;
+		//pinky_mv_mat(2, 3) = -.25;
 
 		identity.identity();
 	}
 
 	void draw(cgv::render::context& ctx)
 	{
-		set_rotations();
 		rotations = device.get_cgv_rotations();
 
 		joint_positions thumb0, thumb1;
@@ -233,6 +264,7 @@ public:
 		hand.append(ring);
 		hand.append(pinky);
 		hand.rotate(rotations[NDAPISpace::IMULOC_PALM]);
+		hand.translate(10.0f*origin);
 
 		cgv::render::sphere_renderer& sr = cgv::render::ref_sphere_renderer(ctx);
 		sr.set_position_array(ctx, hand.positions);
@@ -263,26 +295,6 @@ public:
 
 	}
 
-	void set_rotations()
-	{
-		rotations = device.get_cgv_rotations();
-
-		palm_rotation[0] = rotations[0];
-		thumb_rotation[0] = rotations[1];
-		index_rotation[0] = rotations[3];
-		middle_rotation[0] = rotations[4];
-		ring_rotation[0] = rotations[5];
-		pinky_rotation[0] = rotations[6];
-
-		cgv::math::fmat<float, 3, 3> index_mat;
-		index_rotation[0].put_matrix(index_mat);
-		if (index_mat(1, 1) < 0)
-		{
-			nd_handler& ndh = nd_handler::instance();
-			ndh.set_index_pulse();
-		}
-	}
-
 	void draw_part(cgv::render::context& ctx,
 		cgv::math::fmat<float, 4, 4> model_view_mat,
 		vector<cgv::render::render_types::vec3> position,
@@ -305,5 +317,11 @@ public:
 
 		ctx.pop_modelview_matrix();
 	}
-};
 
+	// Inherited via event_handler
+	virtual bool handle(cgv::gui::event& e) override;
+	virtual void stream_help(std::ostream& os) override;
+
+	// Inherited via provider
+	virtual void create_gui() override;
+};

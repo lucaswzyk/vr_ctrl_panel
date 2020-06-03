@@ -66,7 +66,7 @@ projectName = "vr_ctrl_panel";
 
 //list of individual source files that must be specified with full path
 
-sourceFiles = [INPUT_DIR."/main.cxx"];
+sourceFiles = [];
 
 
 //Specify a list of files that should be excluded from the project.
@@ -82,7 +82,7 @@ excludeSourceFiles = [INPUT_PATH];
 //defaults to empty list [] if sourceFiles are defined or to [INPUT_DIR] if 
 //sourceFiles is not defined
 
-sourceDirs = [];
+sourceDirs = ["C:/Users/CC42D/src/vr_ctrl_panel/git"];
 
 
 //specify subdirs in the source directories that should be excluded
@@ -122,9 +122,12 @@ addProjectDirs = [
 //The tool projects specified in the rules are added to the solution 
 //recursively.
 
-addProjectDeps = ["cgv_utils","cgv_type","cgv_reflect","cgv_data","cgv_signal","cgv_base","cgv_media","cgv_gui",
-"cgv_render","cgv_os","fltk","cgv_viewer","cg_fltk","cg_ext","crg_stereo_view","crg_antialias","crg_depth_of_field",
-"crg_light","cg_meta","cmi_io","crg_grid","cgv_gl","glew"];
+addProjectDeps = ["cgv_utils","cgv_type","cgv_reflect","cgv_data","cgv_signal",
+                  "cgv_base","cgv_media","cgv_gui","cgv_render","cgv_os",
+                  "fltk","cgv_viewer","cg_fltk","cg_ext","crg_stereo_view",
+                  "crg_antialias","crg_depth_of_field","crg_light","cg_meta","cmi_io",
+                  "crg_grid","cgv_gl","glew", "cgv_math", "crg_vr_view", 
+                  "cg_vr", "openvr_driver"];
 
 // By default all projects on which this project depends are included to the workspace (solution).
 // By setting "referenceDeps" to 0, only the workspace only contains this project. This feature is
@@ -159,7 +162,7 @@ workingDirectory = INPUT_DIR;
 // add your NDAPI dir here instead of "C:/Users/CC42D/src/neurodigital/C_SDK/C++/x64"
 // use FORWARD slashes!
 
-addIncDirs = [ "C:/Users/CC42D/src/neurodigital/C_SDK/C++/x64", CGV_DIR."/libs", CGV_DIR."/3rd/glew/", CGV_DIR."/libs/delaunay" ];
+addIncDirs = ["C:/Users/CC42D/src/vr_ctrl_panel/git", "C:/Users/CC42D/src/neurodigital/C_SDK/C++/x64", CGV_DIR."/libs", CGV_DIR."/3rd/glew/", CGV_DIR."/libs/delaunay" ];
 
 
 //additional preprocessor definitions for all configurations. By default the
