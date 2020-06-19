@@ -38,6 +38,10 @@ public:
 		delete[] device_ids;
 		try
 		{
+			if (is_connected)
+			{
+				nd.closeConnection();
+			}
 			nd.~NDAPI();
 		}
 		catch (const std::exception& e)

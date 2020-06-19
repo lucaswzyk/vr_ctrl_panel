@@ -27,19 +27,31 @@ using namespace std;
 
 class hand
 	: public cgv::base::node,
-	public cgv::render::drawable,
-	public cgv::gui::event_handler,
-	public cgv::gui::provider
+	public cgv::render::drawable
 {
-	enum hand_parts
+	typedef cgv::render::render_types::vec3 vec3;
+	typedef cgv::render::render_types::mat4 mat4;
+	typedef cgv::math::quaternion<float> fquat;
+
+	enum fingers
 	{
-		PALM, THUMB0, THUMB1, INDEX, MIDDLE, RING, PINKY
+		THUMB, INDEX, MIDDLE, RING, PINKY, NUM_FINGERS
+	};
+
+	enum phalanges
+	{
+		PROXIMAL, INTERMED, DISTAL, NUM_BONES_PER_FINGER
 	};
 
 	struct joint_positions {
-		vector<cgv::render::render_types::vec3> positions;
+		vector<vec3> positions;
 
-		void rotate(cgv::math::quaternion<float> rotation)
+		void push_back(vec3 v)
+		{
+			positions.push_back(v);
+		}
+
+		void rotate(fquat rotation)
 		{
 			for (size_t i = 0; i < positions.size(); i++)
 			{
@@ -47,7 +59,7 @@ class hand
 			}
 		}
 
-		void translate(cgv::render::render_types::vec3 translation)
+		void translate(vec3 translation)
 		{
 			for (size_t i = 0; i < positions.size(); i++)
 			{
@@ -57,12 +69,21 @@ class hand
 
 		void translate(float x, float y, float z)
 		{
-			translate(cgv::render::render_types::vec3(x, y, z));
+			translate(vec3(x, y, z));
 		}
 
 		void add_origin()
 		{
-			positions.push_back(cgv::render::render_types::vec3(0));
+			positions.push_back(vec3(0));
+		}
+
+		void mirror_at_yz()
+		{
+			for (size_t i = 0; i < positions.size(); i++)
+			{
+				vec3 pos = positions[i];
+				positions[i] = vec3(-pos.x(), pos.y(), pos.z());
+			}
 		}
 
 		void append(joint_positions appendix)
@@ -92,32 +113,12 @@ class hand
 
 protected:
 	nd_device device;
-	cgv::render::render_types::vec3 origin;
-	vector<cgv::math::quaternion<float>> rotations;
-	cgv::math::fmat<float, 4, 4> identity, palm_rotation_mat;
+	vec3 origin;
+	vector<vec3> bone_lengths;
+	joint_positions fingers_meet_palm;
+	vector<vector<fquat>> recursive_phalanx_rotations;
+	fquat palm_rotation;
 	cgv::render::sphere_render_style sphere_style;
-
-	void on_device_change(void* kit_handle, bool attach)
-	{
-		void* last_kit_handle = 0;
-		if (attach) {
-			if (last_kit_handle == 0) {
-				vr::vr_kit* kit_ptr = vr::get_vr_kit(kit_handle);
-				if (kit_ptr) {
-					last_kit_handle = kit_handle;
-					//left_deadzone_and_precision = kit_ptr->get_controller_throttles_and_sticks_deadzone_and_precision(0);
-					//cgv::gui::ref_vr_server().provide_controller_throttles_and_sticks_deadzone_and_precision(kit_handle, 0, &left_deadzone_and_precision);
-					//post_recreate_gui();
-				}
-			}
-		}
-		else {
-			if (kit_handle == last_kit_handle) {
-				last_kit_handle = 0;
-				//post_recreate_gui();
-			}
-		}
-	}
 
 public:
 	hand() {
@@ -125,7 +126,6 @@ public:
 
 	hand(NDAPISpace::Location location)
 	{
-		connect(cgv::gui::ref_vr_server().on_device_change, this, &hand::on_device_change);
 		device = nd_device(location);
 		set_geometry();
 	}
@@ -135,142 +135,133 @@ public:
 		return "hand";
 	}
 
-	void set_origin(cgv::render::render_types::vec3 new_origin)
+	void set_origin(vec3 new_origin)
 	{
 		origin = new_origin;
 	}
 
 	void set_geometry()
 	{
-		//// palm
-		//palm_position.push_back(cgv::render::render_types::vec3(0, 0, 0));
-		//palm_extent.push_back(cgv::render::render_types::vec3(.4, .1, .5));
-		//palm_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
+		vector<fquat> identity_vec(NUM_BONES_PER_FINGER, fquat(1, 0, 0, 0));
 
-		//// thumb
-		//thumb_position.push_back(cgv::render::render_types::vec3(0));
-		//thumb_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.5));
-		//thumb_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
-		//thumb_mv_mat.identity();
-		//thumb_mv_mat(0, 3) = -.2;
-		//thumb_mv_mat(1, 3) = -.05;
-		//thumb_mv_mat(2, 3) = .15;
+		// thumb
+		bone_lengths.push_back(vec3(0.0f, 4.0f, 3.0f));
+		fingers_meet_palm.push_back(vec3(5, 3, -2.5));
+		recursive_phalanx_rotations.push_back(identity_vec);
 
-		//// index
-		//index_position.push_back(cgv::render::render_types::vec3(0));
-		//index_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.6));
-		//index_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
-		//index_mv_mat.identity();
-		//index_mv_mat(0, 3) = -.1;
-		//index_mv_mat(1, 3) = -.05;
-		//index_mv_mat(2, 3) = -.25;
+		// index
+		bone_lengths.push_back(vec3(5.0f, 3.0f, 2.0f));
+		fingers_meet_palm.push_back(vec3(3.5, 0, 4));
+		recursive_phalanx_rotations.push_back(identity_vec);
 
-		//// middle
-		//middle_position.push_back(cgv::render::render_types::vec3(0));
-		//middle_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.6));
-		//middle_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
-		//middle_mv_mat.identity();
-		//middle_mv_mat(1, 3) = -.05;
-		//middle_mv_mat(2, 3) = -.25;
+		// middle
+		bone_lengths.push_back(vec3(5.0f, 3.5f, 2.5f));
+		fingers_meet_palm.push_back(vec3(1, 0, 4.5));
+		recursive_phalanx_rotations.push_back(identity_vec);
 
-		//// ring
-		//ring_position.push_back(cgv::render::render_types::vec3(0));
-		//ring_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.6));
-		//ring_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
-		//ring_mv_mat.identity();
-		//ring_mv_mat(0, 3) = .1;
-		//ring_mv_mat(1, 3) = -.05;
-		//ring_mv_mat(2, 3) = -.25;
+		// ring
+		bone_lengths.push_back(vec3(4.5f, 3.5f, 2.5f));
+		fingers_meet_palm.push_back(vec3(-1.5, 0, 4));
+		recursive_phalanx_rotations.push_back(identity_vec);
 
-		//// pinky
-		//pinky_position.push_back(cgv::render::render_types::vec3(0));
-		//pinky_extent.push_back(cgv::render::render_types::vec3(-.1, .1, -.6));
-		//pinky_rotation.push_back(cgv::math::quaternion<float>(0, 0, 0, 1));
-		//pinky_mv_mat.identity();
-		//pinky_mv_mat(0, 3) = .2;
-		//pinky_mv_mat(1, 3) = -.05;
-		//pinky_mv_mat(2, 3) = -.25;
+		// pinky
+		bone_lengths.push_back(vec3(4.0f, 2.5f, 2.0f));
+		fingers_meet_palm.push_back(vec3(-4, 0, 4));
+		recursive_phalanx_rotations.push_back(identity_vec);
 
-		identity.identity();
+		if (device.is_left())
+		{
+			fingers_meet_palm.mirror_at_yz();
+		}
 	}
 
 	void draw(cgv::render::context& ctx)
 	{
-		rotations = device.get_cgv_rotations();
+		joint_positions hand(fingers_meet_palm);
+		hand.rotate(palm_rotation);
+		hand.translate(origin);
 
-		joint_positions thumb0, thumb1;
-		thumb1.add_origin();
-		thumb1.translate(0, 0, -3);
-		thumb1.rotate(rotations[NDAPISpace::IMULOC_THUMB1]);
-		thumb1.translate(0, 0, -4);
-		thumb0.add_origin();
-		thumb0.translate(0, 0, -4);
-		thumb0.rotate(rotations[NDAPISpace::IMULOC_THUMB0]);
-		thumb0.add_origin();
-		joint_positions thumb = joint_positions::join(thumb0, thumb1);
-		thumb.translate(-5, -3, 2.5);
-
-		joint_positions index;
-		index.add_origin();
-		index.translate(0, 0, -2);
-		index.add_origin();
-		index.translate(0, 0, -3);
-		index.add_origin();
-		index.translate(0, 0, -5);
-		index.rotate(rotations[NDAPISpace::IMULOC_INDEX]);
-		index.add_origin();
-		index.translate(-3.5, 0, -4);
-
-		joint_positions middle;
-		middle.add_origin();
-		middle.translate(0, 0, -2.5);
-		middle.add_origin();
-		middle.translate(0, 0, -3.5);
-		middle.add_origin();
-		middle.translate(0, 0, -5);
-		middle.rotate(rotations[NDAPISpace::IMULOC_MIDDLE]);
-		middle.add_origin();
-		middle.translate(-1, 0, -4.5);
-
-		rotations = device.get_cgv_rotations();
-		joint_positions ring;
-		ring.add_origin();
-		ring.translate(0, 0, -2.5);
-		ring.add_origin();
-		ring.translate(0, 0, -3.5);
-		ring.add_origin();
-		ring.translate(0, 0, -4.5);
-		ring.rotate(rotations[NDAPISpace::IMULOC_RING]);
-		ring.add_origin();
-		ring.translate(1.5, 0, -4);
-
-		rotations = device.get_cgv_rotations();
-		joint_positions pinky;
-		pinky.add_origin();
-		pinky.translate(0, 0, -2);
-		pinky.add_origin();
-		pinky.translate(0, 0, -2.5);
-		pinky.add_origin();
-		pinky.translate(0, 0, -4);
-		pinky.rotate(rotations[NDAPISpace::IMULOC_PINKY]);
-		pinky.add_origin();
-		pinky.translate(4, 0, -4);
-
-		joint_positions hand;
-		hand.add_origin();
-		hand.append(thumb);
-		hand.append(index);
-		hand.append(middle);
-		hand.append(ring);
-		hand.append(pinky);
-		hand.rotate(rotations[NDAPISpace::IMULOC_PALM]);
-		hand.translate(10.0f*origin);
+		for (size_t finger = 0; finger < NUM_FINGERS; finger++)
+		{
+			joint_positions hand_part;
+			for (size_t phalanx = 0; phalanx < NUM_BONES_PER_FINGER; phalanx++)
+			{
+				hand_part.add_origin();
+				hand_part.translate(0, 0, bone_lengths[finger][phalanx]);
+				hand_part.rotate(recursive_phalanx_rotations[finger][phalanx]);
+			}
+			hand_part.translate(hand.positions[finger]);
+		}
 
 		cgv::render::sphere_renderer& sr = cgv::render::ref_sphere_renderer(ctx);
 		sr.set_position_array(ctx, hand.positions);
 		sr.validate_and_enable(ctx);
 		glDrawArrays(GL_POINTS, 0, hand.positions.size());
 		sr.disable(ctx);
+
+		//joint_positions thumb0, thumb1;
+		//thumb1.add_origin();
+		//thumb1.translate(0, 0, -3);
+		//thumb1.rotate(rotations[NDAPISpace::IMULOC_THUMB1]);
+		//thumb1.translate(0, 0, -4);
+		//thumb0.add_origin();
+		//thumb0.translate(0, 0, -4);
+		//thumb0.rotate(rotations[NDAPISpace::IMULOC_THUMB0]);
+		//thumb0.add_origin();
+		//joint_positions thumb = joint_positions::join(thumb0, thumb1);
+		//thumb.translate(-5, -3, 2.5);
+
+		//joint_positions index;
+		//index.add_origin();
+		//index.translate(0, 0, -2);
+		//index.add_origin();
+		//index.translate(0, 0, -3);
+		//index.add_origin();
+		//index.translate(0, 0, -5);
+		//index.rotate(rotations[NDAPISpace::IMULOC_INDEX]);
+		//index.add_origin();
+		//index.translate(-3.5, 0, -4);
+
+		//joint_positions middle;
+		//middle.add_origin();
+		//middle.translate(0, 0, -2.5);
+		//middle.add_origin();
+		//middle.translate(0, 0, -3.5);
+		//middle.add_origin();
+		//middle.translate(0, 0, -5);
+		//middle.rotate(rotations[NDAPISpace::IMULOC_MIDDLE]);
+		//middle.add_origin();
+		//middle.translate(-1, 0, -4.5);
+
+		//rotations = device.get_cgv_rotations();
+		//joint_positions ring;
+		//ring.add_origin();
+		//ring.translate(0, 0, -2.5);
+		//ring.add_origin();
+		//ring.translate(0, 0, -3.5);
+		//ring.add_origin();
+		//ring.translate(0, 0, -4.5);
+		//ring.rotate(rotations[NDAPISpace::IMULOC_RING]);
+		//ring.add_origin();
+		//ring.translate(1.5, 0, -4);
+
+		//rotations = device.get_cgv_rotations();
+		//joint_positions pinky;
+		//pinky.add_origin();
+		//pinky.translate(0, 0, -2);
+		//pinky.add_origin();
+		//pinky.translate(0, 0, -2.5);
+		//pinky.add_origin();
+		//pinky.translate(0, 0, -4);
+		//pinky.rotate(rotations[NDAPISpace::IMULOC_PINKY]);
+		//pinky.add_origin();
+		//pinky.translate(4, 0, -4);
+
+		//hand.append(thumb);
+		//hand.append(index);
+		//hand.append(middle);
+		//hand.append(ring);
+		//hand.append(pinky);
 
 		//draw_part(ctx, identity, palm_position, palm_extent, palm_rotation, true);
 
@@ -295,33 +286,17 @@ public:
 
 	}
 
-	void draw_part(cgv::render::context& ctx,
-		cgv::math::fmat<float, 4, 4> model_view_mat,
-		vector<cgv::render::render_types::vec3> position,
-		vector<cgv::render::render_types::vec3> extent,
-		vector<cgv::math::quaternion<float>> rotation,
-		bool position_is_center)
+	void set_rotations()
 	{
-		ctx.push_modelview_matrix();
-		ctx.mul_modelview_matrix(model_view_mat);
+		vector<fquat> imu_rotations = device.get_cgv_rotations();
+		fquat thumb0_quat = imu_rotations[NDAPISpace::IMULOC_THUMB0];
+		palm_rotation = imu_rotations[NDAPISpace::IMULOC_PALM];
 
-		cgv::render::box_wire_renderer& renderer = cgv::render::ref_box_wire_renderer(ctx);
-		renderer.set_position_is_center(position_is_center);
-		renderer.set_position_array(ctx, position);
-		renderer.set_extent_array(ctx, extent);
-		renderer.set_rotation_array(ctx, rotation);
-
-		renderer.validate_and_enable(ctx);
-		glDrawArrays(GL_POINTS, 0, 1);
-		renderer.disable(ctx);
-
-		ctx.pop_modelview_matrix();
+		recursive_phalanx_rotations[THUMB][INTERMED] = thumb0_quat;
+		recursive_phalanx_rotations[THUMB][DISTAL] = thumb0_quat.inverse() * imu_rotations[NDAPISpace::IMULOC_THUMB1];
+		recursive_phalanx_rotations[INDEX][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_INDEX];
+		recursive_phalanx_rotations[MIDDLE][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_MIDDLE];
+		recursive_phalanx_rotations[RING][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_RING];
+		recursive_phalanx_rotations[PINKY][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_PINKY];
 	}
-
-	// Inherited via event_handler
-	virtual bool handle(cgv::gui::event& e) override;
-	virtual void stream_help(std::ostream& os) override;
-
-	// Inherited via provider
-	virtual void create_gui() override;
 };
