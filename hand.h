@@ -146,27 +146,27 @@ public:
 
 		// thumb
 		bone_lengths.push_back(vec3(0.0f, 4.0f, 3.0f));
-		fingers_meet_palm.push_back(vec3(5, 3, -2.5));
+		fingers_meet_palm.push_back(vec3(-5, -3, 2.5));
 		recursive_phalanx_rotations.push_back(identity_vec);
 
 		// index
 		bone_lengths.push_back(vec3(5.0f, 3.0f, 2.0f));
-		fingers_meet_palm.push_back(vec3(3.5, 0, 4));
+		fingers_meet_palm.push_back(vec3(-3.5, 0, -4));
 		recursive_phalanx_rotations.push_back(identity_vec);
 
 		// middle
 		bone_lengths.push_back(vec3(5.0f, 3.5f, 2.5f));
-		fingers_meet_palm.push_back(vec3(1, 0, 4.5));
+		fingers_meet_palm.push_back(vec3(-1, 0, -4.5));
 		recursive_phalanx_rotations.push_back(identity_vec);
 
 		// ring
 		bone_lengths.push_back(vec3(4.5f, 3.5f, 2.5f));
-		fingers_meet_palm.push_back(vec3(-1.5, 0, 4));
+		fingers_meet_palm.push_back(vec3(1.5, 0, -4));
 		recursive_phalanx_rotations.push_back(identity_vec);
 
 		// pinky
 		bone_lengths.push_back(vec3(4.0f, 2.5f, 2.0f));
-		fingers_meet_palm.push_back(vec3(-4, 0, 4));
+		fingers_meet_palm.push_back(vec3(4, 0, -4));
 		recursive_phalanx_rotations.push_back(identity_vec);
 
 		if (device.is_left())
@@ -177,9 +177,11 @@ public:
 
 	void draw(cgv::render::context& ctx)
 	{
-		joint_positions hand(fingers_meet_palm);
+		set_rotations();
+
+		joint_positions hand;
+		hand.append(fingers_meet_palm);
 		hand.rotate(palm_rotation);
-		hand.translate(origin);
 
 		for (size_t finger = 0; finger < NUM_FINGERS; finger++)
 		{
@@ -187,10 +189,11 @@ public:
 			for (size_t phalanx = 0; phalanx < NUM_BONES_PER_FINGER; phalanx++)
 			{
 				hand_part.add_origin();
-				hand_part.translate(0, 0, bone_lengths[finger][phalanx]);
-				hand_part.rotate(recursive_phalanx_rotations[finger][phalanx]);
+				hand_part.translate(0, 0, -bone_lengths[finger][DISTAL - phalanx]);
+				hand_part.rotate(recursive_phalanx_rotations[finger][DISTAL - phalanx]);
 			}
 			hand_part.translate(hand.positions[finger]);
+			hand.append(hand_part);
 		}
 
 		cgv::render::sphere_renderer& sr = cgv::render::ref_sphere_renderer(ctx);

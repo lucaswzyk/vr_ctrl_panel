@@ -1,6 +1,6 @@
-type(vr_ctrl_panel):hand_translation_x=.2f
-type(vr_ctrl_panel):hand_translation_y=-.68f
-type(vr_ctrl_panel):hand_translation_z=-.72f
+type(vr_ctrl_panel):hand_translation_x=0.0f
+type(vr_ctrl_panel):hand_translation_y=.0f
+type(vr_ctrl_panel):hand_translation_z=-.0f
 
 type(vr_ctrl_panel):is_load_mesh=true
-type(vr_ctrl_panel):is_render_mesh=false
+type(vr_ctrl_panel):is_render_mesh=true
