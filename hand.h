@@ -8,10 +8,8 @@
 #include <cgv/utils/options.h>
 #include <cgv/gui/provider.h>
 
-#include <cgv/math/quaternion.h>
 #include <cgv/render/drawable.h>
-#include <cgv_gl/box_wire_renderer.h>
-#include <cgv_gl/rounded_cone_renderer.h>
+#include <cgv/math/quaternion.h>
 #include <cgv_gl/sphere_renderer.h>
 #include <cgv_gl/gl/gl.h>
 #include <iostream>
@@ -118,7 +116,6 @@ protected:
 	joint_positions fingers_meet_palm;
 	vector<vector<fquat>> recursive_phalanx_rotations;
 	fquat palm_rotation;
-	cgv::render::sphere_render_style sphere_style;
 
 public:
 	hand() {

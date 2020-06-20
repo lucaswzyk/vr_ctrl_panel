@@ -3,4 +3,11 @@ type(vr_ctrl_panel):hand_translation_y=.0f
 type(vr_ctrl_panel):hand_translation_z=-.0f
 
 type(vr_ctrl_panel):is_load_mesh=true
-type(vr_ctrl_panel):is_render_mesh=true
+type(vr_ctrl_panel):is_render_mesh=false
+
+type(conn_panel):width=.43f
+type(conn_panel):height=.3f
+type(conn_panel):angle_x=11.5f
+type(conn_panel):angle_y=2.5f
+type(conn_panel):ty=-.64f
+type(conn_panel):tz=-.89f
