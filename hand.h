@@ -20,6 +20,7 @@
 
 #include "nd_device.h"
 #include "nd_handler.h"
+#include "conn_panel.h"
 
 using namespace std;
 
@@ -27,13 +28,9 @@ class hand
 	: public cgv::base::node,
 	public cgv::render::drawable
 {
-	typedef cgv::render::render_types::vec3 vec3;
-	typedef cgv::render::render_types::mat4 mat4;
-	typedef cgv::math::quaternion<float> fquat;
-
-	enum fingers
+	enum hand_parts
 	{
-		THUMB, INDEX, MIDDLE, RING, PINKY, NUM_FINGERS
+		PALM, THUMB, INDEX, MIDDLE, RING, PINKY, NUM_HAND_PARTS
 	};
 
 	enum phalanges
@@ -42,67 +39,70 @@ class hand
 	};
 
 	struct joint_positions {
-		vector<vec3> positions;
+		vector<vector<vec3>> positions;
 
-		void push_back(vec3 v)
+		joint_positions()
 		{
-			positions.push_back(v);
+			for (size_t i = 0; i < NUM_HAND_PARTS; i++)
+			{
+				positions.push_back(vector<vec3>(NUM_BONES_PER_FINGER));
+			}
 		}
 
-		void rotate(fquat rotation)
+		void push_back(int part, vec3 v)
 		{
-			for (size_t i = 0; i < positions.size(); i++)
+			positions[part].push_back(v);
+		}
+
+		void rotate(int part, quat rotation)
+		{
+			for (size_t i = 0; i < positions[part].size(); i++)
 			{
-				rotation.rotate(positions[i]);
+				rotation.rotate(positions[part][i]);
 			}
+		}
+
+		void translate(int part, vec3 translation)
+		{
+			for (size_t i = 0; i < positions[part].size(); i++)
+			{
+				positions[part][i] += translation;
+			}
+		}
+
+		void translate_neg_z(int part, float z)
+		{
+			translate(part, vec3(0, 0, -z));
 		}
 
 		void translate(vec3 translation)
 		{
+			for (size_t part = 0; part < positions.size(); part++)
+			{
+				translate(part, translation);
+			}
+		}
+
+		void scale(float scale)
+		{
+			for (size_t part = 0; part < positions.size(); part++)
+			{
+				for (size_t i = 0; i < positions[part].size(); i++)
+				{
+					positions[part][i] *= scale;
+				}
+			}
+		}
+
+		vector<vec3> make_array()
+		{
+			vector<vec3> result;
 			for (size_t i = 0; i < positions.size(); i++)
 			{
-				positions[i] += translation;
-			}
-		}
-
-		void translate(float x, float y, float z)
-		{
-			translate(vec3(x, y, z));
-		}
-
-		void add_origin()
-		{
-			positions.push_back(vec3(0));
-		}
-
-		void mirror_at_yz()
-		{
-			for (size_t i = 0; i < positions.size(); i++)
-			{
-				vec3 pos = positions[i];
-				positions[i] = vec3(-pos.x(), pos.y(), pos.z());
-			}
-		}
-
-		void append(joint_positions appendix)
-		{
-			for (size_t i = 0; i < appendix.positions.size(); i++)
-			{
-				positions.push_back(appendix.positions[i]);
-			}
-		}
-
-		static joint_positions join(joint_positions pos1, joint_positions pos2)
-		{
-			joint_positions result;
-
-			for (size_t i = 0; i < pos1.positions.size(); i++)
-			{
-				result.positions.push_back(pos1.positions[i]);
-			}
-			for (size_t i = 0; i < pos2.positions.size(); i++)
-			{
-				result.positions.push_back(pos2.positions[i]);
+				for (size_t j = 0; j < positions[i].size(); j++)
+				{
+					result.push_back(positions[i][j]);
+				}
 			}
 
 			return result;
@@ -111,15 +111,15 @@ class hand
 
 protected:
 	nd_device device;
+	vector<vec3> bone_lengths, palm_resting;
+	vector<vector<quat>> recursive_rotations;
 	vec3 origin;
-	vector<vec3> bone_lengths;
-	joint_positions fingers_meet_palm;
-	vector<vector<fquat>> recursive_phalanx_rotations;
-	fquat palm_rotation;
+	joint_positions pose;
+	float scale = .01f;
 
 public:
-	hand() {
-	}
+	hand() 
+	{}
 
 	hand(NDAPISpace::Location location)
 	{
@@ -132,71 +132,128 @@ public:
 		return "hand";
 	}
 
-	void set_origin(vec3 new_origin)
-	{
-		origin = new_origin;
-	}
-
 	void set_geometry()
 	{
-		vector<fquat> identity_vec(NUM_BONES_PER_FINGER, fquat(1, 0, 0, 0));
+		vector<quat> identity_vec(NUM_BONES_PER_FINGER, quat(1, 0, 0, 0));
+		recursive_rotations = vector<vector<quat>>(NUM_HAND_PARTS, identity_vec);
+
+		// palm
+		bone_lengths.push_back(vec3());
+		palm_resting.push_back(vec3());
+		recursive_rotations[PALM] = vector<quat>(1, quat(1, 0, 0, 0));
 
 		// thumb
 		bone_lengths.push_back(vec3(0.0f, 4.0f, 3.0f));
-		fingers_meet_palm.push_back(vec3(-5, -3, 2.5));
-		recursive_phalanx_rotations.push_back(identity_vec);
+		palm_resting.push_back(vec3(-5, -3, 2.5));
 
 		// index
 		bone_lengths.push_back(vec3(5.0f, 3.0f, 2.0f));
-		fingers_meet_palm.push_back(vec3(-3.5, 0, -4));
-		recursive_phalanx_rotations.push_back(identity_vec);
+		palm_resting.push_back(vec3(-3.5, 0, -4));
 
 		// middle
 		bone_lengths.push_back(vec3(5.0f, 3.5f, 2.5f));
-		fingers_meet_palm.push_back(vec3(-1, 0, -4.5));
-		recursive_phalanx_rotations.push_back(identity_vec);
+		palm_resting.push_back(vec3(-1, 0, -4.5));
 
 		// ring
 		bone_lengths.push_back(vec3(4.5f, 3.5f, 2.5f));
-		fingers_meet_palm.push_back(vec3(1.5, 0, -4));
-		recursive_phalanx_rotations.push_back(identity_vec);
+		palm_resting.push_back(vec3(1.5, 0, -4));
 
 		// pinky
 		bone_lengths.push_back(vec3(4.0f, 2.5f, 2.0f));
-		fingers_meet_palm.push_back(vec3(4, 0, -4));
-		recursive_phalanx_rotations.push_back(identity_vec);
+		palm_resting.push_back(vec3(4, 0, -4));
+
+		palm_resting.push_back(vec3(3, -2, 2.5));
+		palm_resting.push_back(vec3(-3.5, -3, 3));
 
 		if (device.is_left())
 		{
-			fingers_meet_palm.mirror_at_yz();
+			for (size_t i = 0; i < palm_resting.size(); i++)
+			{
+				vec3 pos = palm_resting[i];
+				palm_resting[i] = vec3(-pos.x(), pos.y(), pos.z());
+			}
+		}
+	}
+
+	void set_pose_and_actuators(const conn_panel& cp, vec3 translation, float ascale)
+	{
+		origin = translation;
+		scale = ascale;
+		set_rotations();
+
+		pose = joint_positions();
+		pose.positions[PALM] = palm_resting;
+		pose.rotate(PALM, recursive_rotations[PALM][0]);
+
+		for (size_t finger = THUMB; finger < NUM_HAND_PARTS; finger++)
+		{
+			pose.positions[finger][DISTAL] = vec3(0);
+			pose.translate_neg_z(finger, bone_lengths[finger][DISTAL]);
+			pose.rotate(finger, recursive_rotations[finger][DISTAL]);
+
+			pose.positions[finger][INTERMED] = vec3(0);
+			pose.translate_neg_z(finger, bone_lengths[finger][INTERMED]);
+			pose.rotate(finger, recursive_rotations[finger][INTERMED]);
+
+			pose.positions[finger][PROXIMAL] = vec3(0);
+			pose.translate_neg_z(finger, bone_lengths[finger][PROXIMAL]);
+			pose.rotate(finger, recursive_rotations[finger][PROXIMAL]);
+
+			pose.translate(finger, pose.positions[PALM][finger]);
+		}
+
+		pose.scale(scale);
+		pose.translate(origin);
+
+		if (cp.contains(pose.positions[THUMB][DISTAL]))
+		{
+			device.set_actuator_pulse(NDAPISpace::ACT_THUMB);
+		}
+		if (cp.contains(pose.positions[INDEX][DISTAL]))
+		{
+			device.set_actuator_pulse(NDAPISpace::ACT_INDEX);
+		}
+		if (cp.contains(pose.positions[MIDDLE][DISTAL]))
+		{
+			device.set_actuator_pulse(NDAPISpace::ACT_MIDDLE);
+		}
+		if (cp.contains(pose.positions[RING][DISTAL]))
+		{
+			device.set_actuator_pulse(NDAPISpace::ACT_RING);
+		}
+		if (cp.contains(pose.positions[PINKY][DISTAL]))
+		{
+			device.set_actuator_pulse(NDAPISpace::ACT_PINKY);
+		}
+		if (cp.contains(pose.positions[PALM][INDEX]))
+		{
+			device.set_actuator_pulse(NDAPISpace::ACT_PALM_INDEX_UP);
+		}
+		if (cp.contains(pose.positions[PALM][MIDDLE]) || cp.contains(pose.positions[PALM][RING]))
+		{
+			device.set_actuator_pulse(NDAPISpace::ACT_PALM_MIDDLE_UP);
+		}
+		if (cp.contains(pose.positions[PALM][NUM_HAND_PARTS]))
+		{
+			device.set_actuator_pulse(NDAPISpace::ACT_PALM_INDEX_DOWN);
+		}
+		if (cp.contains(pose.positions[PALM][NUM_HAND_PARTS + 1]))
+		{
+			device.set_actuator_pulse(NDAPISpace::ACT_PALM_PINKY_DOWN);
 		}
 	}
 
 	void draw(cgv::render::context& ctx)
 	{
-		set_rotations();
-
-		joint_positions hand;
-		hand.append(fingers_meet_palm);
-		hand.rotate(palm_rotation);
-
-		for (size_t finger = 0; finger < NUM_FINGERS; finger++)
-		{
-			joint_positions hand_part;
-			for (size_t phalanx = 0; phalanx < NUM_BONES_PER_FINGER; phalanx++)
-			{
-				hand_part.add_origin();
-				hand_part.translate(0, 0, -bone_lengths[finger][DISTAL - phalanx]);
-				hand_part.rotate(recursive_phalanx_rotations[finger][DISTAL - phalanx]);
-			}
-			hand_part.translate(hand.positions[finger]);
-			hand.append(hand_part);
-		}
+		vector<vec3> positions = pose.make_array();
+		vector<float> radius_array = vector<float>(positions.size(), scale);
+		radius_array[0] = 2 * scale;
 
 		cgv::render::sphere_renderer& sr = cgv::render::ref_sphere_renderer(ctx);
-		sr.set_position_array(ctx, hand.positions);
+		sr.set_position_array(ctx, positions);
+		sr.set_radius_array(ctx, radius_array);
 		sr.validate_and_enable(ctx);
-		glDrawArrays(GL_POINTS, 0, hand.positions.size());
+		glDrawArrays(GL_POINTS, 0, positions.size());
 		sr.disable(ctx);
 
 		//joint_positions thumb0, thumb1;
@@ -288,15 +345,15 @@ public:
 
 	void set_rotations()
 	{
-		vector<fquat> imu_rotations = device.get_cgv_rotations();
-		fquat thumb0_quat = imu_rotations[NDAPISpace::IMULOC_THUMB0];
-		palm_rotation = imu_rotations[NDAPISpace::IMULOC_PALM];
+		vector<quat> imu_rotations = device.get_cgv_rotations();
+		quat thumb0_quat = imu_rotations[NDAPISpace::IMULOC_THUMB0];
 
-		recursive_phalanx_rotations[THUMB][INTERMED] = thumb0_quat;
-		recursive_phalanx_rotations[THUMB][DISTAL] = thumb0_quat.inverse() * imu_rotations[NDAPISpace::IMULOC_THUMB1];
-		recursive_phalanx_rotations[INDEX][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_INDEX];
-		recursive_phalanx_rotations[MIDDLE][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_MIDDLE];
-		recursive_phalanx_rotations[RING][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_RING];
-		recursive_phalanx_rotations[PINKY][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_PINKY];
+		recursive_rotations[PALM][0] = imu_rotations[NDAPISpace::IMULOC_PALM];
+		recursive_rotations[THUMB][INTERMED] = thumb0_quat;
+		recursive_rotations[THUMB][DISTAL] = thumb0_quat.inverse() * imu_rotations[NDAPISpace::IMULOC_THUMB1];
+		recursive_rotations[INDEX][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_INDEX];
+		recursive_rotations[MIDDLE][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_MIDDLE];
+		recursive_rotations[RING][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_RING];
+		recursive_rotations[PINKY][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_PINKY];
 	}
 };

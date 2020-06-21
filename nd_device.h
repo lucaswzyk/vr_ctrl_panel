@@ -50,6 +50,12 @@ public:
 		return location == NDAPISpace::LOC_LEFT_HAND;
 	}
 
+	void set_actuator_pulse(NDAPISpace::Actuator act, float level=.5, float duration_ms=100)
+	{
+		nd_handler& ndh = nd_handler::instance();
+		ndh.set_actuator_pulse(act, level, duration_ms);
+	}
+
 	static cgv::math::quaternion<float> nd_to_cgv_quat(NDAPISpace::quaternion_t nd_q)
 	{
 		return cgv::math::quaternion<float>(nd_q.w, -nd_q.x, -nd_q.y, nd_q.z);

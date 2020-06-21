@@ -5,9 +5,10 @@ type(vr_ctrl_panel):hand_translation_z=-.0f
 type(vr_ctrl_panel):is_load_mesh=true
 type(vr_ctrl_panel):is_render_mesh=false
 
-type(conn_panel):width=.43f
-type(conn_panel):height=.3f
-type(conn_panel):angle_x=11.5f
-type(conn_panel):angle_y=2.5f
-type(conn_panel):ty=-.64f
-type(conn_panel):tz=-.89f
+type(vr_ctrl_panel):width=.5f
+type(vr_ctrl_panel):height=.3f
+type(vr_ctrl_panel):angle_x=12.4f
+type(vr_ctrl_panel):angle_y=2.98f
+type(vr_ctrl_panel):angle_z=1.3f
+type(vr_ctrl_panel):ty=-.625f
+type(vr_ctrl_panel):tz=-.93f

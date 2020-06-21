@@ -33,19 +33,31 @@ class vr_ctrl_panel
 protected:
 	vector<hand> hands;
 	nd_handler::mode app_mode;
+	vector<vec3> hand_translations;
+	float hand_scale = .01f;
 
 	cgv::render::mesh_render_info mri;
 	bool is_load_mesh, is_render_mesh;
 
-	mat4 bridge_view_mat, hand_view_mat;
-	vec3 hand_translation;
+	mat4 bridge_view_mat;
+
+	conn_panel panel;
+	float panel_width, panel_height;
+	float panel_angle_x, panel_angle_y, panel_angle_z;
+	float panel_ty, panel_tz;
 
 public:
 	vr_ctrl_panel()
 		: is_load_mesh(true), is_render_mesh(true)
 	{
+		panel_width = .5f;
+		panel_height = .3f;
+		panel_angle_x = 12.4f;
+		panel_angle_y = 2.98f;
+		panel_angle_z = 1.3f;
+		panel_ty = -.625f;
+		panel_tz = -.93f;
 		bridge_view_mat.identity();
-		hand_view_mat.identity();
 	}
 
 	string get_type_name(void) const
@@ -55,11 +67,15 @@ public:
 
 	bool self_reflect(cgv::reflect::reflection_handler& rh)
 	{
-		return rh.reflect_member("hand_translation_x", hand_translation(0)) &&
-			rh.reflect_member("hand_translation_y", hand_translation(1)) &&
-			rh.reflect_member("hand_translation_z", hand_translation(2)) &&
-			rh.reflect_member("is_load_mesh", is_load_mesh) &&
-			rh.reflect_member("is_render_mesh", is_render_mesh);
+		return rh.reflect_member("is_load_mesh", is_load_mesh) &&
+			rh.reflect_member("is_render_mesh", is_render_mesh) &&
+			rh.reflect_member("width", panel_width) &&
+			rh.reflect_member("height", panel_height) &&
+			rh.reflect_member("angle_x", panel_angle_x) &&
+			rh.reflect_member("angle_y", panel_angle_y) &&
+			rh.reflect_member("angle_z", panel_angle_z) &&
+			rh.reflect_member("ty", panel_ty) &&
+			rh.reflect_member("tz", panel_tz);
 	}
 
 	bool init(cgv::render::context& ctx)
@@ -89,29 +105,31 @@ public:
 		default:
 			break;
 		}
-		//hand_view_mat *= cgv::math::translate4(0.2f, -.68f, -.72f); 
-		//hand_view_mat *= cgv::math::rotate4(180.0f, 0.0f, 1.0f, 0.0f);
-		hand_view_mat *= cgv::math::scale4(.01f, .01f, .01f); 
+		hand_translations = vector<vec3>(hands.size());
 
 		if (is_load_mesh)
 		{
-			load_bridge_mesh(ctx);
+			//load_bridge_mesh(ctx);
 		}
+
+		panel = conn_panel(
+			panel_width, panel_height,
+			panel_angle_x, panel_angle_y, panel_angle_z,
+			panel_ty, panel_tz
+		);
 
 		return res;
 	}
 
 	void draw(cgv::render::context& ctx)
 	{
-		auto t0 = std::chrono::steady_clock::now();
-		ctx.push_modelview_matrix();
-		ctx.mul_modelview_matrix(hand_view_mat);
-		for each (hand h in hands)
+		//auto t0 = std::chrono::steady_clock::now();
+		for (size_t i = 0; i < hands.size(); i++)
 		{
-			h.draw(ctx);
+			hands[i].set_pose_and_actuators(panel, hand_translations[i], hand_scale);
+			hands[i].draw(ctx);
 		}
-		ctx.pop_modelview_matrix();
-		auto t1 = std::chrono::steady_clock::now();
+		//auto t1 = std::chrono::steady_clock::now();
 
 		if (is_render_mesh && mri.is_constructed())
 		{
@@ -120,7 +138,9 @@ public:
 			mri.render_mesh(ctx, ctx.ref_surface_shader_program(true));
 			ctx.pop_modelview_matrix();
 		}
-		auto t2 = std::chrono::steady_clock::now();
+
+		panel.draw(ctx);
+		//auto t2 = std::chrono::steady_clock::now();
 		//cout << "hand: " << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() << endl;
 		//cout << "mesh: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << endl << endl;
 	}
@@ -143,10 +163,7 @@ public:
 		if (e.get_kind() == cgv::gui::EID_POSE)
 		{
 			cgv::gui::vr_pose_event& vrpe = static_cast<cgv::gui::vr_pose_event&>(e);
-			vec3 origin = vrpe.get_position();
-			hand_view_mat(0, 3) = origin(0) + hand_translation(0);
-			hand_view_mat(1, 3) = origin(1) + hand_translation(1);
-			hand_view_mat(2, 3) = origin(2) + hand_translation(2);
+			hand_translations[0] = vrpe.get_position();
 			return true;
 		}
 
@@ -160,19 +177,6 @@ public:
 	// Inherited via provider
 	virtual void create_gui() override
 	{
-		add_control(
-			"hand pos x", hand_view_mat(0, 3), "value_slider",
-			"min=-1.0f;max=1.0f;ticks=false"
-		).operator->();
-		add_control(
-			"hand pos y", hand_view_mat(1, 3), "value_slider",
-			"min=-1.0f;max=1.0f;ticks=false"
-		).operator->();
-		add_control(
-			"hand pos z", hand_view_mat(2, 3), "value_slider",
-			"min=-1.0f;max=1.0f;ticks=false"
-		).operator->();
-
 		add_member_control(this, "render mesh", is_render_mesh);
 	}
 
