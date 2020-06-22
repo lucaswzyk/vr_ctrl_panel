@@ -112,12 +112,6 @@ public:
 			//load_bridge_mesh(ctx);
 		}
 
-		panel = conn_panel(
-			panel_width, panel_height,
-			panel_angle_x, panel_angle_y, panel_angle_z,
-			panel_ty, panel_tz
-		);
-
 		return res;
 	}
 

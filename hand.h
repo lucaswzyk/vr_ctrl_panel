@@ -116,6 +116,7 @@ protected:
 	vec3 origin;
 	joint_positions pose;
 	float scale = .01f;
+	vector<NDAPISpace::Actuator> actuators;
 
 public:
 	hand() 
@@ -162,8 +163,8 @@ public:
 		bone_lengths.push_back(vec3(4.0f, 2.5f, 2.0f));
 		palm_resting.push_back(vec3(4, 0, -4));
 
-		palm_resting.push_back(vec3(3, -2, 2.5));
 		palm_resting.push_back(vec3(-3.5, -3, 3));
+		palm_resting.push_back(vec3(3, -2, 2.5));
 
 		if (device.is_left())
 		{
@@ -173,6 +174,19 @@ public:
 				palm_resting[i] = vec3(-pos.x(), pos.y(), pos.z());
 			}
 		}
+
+		actuators = vector<NDAPISpace::Actuator>{
+			NDAPISpace::ACT_THUMB,
+			NDAPISpace::ACT_INDEX,
+			NDAPISpace::ACT_MIDDLE,
+			NDAPISpace::ACT_RING,
+			NDAPISpace::ACT_PINKY,
+			NDAPISpace::ACT_PALM_INDEX_UP,
+			NDAPISpace::ACT_PALM_MIDDLE_UP,
+			NDAPISpace::ACT_PALM_PINKY_UP,
+			NDAPISpace::ACT_PALM_INDEX_DOWN,
+			NDAPISpace::ACT_PALM_PINKY_DOWN
+		};
 	}
 
 	void set_pose_and_actuators(const conn_panel& cp, vec3 translation, float ascale)
@@ -205,41 +219,24 @@ public:
 		pose.scale(scale);
 		pose.translate(origin);
 
-		if (cp.contains(pose.positions[THUMB][DISTAL]))
+		vector<vec3> touching_points = vector<vec3>{
+			pose.positions[THUMB][DISTAL],
+			pose.positions[INDEX][DISTAL],
+			pose.positions[MIDDLE][DISTAL],
+			pose.positions[RING][DISTAL],
+			pose.positions[PINKY][DISTAL],
+			pose.positions[PALM][INDEX],
+			.5f * (pose.positions[PALM][MIDDLE] + pose.positions[PALM][RING]),
+			pose.positions[PALM][PINKY],
+			pose.positions[PALM][NUM_HAND_PARTS],
+			pose.positions[PALM][NUM_HAND_PARTS + 1]
+		};
+
+		std::set<int> touching_indices = cp.check_containments(touching_points);
+
+		for each (int ind in touching_indices)
 		{
-			device.set_actuator_pulse(NDAPISpace::ACT_THUMB);
-		}
-		if (cp.contains(pose.positions[INDEX][DISTAL]))
-		{
-			device.set_actuator_pulse(NDAPISpace::ACT_INDEX);
-		}
-		if (cp.contains(pose.positions[MIDDLE][DISTAL]))
-		{
-			device.set_actuator_pulse(NDAPISpace::ACT_MIDDLE);
-		}
-		if (cp.contains(pose.positions[RING][DISTAL]))
-		{
-			device.set_actuator_pulse(NDAPISpace::ACT_RING);
-		}
-		if (cp.contains(pose.positions[PINKY][DISTAL]))
-		{
-			device.set_actuator_pulse(NDAPISpace::ACT_PINKY);
-		}
-		if (cp.contains(pose.positions[PALM][INDEX]))
-		{
-			device.set_actuator_pulse(NDAPISpace::ACT_PALM_INDEX_UP);
-		}
-		if (cp.contains(pose.positions[PALM][MIDDLE]) || cp.contains(pose.positions[PALM][RING]))
-		{
-			device.set_actuator_pulse(NDAPISpace::ACT_PALM_MIDDLE_UP);
-		}
-		if (cp.contains(pose.positions[PALM][NUM_HAND_PARTS]))
-		{
-			device.set_actuator_pulse(NDAPISpace::ACT_PALM_INDEX_DOWN);
-		}
-		if (cp.contains(pose.positions[PALM][NUM_HAND_PARTS + 1]))
-		{
-			device.set_actuator_pulse(NDAPISpace::ACT_PALM_PINKY_DOWN);
+			device.set_actuator_pulse(actuators[ind]);
 		}
 	}
 

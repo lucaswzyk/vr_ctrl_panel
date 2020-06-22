@@ -50,7 +50,7 @@ public:
 		return location == NDAPISpace::LOC_LEFT_HAND;
 	}
 
-	void set_actuator_pulse(NDAPISpace::Actuator act, float level=.5, float duration_ms=100)
+	void set_actuator_pulse(NDAPISpace::Actuator act, float level=.1, float duration_ms=100)
 	{
 		nd_handler& ndh = nd_handler::instance();
 		ndh.set_actuator_pulse(act, level, duration_ms);
