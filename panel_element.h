@@ -21,6 +21,7 @@ protected:
 	rgb color;
 
 	float height;
+
 	bool has_been_touched;
 
 	quat IDENTITY_QUAT = quat(1, 0, 0, 0);
@@ -33,7 +34,19 @@ public:
 		vec3 angles, rgb a_color,
 		panel_node* parent_ptr)
 	{
+		add_to_tree(parent_ptr);
+		set_geometry(a_position, a_extent, a_translation, angles, a_color);
+	};
+
+	void add_to_tree(panel_node* parent_ptr)
+	{
 		parent = parent_ptr;
+		if (parent) parent->children.push_back(this);
+	}
+
+	void set_geometry(vec3 a_position, vec3 a_extent, vec3 a_translation,
+		vec3 angles, rgb a_color)
+	{
 		vec3 pos_parent = parent ? parent->position : vec3(0);
 		position = a_position + pos_parent;
 
@@ -64,11 +77,9 @@ public:
 		rotation = quat_parent * quat_x * quat_z.inverse() * quat_y;
 
 		color = a_color;
+	}
 
-		if (parent) parent->children.push_back(this);
-	};
-
-	set<int> check_containments(vector<vec3> vecs)
+	virtual set<int> check_containments(vector<vec3> vecs)
 	{
 		set<int> result;
 
@@ -77,7 +88,6 @@ public:
 			if (contains(vecs[i]))
 			{
 				result.insert(i);
-				on_touch();
 			}
 		}
 
@@ -87,19 +97,22 @@ public:
 			result.insert(child_result.begin(), child_result.end());
 		}
 
+		if (result.size() > 0) on_touch();
 		has_been_touched = result.size() > 0;
 
 		return result;
 	}
 
-	bool contains(vec3 v)
+	virtual bool contains(vec3 v)
 	{
 		v -= translation;
 		rotation.inverse().rotate(v);
 
-		return min(position.x(), extent.x()) <= v.x() && v.x() <= max(position.x(), extent.x())
-			&& min(position.y(), extent.y()) <= v.y() && v.y() <= max(position.y(), extent.y())
-			&& min(position.z(), extent.z()) <= v.z() && v.z() <= max(position.z(), extent.z());
+		bool is_contained = min(position.x(), extent.x()) <= v.x() && v.x() <= max(position.x(), extent.x())
+						 && min(position.y(), extent.y()) <= v.y() && v.y() <= max(position.y(), extent.y())
+						 && min(position.z(), extent.z()) <= v.z() && v.z() <= max(position.z(), extent.z());
+
+		return is_contained;
 	}
 
 	virtual void on_touch() {};
@@ -197,5 +210,106 @@ public:
 			parent->set_color(tmp);
 			has_been_touched = true;
 		}
+	}
+};
+
+class slider : public panel_node
+{
+protected:
+	float value, tolerance;
+	rgb active_color;
+
+	vector<vec3> last_contained_pos;
+
+	int NUM_INDICATOR_FIELDS = 7;
+	float BORDER_FRAC = .1f, TOLERANCE_NUMERATOR = .1f;
+
+public:
+	// needs to be constructed with position on bottom left and extent to top right corner
+	slider(vec3 a_position, vec3 a_extent, vec3 a_translation,
+		vec3 angles, rgb base_color, rgb val_color,
+		panel_node* parent_ptr)
+	{
+		add_to_tree(parent_ptr);
+		set_geometry(a_position, a_extent, a_translation, angles, base_color);
+
+		value = 0;
+		tolerance = abs(TOLERANCE_NUMERATOR / (a_extent.z() - a_position.z()));
+		active_color = val_color;
+
+		float indicator_extent_z = a_extent.z() / NUM_INDICATOR_FIELDS;
+		float border = a_extent.x() * BORDER_FRAC;
+
+		for (size_t i = 0; i < NUM_INDICATOR_FIELDS; i++)
+		{
+			new panel_node(
+				vec3(border, 0, i * indicator_extent_z - border),
+				vec3(a_extent.x() - 2 * border, 0, indicator_extent_z + 2 * border),
+				vec3(0), vec3(0), base_color, this
+			);
+		}
+	}
+
+	void on_touch()
+	{
+		//cout << "contained" << endl;
+		if (last_contained_pos.size() == 1)
+		{
+			float new_value = vec_to_val(last_contained_pos[0]);
+			if (abs(new_value - value) < tolerance)
+			{
+				value = new_value;
+				set_indicator_colors();
+			}
+		}
+	}
+
+	float vec_to_val(vec3 v)
+	{
+		return min(1.0f, max(.0f, (v.z() - position.z()) / (extent.z() - position.z())));
+	}
+
+	void set_indicator_colors()
+	{
+		float val = value;
+		float indicator_fields_frac = 1.0f / NUM_INDICATOR_FIELDS;
+		for (size_t i = 0; i < children.size(); i++)
+		{
+			if (val > indicator_fields_frac)
+			{
+				children[i]->set_color(active_color);
+				val -= indicator_fields_frac;
+			}
+			else if (value > 0)
+			{
+				val = val * NUM_INDICATOR_FIELDS;
+				children[i]->set_color(val * active_color + (1 - val) * color);
+				val = .0f;
+			}
+			else
+			{
+				children[i]->set_color(color);
+			}
+		}
+	}
+
+	virtual bool contains(vec3 v) override
+	{
+		v -= translation;
+		rotation.inverse().rotate(v);
+
+		bool is_contained = min(position.x(), extent.x()) <= v.x() && v.x() <= max(position.x(), extent.x())
+			&& min(position.y(), extent.y()) <= v.y() && v.y() <= max(position.y(), extent.y())
+			&& min(position.z(), extent.z()) <= v.z() && v.z() <= max(position.z(), extent.z());
+
+		if (is_contained) last_contained_pos.push_back(v);
+
+		return is_contained;
+	}
+
+	virtual set<int> check_containments(vector<vec3> vecs) override
+	{
+		last_contained_pos.clear();
+		return panel_node::check_containments(vecs);
 	}
 };

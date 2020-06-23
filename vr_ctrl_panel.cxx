@@ -42,23 +42,11 @@ protected:
 	mat4 bridge_view_mat;
 
 	conn_panel panel;
-	float panel_width, panel_height;
-	float panel_angle_x, panel_angle_y, panel_angle_z;
-	float panel_ty, panel_tz;
 
 public:
 	vr_ctrl_panel()
 		: is_load_mesh(true), is_render_mesh(true)
-	{
-		panel_width = .5f;
-		panel_height = .3f;
-		panel_angle_x = 12.4f;
-		panel_angle_y = 2.98f;
-		panel_angle_z = 1.3f;
-		panel_ty = -.625f;
-		panel_tz = -.93f;
-		bridge_view_mat.identity();
-	}
+	{}
 
 	string get_type_name(void) const
 	{
@@ -68,14 +56,7 @@ public:
 	bool self_reflect(cgv::reflect::reflection_handler& rh)
 	{
 		return rh.reflect_member("is_load_mesh", is_load_mesh) &&
-			rh.reflect_member("is_render_mesh", is_render_mesh) &&
-			rh.reflect_member("width", panel_width) &&
-			rh.reflect_member("height", panel_height) &&
-			rh.reflect_member("angle_x", panel_angle_x) &&
-			rh.reflect_member("angle_y", panel_angle_y) &&
-			rh.reflect_member("angle_z", panel_angle_z) &&
-			rh.reflect_member("ty", panel_ty) &&
-			rh.reflect_member("tz", panel_tz);
+			rh.reflect_member("is_render_mesh", is_render_mesh);
 	}
 
 	bool init(cgv::render::context& ctx)

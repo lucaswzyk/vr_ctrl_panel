@@ -41,6 +41,11 @@ public:
 			vec3(0), rgb(0, 1, 1),
 			right_panel
 		);
+		slider* left_slider = new slider(
+			vec3(-.1f, 0, .2f), vec3(.05f, 0, -.15f), vec3(0),
+			vec3(0), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
+			left_panel
+		);
 		//panel = new panel_surface(width, height, angle_x, angle_y, angle_z, ty, tz);
 		//panel->add_child(new color_switch_button(.1f, .1f, .25f, .1f, rgb(0, 1, 1)));
 		//panel->add_child(new button(.01f, .01f, .1f, .1f, rgb(1, 1, 0)));
