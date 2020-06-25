@@ -59,6 +59,11 @@ public:
 			rh.reflect_member("is_render_mesh", is_render_mesh);
 	}
 
+	void on_set(void* member_ptr)
+	{
+		update_member(member_ptr);
+	}
+
 	bool init(cgv::render::context& ctx)
 	{
 		bool res = true;
@@ -88,11 +93,6 @@ public:
 		}
 		hand_translations = vector<vec3>(hands.size());
 
-		if (is_load_mesh)
-		{
-			//load_bridge_mesh(ctx);
-		}
-
 		return res;
 	}
 
@@ -105,6 +105,11 @@ public:
 			hands[i].draw(ctx);
 		}
 		//auto t1 = std::chrono::steady_clock::now();
+
+		if (is_load_mesh && !mri.is_constructed())
+		{
+			load_bridge_mesh(ctx);
+		}
 
 		if (is_render_mesh && mri.is_constructed())
 		{
@@ -152,10 +157,11 @@ public:
 	// Inherited via provider
 	virtual void create_gui() override
 	{
+		add_member_control(this, "load mesh", is_load_mesh);
 		add_member_control(this, "render mesh", is_render_mesh);
 	}
 
-	void load_bridge_mesh(cgv::render::context& ctx, const char* file = "C:/Users/CC42D/src/vr_ctrl_panel/git/bridge.obj")
+	void load_bridge_mesh(cgv::render::context& ctx, const char* file = "C:/Users/CC42D/src/vr_ctrl_panel/git/bridge_cleaned.obj")
 	{
 		cgv::media::mesh::simple_mesh<> m;
 		if (m.read(file))

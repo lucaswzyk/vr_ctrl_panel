@@ -79,13 +79,13 @@ public:
 		color = a_color;
 	}
 
-	virtual set<int> check_containments(vector<vec3> vecs)
+	virtual set<int> check_containments(vector<vec3> vecs, float tolerance)
 	{
 		set<int> result;
 
 		for (size_t i = 0; i < vecs.size(); i++)
 		{
-			if (contains(vecs[i]))
+			if (contains(vecs[i], tolerance))
 			{
 				result.insert(i);
 			}
@@ -93,7 +93,7 @@ public:
 
 		for (size_t i = 0; i < children.size(); i++)
 		{
-			set<int> child_result = children[i]->check_containments(vecs);
+			set<int> child_result = children[i]->check_containments(vecs, tolerance);
 			result.insert(child_result.begin(), child_result.end());
 		}
 
@@ -103,14 +103,17 @@ public:
 		return result;
 	}
 
-	virtual bool contains(vec3 v)
+	virtual bool contains(vec3 v, float tolerance)
 	{
 		v -= translation;
 		rotation.inverse().rotate(v);
 
-		bool is_contained = min(position.x(), extent.x()) <= v.x() && v.x() <= max(position.x(), extent.x())
-						 && min(position.y(), extent.y()) <= v.y() && v.y() <= max(position.y(), extent.y())
-						 && min(position.z(), extent.z()) <= v.z() && v.z() <= max(position.z(), extent.z());
+		bool is_contained = min(position.x(), extent.x()) - tolerance <= v.x()
+						 && min(position.y(), extent.y()) - tolerance <= v.y() 
+						 && min(position.z(), extent.z()) - tolerance <= v.z()
+					   	 && v.x() <= max(position.x(), extent.x()) + tolerance
+						 && v.y() <= max(position.y(), extent.y()) + tolerance
+						 && v.z() <= max(position.z(), extent.z()) + tolerance;
 
 		return is_contained;
 	}
@@ -216,25 +219,29 @@ public:
 class slider : public panel_node
 {
 protected:
-	float value, tolerance;
+	float value, value_tolerance, controlled_val_max;
+	float* controlled_val;
 	rgb active_color;
 
 	vector<vec3> last_contained_pos;
 
 	int NUM_INDICATOR_FIELDS = 7;
-	float BORDER_FRAC = .1f, TOLERANCE_NUMERATOR = .1f;
+	float BORDER_FRAC = .1f, TOLERANCE_NUMERATOR = .01f;
 
 public:
 	// needs to be constructed with position on bottom left and extent to top right corner
 	slider(vec3 a_position, vec3 a_extent, vec3 a_translation,
 		vec3 angles, rgb base_color, rgb val_color,
+		float* a_controlled_val, float a_controlled_val_max,
 		panel_node* parent_ptr)
 	{
 		add_to_tree(parent_ptr);
 		set_geometry(a_position, a_extent, a_translation, angles, base_color);
 
 		value = 0;
-		tolerance = abs(TOLERANCE_NUMERATOR / (a_extent.z() - a_position.z()));
+		controlled_val = a_controlled_val;
+		controlled_val_max = a_controlled_val_max;
+		value_tolerance = abs(TOLERANCE_NUMERATOR / (a_extent.z() - a_position.z()));
 		active_color = val_color;
 
 		float indicator_extent_z = a_extent.z() / NUM_INDICATOR_FIELDS;
@@ -256,9 +263,10 @@ public:
 		if (last_contained_pos.size() == 1)
 		{
 			float new_value = vec_to_val(last_contained_pos[0]);
-			if (abs(new_value - value) < tolerance)
+			if (abs(new_value - value) < value_tolerance)
 			{
 				value = new_value;
+				*controlled_val = controlled_val_max * value;
 				set_indicator_colors();
 			}
 		}
@@ -266,7 +274,9 @@ public:
 
 	float vec_to_val(vec3 v)
 	{
-		return min(1.0f, max(.0f, (v.z() - position.z()) / (extent.z() - position.z())));
+		float fraction = (v.z() - position.z()) / (extent.z() - position.z());
+		
+		return min(1.0f, max(.0f, fraction));
 	}
 
 	void set_indicator_colors()
@@ -293,23 +303,26 @@ public:
 		}
 	}
 
-	virtual bool contains(vec3 v) override
+	virtual bool contains(vec3 v, float tolerance) override
 	{
 		v -= translation;
 		rotation.inverse().rotate(v);
 
-		bool is_contained = min(position.x(), extent.x()) <= v.x() && v.x() <= max(position.x(), extent.x())
-			&& min(position.y(), extent.y()) <= v.y() && v.y() <= max(position.y(), extent.y())
-			&& min(position.z(), extent.z()) <= v.z() && v.z() <= max(position.z(), extent.z());
+		bool is_contained = min(position.x(), extent.x()) - tolerance <= v.x()
+					 	 && min(position.y(), extent.y()) - tolerance <= v.y()
+						 && min(position.z(), extent.z()) - tolerance <= v.z()
+						 && v.x() <= max(position.x(), extent.x()) + tolerance
+						 && v.y() <= max(position.y(), extent.y()) + tolerance
+						 && v.z() <= max(position.z(), extent.z()) + tolerance;
 
 		if (is_contained) last_contained_pos.push_back(v);
 
 		return is_contained;
 	}
 
-	virtual set<int> check_containments(vector<vec3> vecs) override
+	virtual set<int> check_containments(vector<vec3> vecs, float tolerance) override
 	{
 		last_contained_pos.clear();
-		return panel_node::check_containments(vecs);
+		return panel_node::check_containments(vecs, tolerance);
 	}
 };

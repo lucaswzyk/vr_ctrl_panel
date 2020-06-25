@@ -232,7 +232,7 @@ public:
 			pose.positions[PALM][NUM_HAND_PARTS + 1]
 		};
 
-		std::set<int> touching_indices = cp.check_containments(touching_points);
+		std::set<int> touching_indices = cp.check_containments(touching_points, scale);
 
 		for each (int ind in touching_indices)
 		{
