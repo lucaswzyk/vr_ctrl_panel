@@ -63,6 +63,9 @@ projectType = "application_plugin";
 
 projectName = "vr_ctrl_panel";
 
+//location of cloned repo
+git_repo = "D:/Projects/vr_ctrl_panel/git";
+
 
 //list of individual source files that must be specified with full path
 
@@ -82,7 +85,7 @@ excludeSourceFiles = [INPUT_PATH];
 //defaults to empty list [] if sourceFiles are defined or to [INPUT_DIR] if 
 //sourceFiles is not defined
 
-sourceDirs = ["C:/Users/CC42D/src/vr_ctrl_panel/git"];
+sourceDirs = [git_repo];
 
 
 //specify subdirs in the source directories that should be excluded
@@ -159,10 +162,9 @@ workingDirectory = INPUT_DIR;
 //To export include paths to projects that depend on this project, specify
 //the include path in a list of two strings with the second entry equal to "all"
 
-// add your NDAPI dir here instead of "C:/Users/CC42D/src/neurodigital/C_SDK/C++/x64"
 // use FORWARD slashes!
 
-addIncDirs = ["C:/Users/CC42D/src/vr_ctrl_panel/git", "C:/Users/CC42D/src/neurodigital/C_SDK/C++/x64", CGV_DIR."/libs", CGV_DIR."/3rd/glew/", CGV_DIR."/libs/delaunay" ];
+addIncDirs = [git_repo, CGV_DIR."/libs", CGV_DIR."/3rd/glew/", CGV_DIR."/libs/delaunay" ];
 
 
 //additional preprocessor definitions for all configurations. By default the
@@ -200,9 +202,8 @@ addStaticDefines = [];
 //To export lib dirs to projects that depend on this project, specify
 //the lib dir in a list of two strings with the second entry equal to "all"
 
-// add your NDAPI dir here instead of "C:/Users/CC42D/src/neurodigital/C_SDK/C++/x64"
 // use FORWARD slashes!
-addLibDirs=["C:/Users/CC42D/src/neurodigital/C_SDK/C++/x64"];
+addLibDirs=[git_repo];
 
 
 //define a dependency by specification of a configuration specific library name either
@@ -234,7 +235,7 @@ addLibDirs=["C:/Users/CC42D/src/neurodigital/C_SDK/C++/x64"];
 // - "shared" ... dependency exported only to shared configurations 
 // - "all"    ... dependency exported to all configurations
 
-addDependencies = ["NDAPI_x64","opengl"];
+addDependencies = ["NDAPI_x86","opengl"];
 
 
 //set the name of the definition file, in which the symbols are 

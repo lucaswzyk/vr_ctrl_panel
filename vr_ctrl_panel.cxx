@@ -31,6 +31,10 @@ class vr_ctrl_panel
 	  public cgv::gui::provider
 {
 protected:
+	vec3 origin;
+	float angle_y;
+	mat4 model_view_mat;
+
 	vector<hand> hands;
 	nd_handler::mode app_mode;
 	vector<vec3> hand_translations;
@@ -55,8 +59,12 @@ public:
 
 	bool self_reflect(cgv::reflect::reflection_handler& rh)
 	{
-		return rh.reflect_member("is_load_mesh", is_load_mesh) &&
-			rh.reflect_member("is_render_mesh", is_render_mesh);
+		return rh.reflect_member("is_load_mesh", is_load_mesh) 
+			&& rh.reflect_member("is_render_mesh", is_render_mesh)
+			&& rh.reflect_member("origin_x", origin.x())
+			&& rh.reflect_member("origin_y", origin.y())
+			&& rh.reflect_member("origin_z", origin.z())
+			&& rh.reflect_member("angle_y", angle_y);
 	}
 
 	void on_set(void* member_ptr)
@@ -98,6 +106,12 @@ public:
 
 	void draw(cgv::render::context& ctx)
 	{
+		model_view_mat.identity();
+		model_view_mat *= cgv::math::translate4(origin);
+		model_view_mat *= cgv::math::rotate4(angle_y, vec3(0, 1, 0));
+		ctx.push_modelview_matrix();
+		ctx.mul_modelview_matrix(model_view_mat);
+
 		//auto t0 = std::chrono::steady_clock::now();
 		for (size_t i = 0; i < hands.size(); i++)
 		{
@@ -113,16 +127,17 @@ public:
 
 		if (is_render_mesh && mri.is_constructed())
 		{
-			ctx.push_modelview_matrix();
-			ctx.mul_modelview_matrix(bridge_view_mat);
+			//ctx.push_modelview_matrix();
+			//ctx.mul_modelview_matrix(bridge_view_mat);
 			mri.render_mesh(ctx, ctx.ref_surface_shader_program(true));
-			ctx.pop_modelview_matrix();
+			//ctx.pop_modelview_matrix();
 		}
 
 		panel.draw(ctx);
 		//auto t2 = std::chrono::steady_clock::now();
 		//cout << "hand: " << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() << endl;
 		//cout << "mesh: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << endl << endl;
+		ctx.pop_modelview_matrix();
 	}
 
 	void clear(cgv::render::context& ctx)
@@ -142,6 +157,7 @@ public:
 
 		if (e.get_kind() == cgv::gui::EID_POSE)
 		{
+			
 			cgv::gui::vr_pose_event& vrpe = static_cast<cgv::gui::vr_pose_event&>(e);
 			hand_translations[0] = vrpe.get_position();
 			return true;
@@ -159,9 +175,24 @@ public:
 	{
 		add_member_control(this, "load mesh", is_load_mesh);
 		add_member_control(this, "render mesh", is_render_mesh);
+		add_member_control(this, "origin x", origin.x());
+		add_member_control(
+			this, "origin x", origin.x(),
+			"slider", "min=-2.0f;max=2.0f"
+		);
+		add_member_control(this, "origin y", origin.y());
+		add_member_control(
+			this, "origin y", origin.y(),
+			"slider", "min=-2.0f;max=2.0f"
+		);
+		add_member_control(this, "origin z", origin.z());
+		add_member_control(
+			this, "origin z", origin.z(),
+			"slider", "min=-2.0f;max=2.0f"
+		);
 	}
 
-	void load_bridge_mesh(cgv::render::context& ctx, const char* file = "C:/Users/CC42D/src/vr_ctrl_panel/git/bridge_cleaned.obj")
+	void load_bridge_mesh(cgv::render::context& ctx, const char* file = "bridge_cleaned.obj")
 	{
 		cgv::media::mesh::simple_mesh<> m;
 		if (m.read(file))
@@ -176,9 +207,9 @@ public:
 			mri.construct_vbos(ctx, m);
 			mri.bind(ctx, ctx.ref_surface_shader_program(true));
 		}
-		bridge_view_mat.identity();
-		bridge_view_mat *= cgv::math::rotate4(180.0f, 0.0f, 1.0f, 0.0f);
-		bridge_view_mat *= cgv::math::translate4(0.0f, -1.5f, -2.7f);
+		//bridge_view_mat.identity();
+		//bridge_view_mat *= cgv::math::rotate4(180.0f, 0.0f, 1.0f, 0.0f);
+		//bridge_view_mat *= cgv::math::translate4(0.0f, -1.5f, -2.7f);
 	}
 };
 
