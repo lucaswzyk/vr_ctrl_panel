@@ -1,15 +1,7 @@
-type(vr_ctrl_panel):origin_x=.7f
-type(vr_ctrl_panel):origin_y=.0f
-type(vr_ctrl_panel):origin_z=-1.2f
-type(vr_ctrl_panel):angle_y=.0f
+type(vr_ctrl_panel):origin_x=-2.50f
+type(vr_ctrl_panel):origin_y=-1.2f
+type(vr_ctrl_panel):origin_z=1.1f
+type(vr_ctrl_panel):angle_y=130.0f
 
 type(vr_ctrl_panel):is_load_mesh=false
 type(vr_ctrl_panel):is_render_mesh=false
-
-type(vr_ctrl_panel):width=.5f
-type(vr_ctrl_panel):height=.3f
-type(vr_ctrl_panel):angle_x=12.4f
-type(vr_ctrl_panel):angle_y=2.98f
-type(vr_ctrl_panel):angle_z=1.3f
-type(vr_ctrl_panel):ty=-.625f
-type(vr_ctrl_panel):tz=-.93f

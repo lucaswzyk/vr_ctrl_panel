@@ -61,5 +61,7 @@ public:
 	{
 		nd.setActuatorPulse(act, level, duration_ms, device_ids[0]);
 	}
+
+	int get_location(int id) { return nd.getDeviceLocation(id); }
 };
 

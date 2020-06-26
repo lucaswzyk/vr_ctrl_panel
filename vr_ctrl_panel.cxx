@@ -33,9 +33,11 @@ class vr_ctrl_panel
 protected:
 	vec3 origin;
 	float angle_y;
-	mat4 model_view_mat;
+	mat4 model_view_mat, physical_to_world;
 
 	vector<hand> hands;
+	vector<short> tracker_ids;
+	bool trackers_assigned;
 	nd_handler::mode app_mode;
 	vector<vec3> hand_translations;
 	float hand_scale = .01f;
@@ -43,13 +45,12 @@ protected:
 	cgv::render::mesh_render_info mri;
 	bool is_load_mesh, is_render_mesh;
 
-	mat4 bridge_view_mat;
-
 	conn_panel panel;
 
 public:
 	vr_ctrl_panel()
-		: is_load_mesh(true), is_render_mesh(true)
+		: is_load_mesh(true), is_render_mesh(true), 
+		  angle_y(.0f), app_mode(nd_handler::NO_DEVICE), trackers_assigned(false)
 	{}
 
 	string get_type_name(void) const
@@ -69,6 +70,25 @@ public:
 
 	void on_set(void* member_ptr)
 	{
+		if (member_ptr == &origin.x() 
+			|| member_ptr == &origin.y()
+			|| member_ptr == &origin.z() 
+			|| member_ptr == &angle_y)
+		{
+			model_view_mat.identity();
+			model_view_mat *= cgv::math::translate4(origin);
+			model_view_mat *= cgv::math::rotate4(angle_y, vec3(0, 1, 0));
+
+			physical_to_world.identity();
+			physical_to_world *= cgv::math::rotate4(-angle_y, vec3(0, 1, 0));
+			physical_to_world *= cgv::math::translate4(-origin);
+		}
+
+		if (member_ptr == &trackers_assigned)
+		{
+			tracker_ids = vector<short>(hands.size(), -1);
+		}
+
 		update_member(member_ptr);
 	}
 
@@ -99,16 +119,16 @@ public:
 		default:
 			break;
 		}
-		hand_translations = vector<vec3>(hands.size());
+		hand_translations = vector<vec3>(hands.size(), vec3(0));
+		tracker_ids = vector<short>(hands.size(), -1);
+		model_view_mat.identity();
+		physical_to_world.identity();
 
 		return res;
 	}
 
 	void draw(cgv::render::context& ctx)
 	{
-		model_view_mat.identity();
-		model_view_mat *= cgv::math::translate4(origin);
-		model_view_mat *= cgv::math::rotate4(angle_y, vec3(0, 1, 0));
 		ctx.push_modelview_matrix();
 		ctx.mul_modelview_matrix(model_view_mat);
 
@@ -157,13 +177,49 @@ public:
 
 		if (e.get_kind() == cgv::gui::EID_POSE)
 		{
-			
 			cgv::gui::vr_pose_event& vrpe = static_cast<cgv::gui::vr_pose_event&>(e);
-			hand_translations[0] = vrpe.get_position();
+			int t_id = vrpe.get_trackable_index();
+			if (t_id == -1) return false;
+
+			vec4 hom_translation = physical_to_world * cgv::math::hom(vrpe.get_position());
+			vec3 translation = vec3(hom_translation.x(), hom_translation.y(), hom_translation.z());
+
+			if (trackers_assigned)
+			{
+				for (size_t i = 0; i < hands.size(); i++)
+				{
+					if (tracker_ids[i] == t_id)
+					{
+						hand_translations[i] = translation;
+					}
+				}
+			}
+			else
+			{
+				try_to_assign_tracker(t_id, translation);
+			}
+			
 			return true;
 		}
 
 		return false;
+	}
+
+	void try_to_assign_tracker(short t_id, vec3 translation)
+	{
+		trackers_assigned = true;
+		for (size_t i = 0; i < hands.size(); i++)
+		{
+			if (translation.x() >= 0 && hands[i].get_location() == NDAPISpace::LOC_LEFT_HAND
+				|| translation.x() < 0 && hands[i].get_location() == NDAPISpace::LOC_RIGHT_HAND)
+			{
+				tracker_ids[i] = t_id;
+				hand_translations[i] = translation;
+			}
+			trackers_assigned &= tracker_ids[i] > 0;
+		}
+
+		update_member(&trackers_assigned);
 	}
 
 	virtual void stream_help(std::ostream& os) override
@@ -175,6 +231,8 @@ public:
 	{
 		add_member_control(this, "load mesh", is_load_mesh);
 		add_member_control(this, "render mesh", is_render_mesh);
+		add_member_control(this, "trackers assigned", trackers_assigned);
+
 		add_member_control(this, "origin x", origin.x());
 		add_member_control(
 			this, "origin x", origin.x(),
@@ -189,6 +247,11 @@ public:
 		add_member_control(
 			this, "origin z", origin.z(),
 			"slider", "min=-2.0f;max=2.0f"
+		);
+		add_member_control(this, "angle y", angle_y);
+		add_member_control(
+			this, "angle y", angle_y,
+			"slider", "min=-180.0f;max=180.0f"
 		);
 	}
 

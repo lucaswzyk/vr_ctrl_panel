@@ -260,7 +260,7 @@ public:
 	void on_touch()
 	{
 		//cout << "contained" << endl;
-		if (last_contained_pos.size() == 1)
+		if (last_contained_pos.size() >= 1)
 		{
 			float new_value = vec_to_val(last_contained_pos[0]);
 			if (abs(new_value - value) < value_tolerance)

@@ -100,7 +100,7 @@ public:
 
 		float pi_half = acos(.0f);
 		gen = mt19937(random_device()());
-		dis_alpha = uniform_real_distribution<float>(0, pi_half);
+		dis_alpha = uniform_real_distribution<float>(-pi_half, .0f);
 		dis_beta = uniform_real_distribution<float>(.0f, 4 * pi_half);
 		dis_radii = normal_distribution<float>(star_rad_mean, star_rad_deviation);
 
