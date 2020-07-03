@@ -65,5 +65,10 @@ public:
 		nd_handler& ndh = nd_handler::instance();
 		return ndh.get_location(id); 
 	}
+
+	bool are_thumb_index_joined() {
+		nd_handler& ndh = nd_handler::instance();
+		return ndh.are_thumb_index_joined(id);
+	}
 };
 

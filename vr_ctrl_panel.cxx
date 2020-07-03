@@ -37,17 +37,24 @@ protected:
 	float angle_y;
 	mat4 model_view_mat, physical_to_world;
 
-	vector<hand> hands;
-	vector<short> tracker_ids;
+	vector<hand*> hands;
+	int num_hands;
+	map<int, int> tracker_assigns;
+
+	// TODO combine these
+	vector<vec3> hand_translations, raw_positions;
 	bool trackers_assigned;
 	nd_handler::mode app_mode;
-	vector<vec3> hand_translations;
 	float hand_scale = .01f;
 
 	cgv::render::mesh_render_info mri;
 	bool is_load_mesh, is_render_mesh;
 
 	conn_panel panel;
+
+	bool calibration_requested, is_calibrating;
+	chrono::steady_clock::time_point calibration_request_time, calibration_start;
+	int calibration_request_duration_ms, calibration_duration_ms;
 
 public:
 	vr_ctrl_panel()
@@ -88,7 +95,12 @@ public:
 
 		if (member_ptr == &trackers_assigned)
 		{
-			tracker_ids = vector<short>(hands.size(), -1);
+			tracker_assigns = map<int, int>();
+		}
+
+		if (member_ptr == &is_calibrating)
+		{
+			calibration_start = chrono::steady_clock::now();
 		}
 
 		update_member(member_ptr);
@@ -109,24 +121,57 @@ public:
 		switch (ndh.get_app_mode())
 		{
 		case nd_handler::BOTH_HANDS:
-			hands.push_back(hand(NDAPISpace::LOC_LEFT_HAND));
-			hands.push_back(hand(NDAPISpace::LOC_RIGHT_HAND));
+			hands.push_back(new hand(NDAPISpace::LOC_RIGHT_HAND));
+			hands.push_back(new hand(NDAPISpace::LOC_LEFT_HAND));
+			num_hands = 2;
 			break;
 		case nd_handler::LEFT_ONLY:
-			hands.push_back(hand(NDAPISpace::LOC_LEFT_HAND));
+			hands.push_back(nullptr);
+			hands.push_back(new hand(NDAPISpace::LOC_LEFT_HAND));
+			num_hands = 1;
 			break;
 		case nd_handler::RIGHT_ONLY:
-			hands.push_back(hand(NDAPISpace::LOC_RIGHT_HAND));
+			hands.push_back(new hand(NDAPISpace::LOC_RIGHT_HAND));
+			hands.push_back(nullptr);
+			num_hands = 1;
 			break;
 		default:
+			num_hands = 0;
 			break;
 		}
 		hand_translations = vector<vec3>(hands.size(), vec3(0));
-		tracker_ids = vector<short>(hands.size(), -1);
+		raw_positions = vector<vec3>(hands.size(), vec3(0));
 		model_view_mat.identity();
 		physical_to_world.identity();
 
+		calibration_duration_ms = 100000;
+
 		return res;
+	}
+
+	void update_calibration()
+	{
+		bool all_thumb_index_joined = true;
+		for (size_t i = 0; i < hands.size(); i++)
+		{
+			if (!hands[i])
+			{
+				all_thumb_index_joined &= hands[i]->are_thumb_index_joined();
+			}
+		}
+
+		if (calibration_requested)
+		{
+			int since_request_ms = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - calibration_request_time).count();
+			if (calibration_request_duration_ms < since_request_ms)
+			{
+				cout << "Calibration" << endl;
+			}
+		}
+		else if (all_thumb_index_joined)
+		{
+			calibration_request_time = chrono::steady_clock::now();
+		}
 	}
 
 	void draw(cgv::render::context& ctx)
@@ -137,8 +182,11 @@ public:
 		//auto t0 = std::chrono::steady_clock::now();
 		for (size_t i = 0; i < hands.size(); i++)
 		{
-			hands[i].set_pose_and_actuators(panel, hand_translations[i], hand_scale);
-			hands[i].draw(ctx);
+			if (hands[i])
+			{
+				hands[i]->set_pose_and_actuators(panel, hand_translations[i], hand_scale);
+				hands[i]->draw(ctx);
+			}
 		}
 		//auto t1 = std::chrono::steady_clock::now();
 
@@ -183,22 +231,24 @@ public:
 			int t_id = vrpe.get_trackable_index();
 			if (t_id == -1) return false;
 
-			vec4 hom_translation = physical_to_world * cgv::math::hom(vrpe.get_position());
-			vec3 translation = vec3(hom_translation.x(), hom_translation.y(), hom_translation.z());
-
-			if (trackers_assigned)
+			vec3 position = inhom(physical_to_world * hom(vrpe.get_position()));
+			if (tracker_assigns.size() == num_hands && tracker_assigns.count(t_id))
 			{
-				for (size_t i = 0; i < hands.size(); i++)
+				int tracker_loc = tracker_assigns[t_id];
+				hand_translations[tracker_loc] = position;
+				raw_positions[tracker_loc] = vrpe.get_position();
+
+				if (is_calibrating)
 				{
-					if (tracker_ids[i] == t_id)
-					{
-						hand_translations[i] = translation;
-					}
+					set_physical_to_world();
+					int since_calibration_start = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - calibration_start).count();
+					is_calibrating = since_calibration_start < calibration_duration_ms;
+					update_member(&is_calibrating);
 				}
 			}
 			else
 			{
-				try_to_assign_tracker(t_id, translation);
+				assign_trackers(t_id, position);
 			}
 			
 			return true;
@@ -207,22 +257,53 @@ public:
 		return false;
 	}
 
-	void try_to_assign_tracker(short t_id, vec3 translation)
+	void assign_trackers(int id, vec3 position)
 	{
-		trackers_assigned = true;
-		for (size_t i = 0; i < hands.size(); i++)
+		if (tracker_assigns.empty())
 		{
-			if (translation.x() >= 0 && hands[i].get_location() == NDAPISpace::LOC_LEFT_HAND
-				|| translation.x() < 0 && hands[i].get_location() == NDAPISpace::LOC_RIGHT_HAND)
-			{
-				tracker_ids[i] = t_id;
-				hand_translations[i] = translation;
-			}
-			trackers_assigned &= tracker_ids[i] > 0;
+			int loc = hands[0] ? NDAPISpace::LOC_RIGHT_HAND : NDAPISpace::LOC_LEFT_HAND;
+			tracker_assigns[id] = loc;
+			hand_translations[loc] = position;
 		}
-
-		update_member(&trackers_assigned);
+		else
+		{
+			int other_id = tracker_assigns.begin()->first;
+			vec3 other_position = hand_translations[tracker_assigns[other_id]];
+			if (other_position.x() < position.x())
+			{
+				tracker_assigns[id] = NDAPISpace::LOC_RIGHT_HAND;
+				tracker_assigns[other_id] = NDAPISpace::LOC_LEFT_HAND;
+			}
+			else
+			{
+				tracker_assigns[id] = NDAPISpace::LOC_LEFT_HAND;
+				tracker_assigns[other_id] = NDAPISpace::LOC_RIGHT_HAND;
+			}
+		}
 	}
+
+	void set_physical_to_world()
+	{
+		model_view_mat.identity();
+		model_view_mat *= cgv::math::translate4(.5f * (raw_positions[0] + raw_positions[1]));
+		vec3 diff = raw_positions[0] - raw_positions[1];
+		float angle = cgv::math::dot(diff, vec3(1, 0, 0)) / diff.length();
+		angle = acos(angle) * 45 / atan(1.0f);
+		if (cgv::math::cross(vec3(1, 0, 0), diff).y() < 0)
+		{
+			angle = -angle;
+		}
+		model_view_mat *= cgv::math::rotate4(angle, vec3(0, 1, 0));
+		model_view_mat *= cgv::math::translate4(-vec3(.005f, .875f, 3.63f));
+	}
+
+	vec3 position_from_pose(const float pose[12])
+	{
+		return vec3(pose[9], pose[10], pose[12]);
+	}
+	
+	vec4 hom(vec3 v) { return vec4(v.x(), v.y(), v.z(), 1.0f); }
+	vec3 inhom(vec4 v) { return vec3(v.x(), v.y(), v.z()) / v.w(); }
 
 	virtual void stream_help(std::ostream& os) override
 	{
@@ -234,6 +315,7 @@ public:
 		add_member_control(this, "load mesh", is_load_mesh);
 		add_member_control(this, "render mesh", is_render_mesh);
 		add_member_control(this, "trackers assigned", trackers_assigned);
+		add_member_control(this, "calibrate", is_calibrating);
 
 		add_member_control(this, "origin x", origin.x());
 		add_member_control(

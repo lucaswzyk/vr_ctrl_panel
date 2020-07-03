@@ -117,6 +117,7 @@ protected:
 	joint_positions pose;
 	float scale = .01f;
 	vector<NDAPISpace::Actuator> actuators;
+	cgv::render::sphere_render_style srs;
 
 public:
 	hand() 
@@ -173,6 +174,11 @@ public:
 				vec3 pos = palm_resting[i];
 				palm_resting[i] = vec3(-pos.x(), pos.y(), pos.z());
 			}
+			srs.surface_color = rgb(1, 0, 0);
+		}
+		else
+		{
+			srs.surface_color = rgb(0, 0, 1);
 		}
 
 		actuators = vector<NDAPISpace::Actuator>{
@@ -249,6 +255,7 @@ public:
 		cgv::render::sphere_renderer& sr = cgv::render::ref_sphere_renderer(ctx);
 		sr.set_position_array(ctx, positions);
 		sr.set_radius_array(ctx, radius_array);
+		sr.set_render_style(srs);
 		sr.validate_and_enable(ctx);
 		glDrawArrays(GL_POINTS, 0, positions.size());
 		sr.disable(ctx);
@@ -355,4 +362,5 @@ public:
 	}
 
 	int get_location() { return device.get_location(); }
+	bool are_thumb_index_joined() { return device.are_thumb_index_joined(); }
 };

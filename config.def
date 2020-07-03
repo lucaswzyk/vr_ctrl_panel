@@ -5,3 +5,14 @@ type(vr_ctrl_panel):angle_y=130.0f
 
 type(vr_ctrl_panel):is_load_mesh=false
 type(vr_ctrl_panel):is_render_mesh=false
+
+// *********** Visibility of VR devices **********
+
+// set visibility type of all VR devices to 0 ... hidden, 1 ... sphere glyphs, 2 ... meshes, 3 ... spheres and meshes
+type(vr_view_interactor):vis_type=0
+
+// set visibility type of a specific VR device type
+type(vr_view_interactor):hmd_vis_type=1
+type(vr_view_interactor):controller_vis_type=0
+type(vr_view_interactor):tracker_vis_type=1
+type(vr_view_interactor):base_vis_type=0

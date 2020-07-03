@@ -26,7 +26,6 @@ private:
 
 	bool connect();
 
-
 public:
 	static nd_handler& instance()
 	{
@@ -63,5 +62,7 @@ public:
 	}
 
 	int get_location(int id) { return nd.getDeviceLocation(id); }
+
+	bool are_thumb_index_joined(int id) { return nd.areContactsJoined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_INDEX, id); }
 };
 
