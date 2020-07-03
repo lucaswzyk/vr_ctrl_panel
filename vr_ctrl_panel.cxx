@@ -11,6 +11,8 @@
 #include <cgv/gui/provider.h>
 #include <cgv_gl/box_renderer.h>
 #include <cgv_gl/sphere_renderer.h>
+#include <cg_vr/vr_server.h>
+#include <cg_vr/vr_events.h>
 
 #include <chrono>
 
@@ -149,7 +151,7 @@ public:
 		{
 			//ctx.push_modelview_matrix();
 			//ctx.mul_modelview_matrix(bridge_view_mat);
-			mri.render_mesh(ctx, ctx.ref_surface_shader_program(true));
+			//mri.render_mesh(ctx, ctx.ref_surface_shader_program(true));
 			//ctx.pop_modelview_matrix();
 		}
 
@@ -257,7 +259,7 @@ public:
 
 	void load_bridge_mesh(cgv::render::context& ctx, const char* file = "bridge_cleaned.obj")
 	{
-		cgv::media::mesh::simple_mesh<> m;
+		/*cgv::media::mesh::simple_mesh<> m;
 		if (m.read(file))
 		{
 			if (!m.has_colors())
@@ -269,7 +271,7 @@ public:
 			}
 			mri.construct_vbos(ctx, m);
 			mri.bind(ctx, ctx.ref_surface_shader_program(true));
-		}
+		}*/
 		//bridge_view_mat.identity();
 		//bridge_view_mat *= cgv::math::rotate4(180.0f, 0.0f, 1.0f, 0.0f);
 		//bridge_view_mat *= cgv::math::translate4(0.0f, -1.5f, -2.7f);

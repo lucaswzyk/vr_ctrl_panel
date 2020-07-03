@@ -64,7 +64,7 @@ projectType = "application_plugin";
 projectName = "vr_ctrl_panel";
 
 //location of cloned repo
-git_repo = "D:/Projects/vr_ctrl_panel/git";
+git_repo = "D:/src/vr_ctrl_panel";
 
 
 //list of individual source files that must be specified with full path
@@ -85,7 +85,7 @@ excludeSourceFiles = [INPUT_PATH];
 //defaults to empty list [] if sourceFiles are defined or to [INPUT_DIR] if 
 //sourceFiles is not defined
 
-sourceDirs = [git_repo];
+sourceDirs = [INPUT_DIR];
 
 
 //specify subdirs in the source directories that should be excluded
@@ -125,12 +125,12 @@ addProjectDirs = [
 //The tool projects specified in the rules are added to the solution 
 //recursively.
 
-addProjectDeps = ["cgv_utils","cgv_type","cgv_reflect","cgv_data","cgv_signal",
-                  "cgv_base","cgv_media","cgv_gui","cgv_render","cgv_os",
-                  "fltk","cgv_viewer","cg_fltk","cg_ext","crg_stereo_view",
-                  "crg_antialias","crg_depth_of_field","crg_light","cg_meta","cmi_io",
-                  "crg_grid","cgv_gl","glew", "cgv_math", "crg_vr_view", 
-                  "cg_vr", "openvr_driver"];
+addProjectDeps = ["cgv_utils", "cgv_type", "cgv_data", "cgv_base", "cgv_math",
+				"cgv_media", "cgv_gui", "cgv_render", "cmi_io",
+				"cgv_viewer", "cg_fltk", "crg_grid", "cg_ext", "cgv_gl", 
+				"crg_vr_view", 
+				"crg_vr_wall",
+				"cg_vr", "openvr_driver"];
 
 // By default all projects on which this project depends are included to the workspace (solution).
 // By setting "referenceDeps" to 0, only the workspace only contains this project. This feature is
@@ -164,7 +164,7 @@ workingDirectory = INPUT_DIR;
 
 // use FORWARD slashes!
 
-addIncDirs = [git_repo, CGV_DIR."/libs", CGV_DIR."/3rd/glew/", CGV_DIR."/libs/delaunay" ];
+addIncDirs = [INPUT_DIR, CGV_DIR."/libs", CGV_DIR."/3rd/glew/", CGV_DIR."/libs/delaunay" ];
 
 
 //additional preprocessor definitions for all configurations. By default the
@@ -203,7 +203,7 @@ addStaticDefines = [];
 //the lib dir in a list of two strings with the second entry equal to "all"
 
 // use FORWARD slashes!
-addLibDirs=[git_repo];
+addLibDirs=[INPUT_DIR];
 
 
 //define a dependency by specification of a configuration specific library name either
@@ -235,7 +235,7 @@ addLibDirs=[git_repo];
 // - "shared" ... dependency exported only to shared configurations 
 // - "all"    ... dependency exported to all configurations
 
-addDependencies = ["NDAPI_x86","opengl"];
+addDependencies = ["NDAPI_x64","opengl"];
 
 
 //set the name of the definition file, in which the symbols are 
