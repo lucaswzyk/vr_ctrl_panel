@@ -11,6 +11,8 @@
 
 using namespace std;
 
+vec3 const panel_pos_on_bridge = vec3(-.005f, .875f, -3.63f);
+
 class conn_panel
 	: public cgv::base::base,
 	  public cgv::render::drawable
@@ -19,36 +21,34 @@ protected:
 	panel_node* panel_tree;
 	stars_sphere* controlled_stars_sphere;
 
-	vec3 origin = vec3(.005f, .875f, 3.63f);
-
 public:
 
 	conn_panel()
 	{
-		controlled_stars_sphere = new stars_sphere(1.0f, 20.0f, vec3(.0f, .0f, 25.0f));
+		controlled_stars_sphere = new stars_sphere(1.0f, 20.0f, vec3(.0f, .0f, -25.0f));
 		panel_tree = new panel_node();
 		panel_node* left_panel = new panel_node(
-			vec3(0), vec3(.5f, .0f, -.3f), origin,
-			vec3(-12.4f, 2.98f, -1.3f), rgb(1, 0, 0), 
+			vec3(0), vec3(-.5f, .0f, .3f), panel_pos_on_bridge,
+			vec3(12.4f, 2.98f, -1.3f), rgb(1, 0, 0), 
 			panel_tree
 		);
 		color_switch_button* left_button = new color_switch_button(
-			vec3(.25f, .0f, -.2f), vec3(-.1f, .0f, .1f), vec3(0),
+			vec3(-.25f, .0f, .2f), vec3(.1f, .0f, -.1f), vec3(0),
 			vec3(0), rgb(1, 1, 0),
 			left_panel
 		);
 		panel_node* right_panel = new panel_node(
-			vec3(0), vec3(-.5f, .0f, -.3f), origin,
-			vec3(-12.4f, -2.98f, 1.3f), rgb(0, 1, 0),
+			vec3(0), vec3(.5f, .0f, .3f), panel_pos_on_bridge,
+			vec3(12.4f, -2.98f, 1.3f), rgb(0, 1, 0),
 			panel_tree
 		);
 		color_switch_button* right_button = new color_switch_button(
-			vec3(-.25f, .0f, -.2f), vec3(.1f, .0f, .1f), vec3(0),
+			vec3(.25f, .0f, .2f), vec3(-.1f, .0f, -.1f), vec3(0),
 			vec3(0), rgb(0, 1, 1),
 			right_panel
 		);
 		slider* left_slider = new slider(
-			vec3(.1f, 0, -.2f), vec3(-.05f, 0, .15f), vec3(0),
+			vec3(-.1f, 0, .2f), vec3(.05f, 0, -.15f), vec3(0),
 			vec3(0), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
 			controlled_stars_sphere->get_speed_ptr(), controlled_stars_sphere->get_max_speed(),
 			left_panel
@@ -86,5 +86,3 @@ public:
 		return panel_tree->check_containments(vecs, tolerance);
 	}
 };
-
-//cgv::base::object_registration<conn_panel> conn_panel_reg("");

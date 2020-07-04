@@ -26,6 +26,11 @@ extern "C"
 	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 
+enum calibration_mode
+{
+	NOT_CALIBRATING, REQUESTED, CHEST_CLICK, GLOVES1, GLOVES2, PANEL, NUM_CALIBRATION_STEPS
+};
+
 class vr_ctrl_panel
 	: public cgv::base::base,
 	  public cgv::render::drawable,
@@ -33,16 +38,17 @@ class vr_ctrl_panel
 	  public cgv::gui::provider
 {
 protected:
-	vec3 origin;
+	vec3 origin, user_position;
 	float angle_y;
 	mat4 model_view_mat, physical_to_world;
 
 	vector<hand*> hands;
+	vector<NDAPISpace::Location> existing_hand_locs;
 	int num_hands;
 	map<int, int> tracker_assigns;
 
 	// TODO combine these
-	vector<vec3> hand_translations, raw_positions;
+	vector<vec3> hand_translations;
 	bool trackers_assigned;
 	nd_handler::mode app_mode;
 	float hand_scale = .01f;
@@ -52,9 +58,13 @@ protected:
 
 	conn_panel panel;
 
-	bool calibration_requested, is_calibrating;
-	chrono::steady_clock::time_point calibration_request_time, calibration_start;
-	int calibration_request_duration_ms, calibration_duration_ms;
+	// calibration
+	bool is_ack_deprecated;
+	float calibration_pose[12];
+	chrono::steady_clock::time_point calibration_time;
+	int calibration_request_duration_ms, hand_calibration_duration_ms, 
+		calibrating_tracker, current_calibration_stage;
+	vec3 hand_vs_panel_for_calibration = vec3(.0f, .1f, .15f);
 
 public:
 	vr_ctrl_panel()
@@ -69,12 +79,8 @@ public:
 
 	bool self_reflect(cgv::reflect::reflection_handler& rh)
 	{
-		return rh.reflect_member("is_load_mesh", is_load_mesh) 
-			&& rh.reflect_member("is_render_mesh", is_render_mesh)
-			&& rh.reflect_member("origin_x", origin.x())
-			&& rh.reflect_member("origin_y", origin.y())
-			&& rh.reflect_member("origin_z", origin.z())
-			&& rh.reflect_member("angle_y", angle_y);
+		return rh.reflect_member("is_load_mesh", is_load_mesh)
+			&& rh.reflect_member("is_render_mesh", is_render_mesh);
 	}
 
 	void on_set(void* member_ptr)
@@ -98,11 +104,6 @@ public:
 			tracker_assigns = map<int, int>();
 		}
 
-		if (member_ptr == &is_calibrating)
-		{
-			calibration_start = chrono::steady_clock::now();
-		}
-
 		update_member(member_ptr);
 	}
 
@@ -122,16 +123,20 @@ public:
 		{
 		case nd_handler::BOTH_HANDS:
 			hands.push_back(new hand(NDAPISpace::LOC_RIGHT_HAND));
+			existing_hand_locs.push_back(NDAPISpace::LOC_RIGHT_HAND);
 			hands.push_back(new hand(NDAPISpace::LOC_LEFT_HAND));
+			existing_hand_locs.push_back(NDAPISpace::LOC_LEFT_HAND);
 			num_hands = 2;
 			break;
 		case nd_handler::LEFT_ONLY:
 			hands.push_back(nullptr);
 			hands.push_back(new hand(NDAPISpace::LOC_LEFT_HAND));
+			existing_hand_locs.push_back(NDAPISpace::LOC_LEFT_HAND);
 			num_hands = 1;
 			break;
 		case nd_handler::RIGHT_ONLY:
 			hands.push_back(new hand(NDAPISpace::LOC_RIGHT_HAND));
+			existing_hand_locs.push_back(NDAPISpace::LOC_RIGHT_HAND);
 			hands.push_back(nullptr);
 			num_hands = 1;
 			break;
@@ -140,38 +145,136 @@ public:
 			break;
 		}
 		hand_translations = vector<vec3>(hands.size(), vec3(0));
-		raw_positions = vector<vec3>(hands.size(), vec3(0));
 		model_view_mat.identity();
 		physical_to_world.identity();
 
-		calibration_duration_ms = 100000;
+		current_calibration_stage = NOT_CALIBRATING;
+		calibration_request_duration_ms = 1000;
+		hand_calibration_duration_ms = 2000;
 
 		return res;
 	}
 
-	void update_calibration()
+	void update_calibration(vr::vr_kit_state state, int t_id)
 	{
-		bool all_thumb_index_joined = true;
-		for (size_t i = 0; i < hands.size(); i++)
+		if (current_calibration_stage > NOT_CALIBRATING && t_id != calibrating_tracker)
 		{
-			if (!hands[i])
-			{
-				all_thumb_index_joined &= hands[i]->are_thumb_index_joined();
-			}
+			return;
 		}
 
-		if (calibration_requested)
+		bool is_calibrating_hand_ack = hands[tracker_assigns[t_id]]->is_in_ack_pose();
+		float time_to_calibration;
+
+		switch (current_calibration_stage)
 		{
-			int since_request_ms = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - calibration_request_time).count();
-			if (calibration_request_duration_ms < since_request_ms)
+		case NOT_CALIBRATING:
+			if (!is_ack_deprecated && is_calibrating_hand_ack)
 			{
-				cout << "Calibration" << endl;
+				calibrating_tracker = t_id;
+				calibration_time = chrono::steady_clock::now();
+				current_calibration_stage++;
 			}
+			break;
+		case REQUESTED:
+			if (!is_calibrating_hand_ack)
+			{
+				reset_calibration_stage();
+			}
+			else
+			{
+				time_to_calibration = calibration_request_duration_ms - 
+					chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - calibration_time).count();
+				cout << "Calibration in " << to_string(time_to_calibration / 1000) << "s..." << endl;
+				if (time_to_calibration <= 0)
+				{
+					next_calibration_stage();
+				}
+			}
+			break;
+		case CHEST_CLICK:
+			cout << "Tap index and thumb in front of chest" << endl;
+			if (!is_ack_deprecated && is_calibrating_hand_ack)
+			{
+				user_position = position_from_pose(state.controller[t_id].pose);
+				next_calibration_stage();
+			}
+			break;
+		case GLOVES1:
+			cout << "Move your hands as shown, fingers together, tap thumb and index when ready" << endl;
+			for (auto loc : existing_hand_locs)
+			{
+				hands[loc]->calibrate();
+			}
+			if (!is_ack_deprecated && is_calibrating_hand_ack)
+			{
+				next_calibration_stage();
+			}
+			break;
+		case GLOVES2:
+			for (auto loc : existing_hand_locs)
+			{
+				hands[loc]->calibrate();
+			}
+			calibrate(state);
+			time_to_calibration = hand_calibration_duration_ms -
+				chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - calibration_time).count();
+			cout << "Calibration in " << to_string(time_to_calibration / 1000) << "s..." << endl;
+			if (time_to_calibration <= 0)
+			{
+				next_calibration_stage();
+			}
+			break;
+		case PANEL:
+			calibrate(state);
+			if (!is_ack_deprecated && is_calibrating_hand_ack)
+			{
+				reset_calibration_stage();
+			}
+		default:
+			break;
 		}
-		else if (all_thumb_index_joined)
+
+		is_ack_deprecated = is_ack_deprecated && is_calibrating_hand_ack;
+	}
+
+	void next_calibration_stage()
+	{
+		calibration_time = chrono::steady_clock::now();
+		is_ack_deprecated = true;
+		current_calibration_stage++;
+	}
+
+	void reset_calibration_stage()
+	{
+		is_ack_deprecated = true;
+		current_calibration_stage = NOT_CALIBRATING;
+	}
+
+	void calibrate(const vr::vr_kit_state& state)
+	{
+		vec3 new_z(0);
+		vec3 new_y(0, 1, 0);
+		for (auto assign : tracker_assigns)
 		{
-			calibration_request_time = chrono::steady_clock::now();
+			new_z += position_from_pose(state.controller[assign.first].pose);
+			hands[assign.second]->calibrate();
 		}
+		new_z /= tracker_assigns.size();
+		new_z -= user_position;
+		new_z.y() = .0f;
+		new_z.normalize();
+		new_z = -new_z;
+		vec3 new_x = cgv::math::cross(new_y, new_z);
+
+		model_view_mat.identity();
+		model_view_mat.set_col(0, hom_dir(new_x));
+		model_view_mat.set_col(1, hom_dir(new_y));
+		model_view_mat.set_col(2, hom_dir(new_z));
+		model_view_mat.set_col(3, hom_pos(state.controller[calibrating_tracker].pose));
+		vec4 center_translation = hom_pos(-panel_pos_on_bridge - hand_vs_panel_for_calibration);
+		model_view_mat *= cgv::math::translate4(inhom_pos(center_translation));
+
+		physical_to_world = cgv::math::inv(model_view_mat);
 	}
 
 	void draw(cgv::render::context& ctx)
@@ -180,13 +283,10 @@ public:
 		ctx.mul_modelview_matrix(model_view_mat);
 
 		//auto t0 = std::chrono::steady_clock::now();
-		for (size_t i = 0; i < hands.size(); i++)
+		for (auto loc : existing_hand_locs)
 		{
-			if (hands[i])
-			{
-				hands[i]->set_pose_and_actuators(panel, hand_translations[i], hand_scale);
-				hands[i]->draw(ctx);
-			}
+			hands[loc]->set_pose_and_actuators(panel, hand_translations[loc], hand_scale);
+			hands[loc]->draw(ctx);
 		}
 		//auto t1 = std::chrono::steady_clock::now();
 
@@ -231,23 +331,16 @@ public:
 			int t_id = vrpe.get_trackable_index();
 			if (t_id == -1) return false;
 
-			vec3 position = inhom(physical_to_world * hom(vrpe.get_position()));
+			vec3 position = inhom_pos(physical_to_world * hom_pos(vrpe.get_position()));
 			if (tracker_assigns.size() == num_hands && tracker_assigns.count(t_id))
 			{
 				int tracker_loc = tracker_assigns[t_id];
 				hand_translations[tracker_loc] = position;
-				raw_positions[tracker_loc] = vrpe.get_position();
-
-				if (is_calibrating)
-				{
-					set_physical_to_world();
-					int since_calibration_start = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - calibration_start).count();
-					is_calibrating = since_calibration_start < calibration_duration_ms;
-					update_member(&is_calibrating);
-				}
+				update_calibration(vrpe.get_state(), t_id);
 			}
 			else
 			{
+				reset_calibration_stage();
 				assign_trackers(t_id, position);
 			}
 			
@@ -259,9 +352,16 @@ public:
 
 	void assign_trackers(int id, vec3 position)
 	{
+		cout << "Assigning trackers" << endl;
+		if (tracker_assigns.size() == existing_hand_locs.size())
+		{
+			cout << "Resetting tracker assignments" << endl;
+			tracker_assigns = map<int, int>();
+		}
+
 		if (tracker_assigns.empty())
 		{
-			int loc = hands[0] ? NDAPISpace::LOC_RIGHT_HAND : NDAPISpace::LOC_LEFT_HAND;
+			int loc = existing_hand_locs[0];
 			tracker_assigns[id] = loc;
 			hand_translations[loc] = position;
 		}
@@ -282,28 +382,16 @@ public:
 		}
 	}
 
-	void set_physical_to_world()
-	{
-		model_view_mat.identity();
-		model_view_mat *= cgv::math::translate4(.5f * (raw_positions[0] + raw_positions[1]));
-		vec3 diff = raw_positions[0] - raw_positions[1];
-		float angle = cgv::math::dot(diff, vec3(1, 0, 0)) / diff.length();
-		angle = acos(angle) * 45 / atan(1.0f);
-		if (cgv::math::cross(vec3(1, 0, 0), diff).y() < 0)
-		{
-			angle = -angle;
-		}
-		model_view_mat *= cgv::math::rotate4(angle, vec3(0, 1, 0));
-		model_view_mat *= cgv::math::translate4(-vec3(.005f, .875f, 3.63f));
-	}
-
 	vec3 position_from_pose(const float pose[12])
 	{
-		return vec3(pose[9], pose[10], pose[12]);
+		return vec3(pose[9], pose[10], pose[11]);
 	}
 	
-	vec4 hom(vec3 v) { return vec4(v.x(), v.y(), v.z(), 1.0f); }
-	vec3 inhom(vec4 v) { return vec3(v.x(), v.y(), v.z()) / v.w(); }
+	vec4 hom_pos(vec3 v) { return vec4(v.x(), v.y(), v.z(), 1.0f); }
+	vec4 hom_pos(const float pose[12]) { return hom_pos(position_from_pose(pose)); }
+	vec3 inhom_pos(vec4 v) { return vec3(v.x(), v.y(), v.z()) / v.w(); }
+	vec4 hom_dir(vec3 dir) { return vec4(dir.x(), dir.y(), dir.z(), .0f); }
+	vec3 inhom_dir(vec4 dir) { return vec3(dir.x(), dir.y(), dir.z()); }
 
 	virtual void stream_help(std::ostream& os) override
 	{
@@ -315,28 +403,12 @@ public:
 		add_member_control(this, "load mesh", is_load_mesh);
 		add_member_control(this, "render mesh", is_render_mesh);
 		add_member_control(this, "trackers assigned", trackers_assigned);
-		add_member_control(this, "calibrate", is_calibrating);
 
-		add_member_control(this, "origin x", origin.x());
-		add_member_control(
-			this, "origin x", origin.x(),
-			"slider", "min=-2.0f;max=2.0f"
-		);
-		add_member_control(this, "origin y", origin.y());
-		add_member_control(
-			this, "origin y", origin.y(),
-			"slider", "min=-2.0f;max=2.0f"
-		);
-		add_member_control(this, "origin z", origin.z());
-		add_member_control(
-			this, "origin z", origin.z(),
-			"slider", "min=-2.0f;max=2.0f"
-		);
-		add_member_control(this, "angle y", angle_y);
-		add_member_control(
-			this, "angle y", angle_y,
-			"slider", "min=-180.0f;max=180.0f"
-		);
+		for (auto loc : existing_hand_locs)
+		{
+			string loc_string = loc == NDAPISpace::LOC_RIGHT_HAND ? "right" : "left";
+			add_member_control(this, loc_string, *(hands[loc]->get_man_ack()));
+		}
 	}
 
 	void load_bridge_mesh(cgv::render::context& ctx, const char* file = "bridge_cleaned.obj")

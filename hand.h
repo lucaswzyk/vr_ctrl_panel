@@ -118,12 +118,14 @@ protected:
 	float scale = .01f;
 	vector<NDAPISpace::Actuator> actuators;
 	cgv::render::sphere_render_style srs;
+	bool man_ack;
 
 public:
 	hand() 
 	{}
 
 	hand(NDAPISpace::Location location)
+		: man_ack(false)
 	{
 		device = nd_device(location);
 		set_geometry();
@@ -259,97 +261,11 @@ public:
 		sr.validate_and_enable(ctx);
 		glDrawArrays(GL_POINTS, 0, positions.size());
 		sr.disable(ctx);
-
-		//joint_positions thumb0, thumb1;
-		//thumb1.add_origin();
-		//thumb1.translate(0, 0, -3);
-		//thumb1.rotate(rotations[NDAPISpace::IMULOC_THUMB1]);
-		//thumb1.translate(0, 0, -4);
-		//thumb0.add_origin();
-		//thumb0.translate(0, 0, -4);
-		//thumb0.rotate(rotations[NDAPISpace::IMULOC_THUMB0]);
-		//thumb0.add_origin();
-		//joint_positions thumb = joint_positions::join(thumb0, thumb1);
-		//thumb.translate(-5, -3, 2.5);
-
-		//joint_positions index;
-		//index.add_origin();
-		//index.translate(0, 0, -2);
-		//index.add_origin();
-		//index.translate(0, 0, -3);
-		//index.add_origin();
-		//index.translate(0, 0, -5);
-		//index.rotate(rotations[NDAPISpace::IMULOC_INDEX]);
-		//index.add_origin();
-		//index.translate(-3.5, 0, -4);
-
-		//joint_positions middle;
-		//middle.add_origin();
-		//middle.translate(0, 0, -2.5);
-		//middle.add_origin();
-		//middle.translate(0, 0, -3.5);
-		//middle.add_origin();
-		//middle.translate(0, 0, -5);
-		//middle.rotate(rotations[NDAPISpace::IMULOC_MIDDLE]);
-		//middle.add_origin();
-		//middle.translate(-1, 0, -4.5);
-
-		//rotations = device.get_cgv_rotations();
-		//joint_positions ring;
-		//ring.add_origin();
-		//ring.translate(0, 0, -2.5);
-		//ring.add_origin();
-		//ring.translate(0, 0, -3.5);
-		//ring.add_origin();
-		//ring.translate(0, 0, -4.5);
-		//ring.rotate(rotations[NDAPISpace::IMULOC_RING]);
-		//ring.add_origin();
-		//ring.translate(1.5, 0, -4);
-
-		//rotations = device.get_cgv_rotations();
-		//joint_positions pinky;
-		//pinky.add_origin();
-		//pinky.translate(0, 0, -2);
-		//pinky.add_origin();
-		//pinky.translate(0, 0, -2.5);
-		//pinky.add_origin();
-		//pinky.translate(0, 0, -4);
-		//pinky.rotate(rotations[NDAPISpace::IMULOC_PINKY]);
-		//pinky.add_origin();
-		//pinky.translate(4, 0, -4);
-
-		//hand.append(thumb);
-		//hand.append(index);
-		//hand.append(middle);
-		//hand.append(ring);
-		//hand.append(pinky);
-
-		//draw_part(ctx, identity, palm_position, palm_extent, palm_rotation, true);
-
-		// enter palm coord system
-
-		//cgv::render::rounded_cone_renderer& rcr = cgv::render::ref_rounded_cone_renderer(ctx);
-		//cgv::render::rounded_cone_renderer::cone c;
-		//c.start = cgv::math::fvec<float, 4U>(0, 0, 0, 1);
-		//c.end = cgv::math::fvec<float, 4U>(0, 0, 1, 1);
-		//vector<cgv::render::rounded_cone_renderer::cone> cones;
-		//cones.push_back(c);
-		//rcr.set_cone_array(ctx, cones);
-		//rcr.validate_and_enable(ctx);
-		//glDrawArrays(GL_POINTS, 0, 1);
-		//rcr.disable(ctx);
-
-		//draw_part(ctx, thumb_mv_mat, thumb_position, thumb_extent, thumb_rotation, false);
-		//draw_part(ctx, index_mv_mat, index_position, index_extent, index_rotation, false);
-		//draw_part(ctx, middle_mv_mat, middle_position, middle_extent, middle_rotation, false);
-		//draw_part(ctx, ring_mv_mat, ring_position, ring_extent, ring_rotation, false);
-		//draw_part(ctx, pinky_mv_mat, pinky_position, pinky_extent, pinky_rotation, false);
-
 	}
 
 	void set_rotations()
 	{
-		vector<quat> imu_rotations = device.get_cgv_rotations();
+		vector<quat> imu_rotations = device.get_rel_cgv_rotations();
 		quat thumb0_quat = imu_rotations[NDAPISpace::IMULOC_THUMB0];
 
 		recursive_rotations[PALM][0] = imu_rotations[NDAPISpace::IMULOC_PALM].inverse();
@@ -362,5 +278,8 @@ public:
 	}
 
 	int get_location() { return device.get_location(); }
-	bool are_thumb_index_joined() { return device.are_thumb_index_joined(); }
+	bool is_in_ack_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_INDEX) || man_ack; }
+	bool is_in_switch_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_MIDDLE); }
+	void calibrate() { device.calibrate(); }
+	bool* get_man_ack() { return &man_ack; }
 };

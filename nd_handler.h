@@ -63,6 +63,6 @@ public:
 
 	int get_location(int id) { return nd.getDeviceLocation(id); }
 
-	bool are_thumb_index_joined(int id) { return nd.areContactsJoined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_INDEX, id); }
+	bool are_contacts_joined(NDAPISpace::Contact c1, NDAPISpace::Contact c2, int id) { return nd.areContactsJoined(c1, c2, id); }
 };
 
