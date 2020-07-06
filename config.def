@@ -1,10 +1,6 @@
-type(vr_ctrl_panel):origin_x=-2.50f
-type(vr_ctrl_panel):origin_y=-1.2f
-type(vr_ctrl_panel):origin_z=1.1f
-type(vr_ctrl_panel):angle_y=130.0f
-
-type(vr_ctrl_panel):is_load_mesh=false
+type(vr_ctrl_panel):is_load_bridge=false
 type(vr_ctrl_panel):is_render_mesh=false
+type(vr_ctrl_panel):is_using_hmd=false
 
 // *********** Visibility of VR devices **********
 

@@ -13,6 +13,7 @@
 #include <cgv_gl/sphere_renderer.h>
 #include <cgv_gl/gl/gl.h>
 #include <iostream>
+#include <chrono>
 
 #include <vr/vr_driver.h>
 #include <cg_vr/vr_server.h>
@@ -70,9 +71,9 @@ class hand
 			}
 		}
 
-		void translate_z(int part, float z)
+		void translate_neg_z(int part, float z)
 		{
-			translate(part, vec3(0, 0, z));
+			translate(part, vec3(0, 0, -z));
 		}
 
 		void translate(vec3 translation)
@@ -109,6 +110,12 @@ class hand
 		}
 	};
 
+public:
+	enum pulse_kind
+	{
+		NONE, ACK, DONE, ABORT
+	};
+
 protected:
 	nd_device device;
 	vector<vec3> bone_lengths, palm_resting;
@@ -120,12 +127,16 @@ protected:
 	cgv::render::sphere_render_style srs;
 	bool man_ack;
 
+	chrono::steady_clock::time_point pulse_start;
+	pulse_kind current_pulse;
+	int num_delivered_pulses, num_part_pulses_abort = 3, duration_done_pulse_ms = 1000, duration_abort_pulse = 600;
+
 public:
 	hand() 
 	{}
 
 	hand(NDAPISpace::Location location)
-		: man_ack(false)
+		: man_ack(false), current_pulse(NONE)
 	{
 		device = nd_device(location);
 		set_geometry();
@@ -147,27 +158,27 @@ public:
 		recursive_rotations[PALM] = vector<quat>(1, quat(1, 0, 0, 0));
 
 		// thumb
-		bone_lengths.push_back(vec3(0.0f, 4.0f, 3.0f));
-		palm_resting.push_back(vec3(5, -3, -2.5));
+		bone_lengths.push_back(vec3(0, 4, 3));
+		palm_resting.push_back(vec3(-5, -3, 2.5));
 
 		// index
-		bone_lengths.push_back(vec3(5.0f, 3.0f, 2.0f));
-		palm_resting.push_back(vec3(3.5, 0, 4));
+		bone_lengths.push_back(vec3(5, 3, 2));
+		palm_resting.push_back(vec3(-3.5, 0, -4));
 
 		// middle
-		bone_lengths.push_back(vec3(5.0f, 3.5f, 2.5f));
-		palm_resting.push_back(vec3(1, 0, 4.5));
+		bone_lengths.push_back(vec3(5, 3.5, 2.5));
+		palm_resting.push_back(vec3(-1, 0, -4.5));
 
 		// ring
-		bone_lengths.push_back(vec3(4.5f, 3.5f, 2.5f));
-		palm_resting.push_back(vec3(-1.5, 0, 4));
+		bone_lengths.push_back(vec3(4.5, 3.5, 2.5));
+		palm_resting.push_back(vec3(1.5, 0, -4));
 
 		// pinky
-		bone_lengths.push_back(vec3(4.0f, 2.5f, 2.0f));
-		palm_resting.push_back(vec3(-4, 0, 4));
+		bone_lengths.push_back(vec3(4, 2.5, 2));
+		palm_resting.push_back(vec3(4, 0, -4));
 
 		palm_resting.push_back(vec3(3.5, 3, 3));
-		palm_resting.push_back(vec3(-3, -2, -2.5));
+		palm_resting.push_back(vec3(3, -2, 2.5));
 
 		if (device.is_left())
 		{
@@ -197,6 +208,13 @@ public:
 		};
 	}
 
+	void update_and_draw(cgv::render::context& ctx, const conn_panel& cp, vec3 translation, float ascale)
+	{
+		deliver_interactive_pulse();
+		set_pose_and_actuators(cp, translation, ascale);
+		draw(ctx);
+	}
+
 	void set_pose_and_actuators(const conn_panel& cp, vec3 translation, float ascale)
 	{
 		origin = translation;
@@ -210,15 +228,15 @@ public:
 		for (size_t finger = THUMB; finger < NUM_HAND_PARTS; finger++)
 		{
 			pose.positions[finger][DISTAL] = vec3(0);
-			pose.translate_z(finger, bone_lengths[finger][DISTAL]);
+			pose.translate_neg_z(finger, bone_lengths[finger][DISTAL]);
 			pose.rotate(finger, recursive_rotations[finger][DISTAL]);
 
 			pose.positions[finger][INTERMED] = vec3(0);
-			pose.translate_z(finger, bone_lengths[finger][INTERMED]);
+			pose.translate_neg_z(finger, bone_lengths[finger][INTERMED]);
 			pose.rotate(finger, recursive_rotations[finger][INTERMED]);
 
 			pose.positions[finger][PROXIMAL] = vec3(0);
-			pose.translate_z(finger, bone_lengths[finger][PROXIMAL]);
+			pose.translate_neg_z(finger, bone_lengths[finger][PROXIMAL]);
 			pose.rotate(finger, recursive_rotations[finger][PROXIMAL]);
 
 			pose.translate(finger, pose.positions[PALM][finger]);
@@ -278,8 +296,74 @@ public:
 	}
 
 	int get_location() { return device.get_location(); }
-	bool is_in_ack_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_INDEX) || man_ack; }
-	bool is_in_switch_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_MIDDLE); }
-	void calibrate() { device.calibrate(); }
 	bool* get_man_ack() { return &man_ack; }
+	void calibrate_to_quat(quat q) { device.calibrate_to_quat(q); }
+	void restore_last_calibration() { device.restore_last_calibration(); }
+
+	bool is_in_ack_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_INDEX) || man_ack; }
+	void set_ack_pulse() {
+		for (auto act : actuators)
+		{
+			device.set_actuator_pulse(act);
+		}
+	}
+	bool is_in_decl_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_MIDDLE); }
+
+	void init_interactive_pulse(pulse_kind kind)
+	{
+		reset_interactive_pulse();
+		current_pulse = kind;
+		pulse_start = chrono::steady_clock::now();
+	}
+
+	void deliver_interactive_pulse()
+	{
+		int pulse_stage;
+		switch (current_pulse)
+		{
+		case ACK:
+			for (auto act : actuators)
+			{
+				device.set_actuator_pulse(act);
+			}
+			reset_interactive_pulse();
+			break;
+		case DONE:
+			pulse_stage = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - pulse_start).count();
+			pulse_stage = (actuators.size() * pulse_stage) / duration_done_pulse_ms;
+			if (pulse_stage >= actuators.size())
+			{
+				reset_interactive_pulse();
+			}
+			if (pulse_stage == num_delivered_pulses)
+			{
+				device.set_actuator_pulse(actuators[pulse_stage]);
+				num_delivered_pulses++;
+			}
+			break;
+		case ABORT:
+			pulse_stage = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - pulse_start).count();
+			pulse_stage = (num_part_pulses_abort * pulse_stage) / duration_abort_pulse;
+			if (pulse_stage >= num_part_pulses_abort)
+			{
+				reset_interactive_pulse();
+			}
+			if (pulse_stage == num_delivered_pulses)
+			{
+				for (auto act : actuators)
+				{
+					device.set_actuator_pulse(act, .5f);
+				}
+				num_delivered_pulses++;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	void reset_interactive_pulse() {
+		current_pulse = NONE;
+		num_delivered_pulses = 0;
+	}
 };
