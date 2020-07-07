@@ -24,7 +24,7 @@ protected:
 
 	bool has_been_touched;
 
-	quat IDENTITY_QUAT = quat(1, 0, 0, 0);
+	quat IDENTITY_QUAT = quat(vec3(1, 0, 0), 0);
 
 public:
 	panel_node() : panel_node(vec3(0), vec3(0), vec3(0), vec3(0), rgb(0), nullptr) {};
@@ -47,6 +47,14 @@ public:
 	void set_geometry(vec3 a_position, vec3 a_extent, vec3 a_translation,
 		vec3 angles, rgb a_color)
 	{
+		const quat rot_parent = parent ? parent->rotation : quat(vec3(1, 0, 0), 0);
+		quat quat_x, quat_y, quat_z;
+		quat_x = quat(vec3(1, 0, 0), cgv::math::deg2rad(angles.x()));
+		quat_y = quat(vec3(0, 1, 0), cgv::math::deg2rad(angles.y()));
+		quat_z = quat(vec3(0, 0, 1), cgv::math::deg2rad(angles.z()));
+		rotation = rot_parent * quat_z * quat_y * quat_x;
+		
+		rot_parent.rotate(a_position);
 		vec3 pos_parent = parent ? parent->position : vec3(0);
 		position = a_position + pos_parent;
 
@@ -54,27 +62,16 @@ public:
 		{
 			float height_parent = parent ? parent->height : .0099f;
 			height = height_parent + .0001f;
-			extent = vec3(a_extent.x(), height, a_extent.z()) + position;
+			extent = vec3(a_extent.x(), height, a_extent.z());
+			extent.abs();
 		}
 		else
 		{
 			height = a_extent.y();
-			extent = a_extent + position;
 		}
 
 		vec3 t_parent = parent ? parent->translation : vec3(0);
 		translation = a_translation + t_parent;
-
-		float pi = 2 * acos(0.0);
-		float rad_x = angles.x() * 2 * pi / 360;
-		float rad_y = angles.y() * 2 * pi / 360;
-		float rad_z = angles.z() * 2 * pi / 360;
-		quat quat_x, quat_y, quat_z;
-		quat_x = quat(cos(rad_x), sin(rad_x), .0f, .0f);
-		quat_y = quat(cos(rad_y), .0f, sin(rad_y), .0f);
-		quat_z = quat(cos(rad_z), .0f, .0f, sin(rad_z));
-		const quat quat_parent = parent ? parent->rotation : IDENTITY_QUAT;
-		rotation = quat_parent * quat_x * quat_z.inverse() * quat_y;
 
 		color = a_color;
 	}
@@ -105,15 +102,15 @@ public:
 
 	virtual bool contains(vec3 v, float tolerance)
 	{
-		v -= translation;
+		v -= position + translation;
 		rotation.inverse().rotate(v);
 
-		bool is_contained = min(position.x(), extent.x()) - tolerance <= v.x()
-						 && min(position.y(), extent.y()) - tolerance <= v.y() 
-						 && min(position.z(), extent.z()) - tolerance <= v.z()
-					   	 && v.x() <= max(position.x(), extent.x()) + tolerance
-						 && v.y() <= max(position.y(), extent.y()) + tolerance
-						 && v.z() <= max(position.z(), extent.z()) + tolerance;
+		bool is_contained = -.5 * extent.x() - tolerance <= v.x()
+			&& -.5 * extent.y() - tolerance <= v.y()
+			&& -.5 * extent.z() - tolerance <= v.z()
+			&& v.x() <= .5 * extent.x() + tolerance
+			&& v.y() <= .5 * extent.y() + tolerance
+			&& v.z() <= .5 * extent.z() + tolerance;
 
 		return is_contained;
 	}
@@ -226,7 +223,7 @@ protected:
 	vector<vec3> last_contained_pos;
 
 	int NUM_INDICATOR_FIELDS = 7;
-	float BORDER_FRAC = .1f, TOLERANCE_NUMERATOR = .01f;
+	float BORDER_FRAC = .1f, TOLERANCE_NUMERATOR = .1f;
 
 public:
 	// needs to be constructed with position on bottom left and extent to top right corner
@@ -244,14 +241,16 @@ public:
 		value_tolerance = abs(TOLERANCE_NUMERATOR / (a_extent.z() - a_position.z()));
 		active_color = val_color;
 
-		float indicator_extent_z = a_extent.z() / NUM_INDICATOR_FIELDS;
-		float border = a_extent.x() * BORDER_FRAC;
+		float border = BORDER_FRAC * a_extent.x();
+		float z_frac = a_extent.z() / NUM_INDICATOR_FIELDS;
+		vec3 indicator_extent(a_extent.x() - border, 0, z_frac - border);
 
+		float first_z = a_position.z() + .5f * (a_extent.z() - z_frac);
 		for (size_t i = 0; i < NUM_INDICATOR_FIELDS; i++)
 		{
 			new panel_node(
-				vec3(border, 0, i * indicator_extent_z - border),
-				vec3(a_extent.x() - 2 * border, 0, indicator_extent_z + 2 * border),
+				vec3(0, 0, first_z - i * z_frac),
+				indicator_extent,
 				vec3(0), vec3(0), base_color, this
 			);
 		}
@@ -274,7 +273,7 @@ public:
 
 	float vec_to_val(vec3 v)
 	{
-		float fraction = (v.z() - position.z()) / (extent.z() - position.z());
+		float fraction = ((position.z() + .5f * extent.z()) - v.z()) / extent.z();
 		
 		return min(1.0f, max(.0f, fraction));
 	}
@@ -305,15 +304,15 @@ public:
 
 	virtual bool contains(vec3 v, float tolerance) override
 	{
-		v -= translation;
+		v -= position + translation;
 		rotation.inverse().rotate(v);
 
-		bool is_contained = min(position.x(), extent.x()) - tolerance <= v.x()
-					 	 && min(position.y(), extent.y()) - tolerance <= v.y()
-						 && min(position.z(), extent.z()) - tolerance <= v.z()
-						 && v.x() <= max(position.x(), extent.x()) + tolerance
-						 && v.y() <= max(position.y(), extent.y()) + tolerance
-						 && v.z() <= max(position.z(), extent.z()) + tolerance;
+		bool is_contained = -.5 * extent.x() - tolerance <= v.x()
+			&& -.5 * extent.y() - tolerance <= v.y()
+			&& -.5 * extent.z() - tolerance <= v.z()
+			&& v.x() <= .5 * extent.x() + tolerance
+			&& v.y() <= .5 * extent.y() + tolerance
+			&& v.z() <= .5 * extent.z() + tolerance;
 
 		if (is_contained) last_contained_pos.push_back(v);
 

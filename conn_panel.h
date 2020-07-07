@@ -11,7 +11,7 @@
 
 using namespace std;
 
-vec3 const panel_pos_on_bridge = vec3(-.005f, .875f, -3.63f);
+vec3 const panel_pos_on_bridge = vec3(-.005f, .88f, -3.627f);
 
 class conn_panel
 	: public cgv::base::base,
@@ -27,28 +27,35 @@ public:
 	{
 		controlled_stars_sphere = new stars_sphere(1.0f, 20.0f, vec3(.0f, .0f, -25.0f));
 		panel_tree = new panel_node();
+
+		vec3 left_ext(.48, .0f, -.3);
+		vec3 left_rot(25, 6.3f, .2f);
+		vec3 left_tr = panel_pos_on_bridge - .5f * cgv::math::rotate3(left_rot) * left_ext;
 		panel_node* left_panel = new panel_node(
-			vec3(0), vec3(-.5f, .0f, .3f), panel_pos_on_bridge,
-			vec3(12.4f, 2.98f, -1.3f), rgb(1, 0, 0), 
+			vec3(0), left_ext, left_tr,
+			left_rot, rgb(1, 0, 0), 
 			panel_tree
 		);
 		color_switch_button* left_button = new color_switch_button(
-			vec3(-.25f, .0f, .2f), vec3(.1f, .0f, -.1f), vec3(0),
+			vec3(0), vec3(.05f, .0f, .05f), vec3(0),
 			vec3(0), rgb(1, 1, 0),
 			left_panel
 		);
+		vec3 right_ext(-left_ext.x(), left_ext.y(), left_ext.z());
+		vec3 right_rot(left_rot.x(), -left_rot.y(), -left_rot.z());
+		vec3 right_tr = panel_pos_on_bridge - .5f * cgv::math::rotate3(right_rot) * right_ext;
 		panel_node* right_panel = new panel_node(
-			vec3(0), vec3(.5f, .0f, .3f), panel_pos_on_bridge,
-			vec3(12.4f, -2.98f, 1.3f), rgb(0, 1, 0),
+			vec3(0), right_ext, right_tr,
+			right_rot, rgb(0, 1, 0),
 			panel_tree
 		);
 		color_switch_button* right_button = new color_switch_button(
-			vec3(.25f, .0f, .2f), vec3(-.1f, .0f, -.1f), vec3(0),
+			vec3(0), vec3(.05f, .0f, .05f), vec3(0),
 			vec3(0), rgb(0, 1, 1),
 			right_panel
 		);
 		slider* left_slider = new slider(
-			vec3(-.1f, 0, .2f), vec3(.05f, 0, -.15f), vec3(0),
+			vec3(.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
 			vec3(0), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
 			controlled_stars_sphere->get_speed_ptr(), controlled_stars_sphere->get_max_speed(),
 			left_panel
@@ -62,13 +69,13 @@ public:
 
 	void draw(cgv::render::context& ctx)
 	{
-		vector<vec3> positions = panel_tree->get_positions_rec();// vector<vec3>(1, vec3(0));
-		vector<vec3> extents = panel_tree->get_extents_rec();// vector<vec3>(1, vec3(1, 1, 1));
-		vector<quat> rotations = panel_tree->get_rotations_rec();// vector<quat>(1, quat(1, 0, 0, 0));
-		vector<vec3> translations = panel_tree->get_translations_rec();// vector<vec3>(1, vec3(0, 0, 0));
-		vector<rgb> colors = panel_tree->get_colors_rec();// vector<rgb>(1, rgb(1, 0, 0));
+		vector<vec3> positions = panel_tree->get_positions_rec();
+		vector<vec3> extents = panel_tree->get_extents_rec();
+		vector<quat> rotations = panel_tree->get_rotations_rec();
+		vector<vec3> translations = panel_tree->get_translations_rec();
+		vector<rgb> colors = panel_tree->get_colors_rec();
 		cgv::render::box_renderer& br = cgv::render::ref_box_renderer(ctx);
-		br.set_position_is_center(false);
+		br.set_position_is_center(true);
 		br.set_position_array(ctx, positions);
 		br.set_extent_array(ctx, extents);
 		br.set_rotation_array(ctx, rotations);
