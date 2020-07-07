@@ -1,6 +1,6 @@
 type(vr_ctrl_panel):is_load_bridge=false
 type(vr_ctrl_panel):is_render_mesh=false
-type(vr_ctrl_panel):is_using_hmd=false
+type(vr_ctrl_panel):is_using_hmd=true
 
 // *********** Visibility of VR devices **********
 

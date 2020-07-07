@@ -149,15 +149,25 @@ public:
 			return;
 		}
 
-		bool is_calibrating_hand_decl = hands[t_id]->is_in_decl_pose();
+		if (c.is_signal_invalid)
+		{
+			c.is_signal_invalid = false;
+			for (auto loc : existing_hand_locs)
+			{
+				c.is_signal_invalid |= hands[loc]->is_in_ack_pose();
+				c.is_signal_invalid |= hands[loc]->is_in_decl_pose();
+			}
+		}
+
+		bool is_calibrating_hand_ack = hands[c.tr_assign[t_id]]->is_in_ack_pose(), 
+			is_calibrating_hand_decl = hands[c.tr_assign[t_id]]->is_in_decl_pose();
+		float time_to_calibration;
+
 		if (c.stage > NOT_CALIBRATING && is_calibrating_hand_decl)
 		{
 			c.is_signal_invalid = true;
 			c.stage = ABORT;
 		}
-
-		bool is_calibrating_hand_ack = hands[t_id]->is_in_ack_pose();
-		float time_to_calibration;
 
 		switch (c.stage)
 		{
@@ -242,8 +252,6 @@ public:
 		default:
 			break;
 		}
-
-		c.is_signal_invalid = c.is_signal_invalid && (is_calibrating_hand_ack || is_calibrating_hand_decl);
 	}
 
 	void next_calibration_stage(bool set_interactive_pulse=true, bool invalidate_ack=true)
