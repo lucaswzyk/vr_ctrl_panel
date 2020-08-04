@@ -3,6 +3,7 @@
 #include "NDAPI.h"
 #include "stdafx.h"
 #include <iostream>
+#include <fstream>
 
 #include <cgv/base/register.h>
 #include <cgv/render/drawable.h>
@@ -23,6 +24,8 @@
 #include "nd_handler.h"
 #include "hand.h"
 #include "mesh.h"
+#include "math_conversion.h"
+#include "head_display.h"
 
 using namespace std;
 
@@ -44,8 +47,9 @@ class vr_ctrl_panel
 	{
 		// settings that can be calibrated
 		mat4 model_view_mat, world_to_model, bridge_view_mat;
-		map<int, int> tr_assign;
+		map<void*, int> tr_assign;
 		vec3 user_position, z_dir;
+		void* hmd_id;
 
 		// bools determining rendered objects
 		bool load_bridge,
@@ -54,21 +58,42 @@ class vr_ctrl_panel
 			render_bridge;
 
 		// vars used during calibration
-		int stage, t_id;
-		bool is_signal_invalid, use_hmd;
+		int stage;
+		void* t_id;
+		bool is_signal_invalid;
 		chrono::steady_clock::time_point last_tp;
 
 		// constants
 		int request_dur = 1000,
 			hand_calibration_prep = 5000;
 		vec3 hand_vs_panel_for_calibration = vec3(.0f, .1f, .2f);
+
+		calibration()
+		{
+			model_view_mat.identity();
+			world_to_model.identity();
+			bridge_view_mat = rotate4(vec3(0, 180, 0));
+			user_position(0);
+			z_dir(0);
+			z_dir.z() = 1.0f;
+			hmd_id = 0;
+
+			load_bridge = false;
+			render_hands = false;
+			render_panel = false;
+			render_bridge = false;
+
+			stage = NOT_CALIBRATING;
+			t_id = 0;
+			is_signal_invalid = false;
+		}
 	};
 
 protected:
 	// hands
 	vector<hand*> hands;
 	vector<NDAPISpace::Location> existing_hand_locs;
-	vector<vec3> hand_translations;
+	vector<mat4> hand_poses;
 	float hand_scale = .01f;
 
 	// panel
@@ -76,6 +101,8 @@ protected:
 
 	// bridge mesh
 	mesh bridge;
+
+	head_display hd;
 
 	// calibration
 	calibration c, last_cal;
@@ -94,8 +121,7 @@ public:
 		return rh.reflect_member("render_hands", c.render_hands)
 			&& rh.reflect_member("render_panel", c.render_panel)
 			&& rh.reflect_member("load_bridge", c.load_bridge)
-			&& rh.reflect_member("render_bridge", c.render_bridge)
-			&& rh.reflect_member("use_hmd", c.use_hmd);
+			&& rh.reflect_member("render_bridge", c.render_bridge);
 	}
 
 	void on_set(void* member_ptr)
@@ -105,7 +131,7 @@ public:
 
 	bool init(context& ctx);
 
-	void update_calibration(vr::vr_kit_state state, int t_id);
+	void update_calibration(vr::vr_kit_state state, void* t_id, int t_index);
 
 	void next_calibration_stage(bool set_interactive_pulse = true, bool invalidate_ack = true);
 
@@ -117,9 +143,11 @@ public:
 
 	void calibrate_model_view(vec3 panel_origin);
 
-	void assign_trackers(const vr::vr_kit_state& state);
+	void assign_trackers(cgv::gui::vr_pose_event& vrpe);
 
 	void reset_tracker_assigns();
+
+	void export_calibration();
 
 	void set_boolean(bool& b, bool new_val);
 
@@ -131,14 +159,6 @@ public:
 
 	// Inherited via event_handler
 	virtual bool handle(cgv::gui::event& e) override;
-
-	vec3 position_from_pose(const float pose[12]);
-
-	vec4 hom_pos(vec3 v);
-	vec4 hom_pos(const float pose[12]);
-	vec3 inhom_pos(vec4 v);
-	vec4 hom_dir(vec3 dir);
-	vec3 inhom_dir(vec4 dir);
 
 	virtual void stream_help(std::ostream& os) override {}
 

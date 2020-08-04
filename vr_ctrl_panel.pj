@@ -63,9 +63,6 @@ projectType = "application_plugin";
 
 projectName = "vr_ctrl_panel";
 
-//location of cloned repo
-git_repo = "D:/src/vr_ctrl_panel";
-
 
 //list of individual source files that must be specified with full path
 

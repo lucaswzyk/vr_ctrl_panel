@@ -325,3 +325,21 @@ public:
 		return panel_node::check_containments(vecs, tolerance);
 	}
 };
+
+class lever
+	: public panel_node
+{
+public:
+	// a_position - midpoint between lever arms
+	// a_extent - lever length, handle width, thickness
+	lever(vec3 a_position, vec3 a_extent, vec3 a_translation,
+		vec3 angles, rgb base_color, rgb val_color,
+		float* a_controlled_val, float a_controlled_val_max,
+		panel_node* parent_ptr)
+	{
+		add_to_tree(parent_ptr);
+		set_geometry(a_position, a_extent, a_translation, angles, base_color);
+
+
+	}
+};

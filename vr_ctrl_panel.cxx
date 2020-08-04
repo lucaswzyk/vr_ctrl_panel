@@ -33,12 +33,10 @@ bool vr_ctrl_panel::init(context& ctx)
 	default:
 		break;
 	}
-	hand_translations = vector<vec3>(hands.size(), vec3(0));
-	c.model_view_mat.identity();
-	c.world_to_model.identity();
-	c.bridge_view_mat = rotate4(vec3(0, 180, 0));
+	hand_poses = vector<mat4>(hands.size());
 
-	c.stage = NOT_CALIBRATING;
+	hd.set_text("Hello World");
+	hd.set_visible();
 
 	return res;
 }
@@ -51,7 +49,7 @@ inline void vr_ctrl_panel::draw(cgv::render::context& ctx)
 	//auto t0 = std::chrono::steady_clock::now();
 	for (auto loc : existing_hand_locs)
 	{
-		hands[loc]->update_and_draw(ctx, panel, hand_translations[loc], hand_scale);
+		hands[loc]->update_and_draw(ctx, panel, hand_poses[loc], hand_scale);
 	}
 	//auto t1 = std::chrono::steady_clock::now();
 
@@ -79,7 +77,6 @@ inline void vr_ctrl_panel::destruct(context& ctx)
 }
 
 // Inherited via event_handler
-
 inline bool vr_ctrl_panel::handle(cgv::gui::event& e)
 {
 	if ((e.get_flags() & cgv::gui::EF_VR) == 0)
@@ -90,50 +87,31 @@ inline bool vr_ctrl_panel::handle(cgv::gui::event& e)
 	if (e.get_kind() == cgv::gui::EID_POSE)
 	{
 		cgv::gui::vr_pose_event& vrpe = static_cast<cgv::gui::vr_pose_event&>(e);
-		int t_id = vrpe.get_trackable_index();
-		if (t_id == -1) return false;
+		void* dev_id = vrpe.get_device_id();
+		mat4 pose_mat = pose4(vrpe.get_pose_matrix());
 
-		if (!c.tr_assign.size())
+		if (dev_id == c.hmd_id)
 		{
-			assign_trackers(vrpe.get_state());
+			hd.set_pose(pose_mat);
+			return true;
 		}
-		else if (!c.tr_assign.count(t_id))
+		else if (c.tr_assign.count(dev_id))
 		{
-			reset_tracker_assigns();
-			assign_trackers(vrpe.get_state());
+			int tracker_loc = c.tr_assign[dev_id];
+			hand_poses[tracker_loc] = c.world_to_model * pose_mat;
+			update_calibration(vrpe.get_state(), dev_id, vrpe.get_trackable_index());
+			return true;
 		}
-
-		vec3 position = inhom_pos(c.world_to_model * hom(vrpe.get_position()));
-		if (c.tr_assign.size() && c.tr_assign.count(t_id))
+		else 
 		{
-			int tracker_loc = c.tr_assign[t_id];
-			hand_translations[tracker_loc] = position;
-			update_calibration(vrpe.get_state(), t_id);
+			return false;
 		}
-
-		return true;
 	}
 
 	return false;
 }
 
-inline vec3 vr_ctrl_panel::position_from_pose(const float pose[12])
-{
-	return vec3(pose[9], pose[10], pose[11]);
-}
-
-inline vr_ctrl_panel::vec4 vr_ctrl_panel::hom_pos(vec3 v) { return vec4(v.x(), v.y(), v.z(), 1.0f); }
-
-inline vr_ctrl_panel::vec4 vr_ctrl_panel::hom_pos(const float pose[12]) { return hom_pos(position_from_pose(pose)); }
-
-inline vec3 vr_ctrl_panel::inhom_pos(vec4 v) { return vec3(v.x(), v.y(), v.z()) / v.w(); }
-
-inline vr_ctrl_panel::vec4 vr_ctrl_panel::hom_dir(vec3 dir) { return vec4(dir.x(), dir.y(), dir.z(), .0f); }
-
-inline vec3 vr_ctrl_panel::inhom_dir(vec4 dir) { return vec3(dir.x(), dir.y(), dir.z()); }
-
 // Inherited via provider
-
 inline void vr_ctrl_panel::create_gui()
 {
 	add_member_control(this, "render hands", c.render_hands, "toggle");
@@ -141,6 +119,7 @@ inline void vr_ctrl_panel::create_gui()
 	add_member_control(this, "render bridge", c.render_bridge, "toggle");
 	add_member_control(this, "load bridge mesh", c.load_bridge, "toggle");
 	cgv::signal::connect_copy(add_button("reassign trackers")->click, rebind(this, &vr_ctrl_panel::reset_tracker_assigns));
+	cgv::signal::connect_copy(add_button("export calibration")->click, rebind(this, &vr_ctrl_panel::export_calibration));
 
 	for (auto loc : existing_hand_locs)
 	{
@@ -149,7 +128,7 @@ inline void vr_ctrl_panel::create_gui()
 	}
 }
 
-void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
+void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, void* t_id, int t_index)
 {
 	if (c.stage > NOT_CALIBRATING && t_id != c.t_id)
 	{
@@ -194,7 +173,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		{
 			time_to_calibration = c.request_dur -
 				chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - c.last_tp).count();
-			cout << "Calibration in " << to_string(time_to_calibration / 1000) << "s..." << endl;
+			hd.set_text("Calibration in " + to_string(time_to_calibration / 1000) + "s...");
 			if (time_to_calibration <= 0)
 			{
 				last_cal = c;
@@ -205,17 +184,17 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		}
 		break;
 	case USER_POS:
-		if (c.use_hmd)
+		if (state.hmd.status == vr::VRS_TRACKED)
 		{
-			c.user_position = position_from_pose(state.hmd.pose);
+			c.user_position = math_conversion::position_from_pose(state.hmd.pose);
 			next_calibration_stage(false, true);
 		}
 		else
 		{
-			cout << "Tap index and thumb above your head" << endl;
+			hd.set_text("Tap index and thumb above your head");
 			if (!c.is_signal_invalid && is_calibrating_hand_ack)
 			{
-				c.user_position = position_from_pose(state.controller[t_id].pose);
+				c.user_position = math_conversion::position_from_pose(state.controller[t_index].pose);
 				next_calibration_stage();
 			}
 		}
@@ -223,8 +202,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 	case GLOVES:
 		time_to_calibration = c.hand_calibration_prep -
 			chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - c.last_tp).count();
-		cout << "Move your hands as shown, fingers together, tap thumb and index when ready" << endl
-			<< "Calibration in " << to_string(time_to_calibration / 1000) << "s..." << endl;
+		hd.set_text("Move your hands as shown, fingers together, tap thumb and index when ready\nCalibration in " + to_string(time_to_calibration / 1000) + "s...");
 		calibrate_new_z(state);
 		for (auto loc : existing_hand_locs)
 		{
@@ -238,15 +216,15 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		}
 		break;
 	case PANEL:
-		cout << "Acknowledge when done" << endl;
-		calibrate_model_view(position_from_pose(state.controller[c.t_id].pose));
+		hd.set_text("Acknowledge when done");
+		calibrate_model_view(math_conversion::position_from_pose(state.controller[t_index].pose));
 		if (!c.is_signal_invalid && is_calibrating_hand_ack)
 		{
 			next_calibration_stage();
 		}
 		break;
 	case ABORT:
-		cout << "Restore last calibration (index) or go with this one (middle)?" << endl;
+		hd.set_text("Restore last calibration (index) or go with this one (middle)?");
 		if (!c.is_signal_invalid && is_calibrating_hand_ack)
 		{
 			abort_calibration(true);
@@ -307,9 +285,10 @@ void vr_ctrl_panel::abort_calibration(bool restore)
 void vr_ctrl_panel::calibrate_new_z(const vr::vr_kit_state& state)
 {
 	vec3 hands_ave(0);
-	for (auto assign : c.tr_assign)
+	auto controllers = state.controller;
+	for (size_t i = 0; i < sizeof(controllers) / sizeof(controllers[0]); i++)
 	{
-		hands_ave += position_from_pose(state.controller[assign.first].pose);
+		hands_ave += math_conversion::position_from_pose(controllers[i].pose);
 	}
 	hands_ave /= c.tr_assign.size();
 	c.z_dir = c.user_position - hands_ave;
@@ -328,53 +307,92 @@ inline void vr_ctrl_panel::calibrate_model_view(vec3 panel_origin)
 		angle_y = -angle_y;
 	}
 	new_model_view_mat *= cgv::math::rotate4(vec3(0, angle_y, 0));
-	new_model_view_mat.set_col(3, hom_pos(panel_origin));
-	vec4 center_translation = hom_pos(-panel_pos_on_bridge);
-	new_model_view_mat *= cgv::math::translate4(inhom_pos(center_translation));
+	new_model_view_mat.set_col(3, math_conversion::hom_pos(panel_origin));
+	vec4 center_translation = math_conversion::hom_pos(-panel_pos_on_bridge);
+	new_model_view_mat *= cgv::math::translate4(math_conversion::inhom_pos(center_translation));
 
 	c.model_view_mat = new_model_view_mat;
 	c.world_to_model = cgv::math::inv(new_model_view_mat);
 }
 
-
-void vr_ctrl_panel::assign_trackers(const vr::vr_kit_state& state)
+void vr_ctrl_panel::assign_trackers(cgv::gui::vr_pose_event& vrpe)
 {
+	void* t_id = vrpe.get_device_id();
+	int t_index = vrpe.get_trackable_index();
+
+	if (t_index = -1 || t_id == 0)
+	{
+		cout << "Invalid index or id handed in vr_pose_event for tracker assignment." << endl;
+	}
+
+	if (c.tr_assign.size() == existing_hand_locs.size())
+	{
+		reset_tracker_assigns();
+	}
+	
 	if (c.tr_assign.size())
 	{
-		cout << "Trackers already assigned" << endl;
-		return;
-	}
+		auto controllers = vrpe.get_state().controller;
+		void* other_id = c.tr_assign.begin()->first;
+		int other_index = -1;
 
-	if (!existing_hand_locs.size())
-	{
-		cout << "No hands to assign trackers to" << endl;
-	}
-	else
-	{
-		cout << "Assigning trackers" << endl;
-
-		map<float, int, greater<float>> prio_map1, prio_map2;
-		for (size_t i = 0; i < 4; i++)
+		for (size_t i = 0; i < sizeof(controllers)/sizeof(controllers[0]); i++)
 		{
-			prio_map1[state.controller[i].pose[10]] = i;
+			if (i != t_index && controllers[i].status == vr::VRS_TRACKED)
+			{
+				other_index = i;
+			}
+		}
+		
+		if (other_index == -1)
+		{
+			cout << "Could not find second tracker!" << endl;
+			return;
 		}
 
-		if (existing_hand_locs.size() == 1)
+		vec3 t_pos = math_conversion::position_from_pose(controllers[t_index].pose) - c.user_position,
+			 other_pos = math_conversion::position_from_pose(controllers[other_index].pose) - c.user_position;
+		if (cross(t_pos, c.z_dir).y() > 0 && cross(other_pos, c.z_dir).y() < 0)
 		{
-			c.tr_assign[prio_map1.begin()->second] = existing_hand_locs[0];
+			c.tr_assign[t_id] = NDAPISpace::LOC_LEFT_HAND;
+			c.tr_assign[other_id] = NDAPISpace::LOC_RIGHT_HAND;
+		} 
+		else if (cross(t_pos, c.z_dir).y() > 0 && cross(other_pos, c.z_dir).y() < 0)
+		{
+			c.tr_assign[t_id] = NDAPISpace::LOC_RIGHT_HAND;
+			c.tr_assign[other_id] = NDAPISpace::LOC_LEFT_HAND;
 		}
 		else
 		{
-			auto it = prio_map1.begin();
-			c.tr_assign[it++->second] = NDAPISpace::LOC_RIGHT_HAND;
-			c.tr_assign[it->second] = NDAPISpace::LOC_LEFT_HAND;
+			cout << "Could not assign trackers: inconclusive positions!" << endl;
 		}
+	} 
+	else
+	{
+		c.tr_assign[t_id] = existing_hand_locs[0];
 	}
 }
 
 void vr_ctrl_panel::reset_tracker_assigns() {
 	cout << "Resetting tracker assignments" << endl;
-	c.tr_assign = map<int, int>();
+	c.tr_assign = map<void*, int>();
+}
+
+void vr_ctrl_panel::export_calibration()
+{
+	ofstream cal_file("calibration.txt");
+	cal_file << to_string(c.model_view_mat(0, 0)) + " " + to_string(c.model_view_mat(0, 1)) + " " + to_string(c.model_view_mat(0, 2)) + " " + to_string(c.model_view_mat(0, 3));
+	cal_file << to_string(c.model_view_mat(1, 0)) + " " + to_string(c.model_view_mat(1, 1)) + " " + to_string(c.model_view_mat(1, 2)) + " " + to_string(c.model_view_mat(1, 3));
+	cal_file << to_string(c.model_view_mat(2, 0)) + " " + to_string(c.model_view_mat(2, 1)) + " " + to_string(c.model_view_mat(2, 2)) + " " + to_string(c.model_view_mat(2, 3));
+	cal_file << to_string(c.model_view_mat(3, 0)) + " " + to_string(c.model_view_mat(3, 1)) + " " + to_string(c.model_view_mat(3, 2)) + " " + to_string(c.model_view_mat(3, 3)) << endl;
+
+	for (auto it = c.tr_assign.begin(); it != c.tr_assign.end(); ++it)
+	{
+		cal_file << it->first << " ";
+	}
+	cal_file << endl;
+
+	cal_file.close();
 }
 
 inline void vr_ctrl_panel::set_boolean(bool& b, bool new_val)

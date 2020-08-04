@@ -22,6 +22,7 @@
 #include "nd_device.h"
 #include "nd_handler.h"
 #include "conn_panel.h"
+#include "math_conversion.h"
 
 using namespace std;
 
@@ -208,16 +209,16 @@ public:
 		};
 	}
 
-	void update_and_draw(cgv::render::context& ctx, const conn_panel& cp, vec3 translation, float ascale)
+	void update_and_draw(cgv::render::context& ctx, const conn_panel& cp, mat4 pose, float ascale)
 	{
 		deliver_interactive_pulse();
-		set_pose_and_actuators(cp, translation, ascale);
+		set_pose_and_actuators(cp, pose, ascale);
 		draw(ctx);
 	}
 
-	void set_pose_and_actuators(const conn_panel& cp, vec3 translation, float ascale)
+	void set_pose_and_actuators(const conn_panel& cp, mat4 tracker_pose, float ascale)
 	{
-		origin = translation;
+		origin = math_conversion::inhom_pos(tracker_pose.col(3));
 		scale = ascale;
 		set_rotations();
 
