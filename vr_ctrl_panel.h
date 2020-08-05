@@ -47,9 +47,8 @@ class vr_ctrl_panel
 	{
 		// settings that can be calibrated
 		mat4 model_view_mat, world_to_model, bridge_view_mat;
-		map<void*, int> tr_assign;
+		map<int, int> tr_assign;
 		vec3 user_position, z_dir;
-		void* hmd_id;
 
 		// bools determining rendered objects
 		bool load_bridge,
@@ -59,7 +58,7 @@ class vr_ctrl_panel
 
 		// vars used during calibration
 		int stage;
-		void* t_id;
+		int t_id;
 		bool is_signal_invalid;
 		chrono::steady_clock::time_point last_tp;
 
@@ -76,7 +75,6 @@ class vr_ctrl_panel
 			user_position(0);
 			z_dir(0);
 			z_dir.z() = 1.0f;
-			hmd_id = 0;
 
 			load_bridge = false;
 			render_hands = false;
@@ -84,7 +82,7 @@ class vr_ctrl_panel
 			render_bridge = false;
 
 			stage = NOT_CALIBRATING;
-			t_id = 0;
+			t_id = -1;
 			is_signal_invalid = false;
 		}
 	};
@@ -131,7 +129,7 @@ public:
 
 	bool init(context& ctx);
 
-	void update_calibration(vr::vr_kit_state state, void* t_id, int t_index);
+	void update_calibration(vr::vr_kit_state state, int t_index);
 
 	void next_calibration_stage(bool set_interactive_pulse = true, bool invalidate_ack = true);
 
@@ -148,6 +146,8 @@ public:
 	void reset_tracker_assigns();
 
 	void export_calibration();
+
+	void load_calibration();
 
 	void set_boolean(bool& b, bool new_val);
 

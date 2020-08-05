@@ -42,6 +42,8 @@ class hand
 
 	struct joint_positions {
 		vector<vector<vec3>> positions;
+		vector<vec3> linearized;
+		map<int, pair<int, int>> lin_to_anat;
 
 		joint_positions()
 		{
@@ -99,11 +101,13 @@ class hand
 		vector<vec3> make_array()
 		{
 			vector<vec3> result;
+			int ind = 0;
 			for (size_t i = 0; i < positions.size(); i++)
 			{
 				for (size_t j = 0; j < positions[i].size(); j++)
 				{
 					result.push_back(positions[i][j]);
+					lin_to_anat[ind++] = pair<int, int>(i, j);
 				}
 			}
 
@@ -124,7 +128,7 @@ protected:
 	vec3 origin;
 	joint_positions pose;
 	float scale = .01f;
-	vector<NDAPISpace::Actuator> actuators;
+	map<pair<int, int>, NDAPISpace::Actuator> anat_to_actuators;
 	cgv::render::sphere_render_style srs;
 	bool man_ack;
 
@@ -195,18 +199,16 @@ public:
 			srs.surface_color = rgb(0, 0, 1);
 		}
 
-		actuators = vector<NDAPISpace::Actuator>{
-			NDAPISpace::ACT_THUMB,
-			NDAPISpace::ACT_INDEX,
-			NDAPISpace::ACT_MIDDLE,
-			NDAPISpace::ACT_RING,
-			NDAPISpace::ACT_PINKY,
-			NDAPISpace::ACT_PALM_INDEX_UP,
-			NDAPISpace::ACT_PALM_MIDDLE_UP,
-			NDAPISpace::ACT_PALM_PINKY_UP,
-			NDAPISpace::ACT_PALM_INDEX_DOWN,
-			NDAPISpace::ACT_PALM_PINKY_DOWN
-		};
+		anat_to_actuators[pair<int, int>(THUMB, DISTAL)] = NDAPISpace::ACT_THUMB;
+		anat_to_actuators[pair<int, int>(INDEX, DISTAL)] = NDAPISpace::ACT_INDEX;
+		anat_to_actuators[pair<int, int>(MIDDLE, DISTAL)] = NDAPISpace::ACT_MIDDLE;
+		anat_to_actuators[pair<int, int>(RING, DISTAL)] = NDAPISpace::ACT_RING;
+		anat_to_actuators[pair<int, int>(PINKY, DISTAL)] = NDAPISpace::ACT_PINKY;
+		anat_to_actuators[pair<int, int>(PALM, INDEX)] = NDAPISpace::ACT_PALM_INDEX_UP;
+		anat_to_actuators[pair<int, int>(PALM, MIDDLE)] = NDAPISpace::ACT_PALM_MIDDLE_UP;
+		anat_to_actuators[pair<int, int>(PALM, PINKY)] = NDAPISpace::ACT_PALM_PINKY_UP;
+		anat_to_actuators[pair<int, int>(PALM, NUM_HAND_PARTS)] = NDAPISpace::ACT_PALM_INDEX_DOWN;
+		anat_to_actuators[pair<int, int>(PALM, NUM_HAND_PARTS + 1)] = NDAPISpace::ACT_PALM_PINKY_DOWN;
 	}
 
 	void update_and_draw(cgv::render::context& ctx, const conn_panel& cp, mat4 pose, float ascale)
@@ -246,24 +248,18 @@ public:
 		pose.scale(scale);
 		pose.translate(origin);
 
-		vector<vec3> touching_points = vector<vec3>{
-			pose.positions[THUMB][DISTAL],
-			pose.positions[INDEX][DISTAL],
-			pose.positions[MIDDLE][DISTAL],
-			pose.positions[RING][DISTAL],
-			pose.positions[PINKY][DISTAL],
-			pose.positions[PALM][INDEX],
-			.5f * (pose.positions[PALM][MIDDLE] + pose.positions[PALM][RING]),
-			pose.positions[PALM][PINKY],
-			pose.positions[PALM][NUM_HAND_PARTS],
-			pose.positions[PALM][NUM_HAND_PARTS + 1]
-		};
+		containment_info ci;
+		ci.tolerance = scale;
+		ci.positions = pose.make_array();
+		std::map<int, float> touching_indices = cp.check_containments(ci, device.get_location());
 
-		std::set<int> touching_indices = cp.check_containments(touching_points, scale);
-
-		for each (int ind in touching_indices)
+		for (auto ind_strength : touching_indices)
 		{
-			device.set_actuator_pulse(actuators[ind]);
+			pair<int, int> anatomical = pose.lin_to_anat[ind_strength.first];
+			if (anat_to_actuators.count(anatomical))
+			{
+				device.set_actuator_pulse(anat_to_actuators[anatomical], ind_strength.second);
+			}
 		}
 	}
 
@@ -303,9 +299,9 @@ public:
 
 	bool is_in_ack_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_INDEX) || man_ack; }
 	void set_ack_pulse() {
-		for (auto act : actuators)
+		for (auto p : anat_to_actuators)
 		{
-			device.set_actuator_pulse(act);
+			device.set_actuator_pulse(p.second);
 		}
 	}
 	bool is_in_decl_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_MIDDLE); }
@@ -323,22 +319,24 @@ public:
 		switch (current_pulse)
 		{
 		case ACK:
-			for (auto act : actuators)
+			for (auto p : anat_to_actuators)
 			{
-				device.set_actuator_pulse(act);
+				device.set_actuator_pulse(p.second);
 			}
 			reset_interactive_pulse();
 			break;
 		case DONE:
 			pulse_stage = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - pulse_start).count();
-			pulse_stage = (actuators.size() * pulse_stage) / duration_done_pulse_ms;
-			if (pulse_stage >= actuators.size())
+			pulse_stage = (anat_to_actuators.size() * pulse_stage) / duration_done_pulse_ms;
+			if (pulse_stage >= anat_to_actuators.size())
 			{
 				reset_interactive_pulse();
 			}
 			if (pulse_stage == num_delivered_pulses)
 			{
-				device.set_actuator_pulse(actuators[pulse_stage]);
+				auto it = anat_to_actuators.begin();
+				for (size_t i = 0; i < pulse_stage; i++, it++)
+				device.set_actuator_pulse(it->second);
 				num_delivered_pulses++;
 			}
 			break;
@@ -351,9 +349,9 @@ public:
 			}
 			if (pulse_stage == num_delivered_pulses)
 			{
-				for (auto act : actuators)
+				for (auto p : anat_to_actuators)
 				{
-					device.set_actuator_pulse(act, .5f);
+					device.set_actuator_pulse(p.second, .5f);
 				}
 				num_delivered_pulses++;
 			}

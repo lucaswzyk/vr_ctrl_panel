@@ -8,7 +8,7 @@ class math_conversion :
 	public render_types
 {
 public:
-	static vec3 position_from_pose(const float pose[12], int col=0)
+	static vec3 position_from_pose(const float pose[12], int col=3)
 	{
 		return vec3(pose[3 * col], pose[3 * col + 1], pose[3 * col + 2]);
 	}

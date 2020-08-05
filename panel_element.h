@@ -1,14 +1,71 @@
 #pragma once
 
 #include <cgv/render/drawable.h>
-#include <set>
-
 typedef cgv::render::render_types::vec3 vec3;
 typedef cgv::render::render_types::quat quat;
 typedef cgv::render::render_types::rgb rgb;
 
 using namespace std;
 
+struct geometry
+{
+	vec3 position, extent, translation;
+	quat rotation;
+	rgb color;
+	bool has_changed;
+
+	geometry()
+		: position(0), extent(0), translation(0), rotation(vec3(1, 0, 0), 0), color(0), has_changed(true)
+	{};
+
+	geometry(vec3 a_position, vec3 a_extent, vec3 a_translation,
+		vec3 a_angles, rgb a_color)
+		: position(a_position), extent(a_extent), translation(a_translation), color(a_color)
+	{
+		quat quat_x, quat_y, quat_z;
+		quat_x = quat(vec3(1, 0, 0), cgv::math::deg2rad(a_angles.x()));
+		quat_y = quat(vec3(0, 1, 0), cgv::math::deg2rad(a_angles.y()));
+		quat_z = quat(vec3(0, 0, 1), cgv::math::deg2rad(a_angles.z()));
+		rotation = quat_z * quat_y * quat_x;
+	};
+};
+
+struct group_geometry
+{
+	vector<vec3> positions, extents, translations;
+	vector<quat> rotations;
+	vector<rgb> colors;
+
+	void push_back(geometry g)
+	{
+		positions.push_back(g.position);
+		extents.push_back(g.extent);
+		translations.push_back(g.translation);
+		rotations.push_back(g.rotation);
+		colors.push_back(g.color);
+	}
+
+	void append(group_geometry gg)
+	{
+		positions.insert(positions.end(), gg.positions.begin(), gg.positions.end());
+		extents.insert(extents.end(), gg.extents.begin(), gg.extents.end());
+		translations.insert(translations.end(), gg.translations.begin(), gg.translations.end());
+		rotations.insert(rotations.end(), gg.rotations.begin(), gg.rotations.end());
+		colors.insert(colors.end(), gg.colors.begin(), gg.colors.end());
+	}
+};
+
+struct containment_info
+{
+	// positions of joints
+	vector<vec3> positions;
+	// indices of contained joints
+	map<int, float> ind_map;
+	// are joined: thumb+index, thumb+middle, palm+index, palm+middle
+	bool contacts[4];
+	// tolerance for containment check
+	float tolerance;
+};
 
 class panel_node
 {
@@ -16,28 +73,32 @@ protected:
 	panel_node* parent;
 	vector<panel_node*> children;
 
-	vec3 position, extent, translation;
-	quat rotation;
-	rgb color;
+	geometry geo;
+	group_geometry last_group_geo;
 
-	float height;
-
-	bool has_been_touched;
-
-	quat IDENTITY_QUAT = quat(vec3(1, 0, 0), 0);
+	vector<containment_info> cis;
+	bool is_responsive;
 
 public:
 	panel_node() : panel_node(vec3(0), vec3(0), vec3(0), vec3(0), rgb(0), nullptr) {};
 
 	// if a_extent.y() <= 0, the box height will be chosen slightly bigger than the parent's
 	panel_node(vec3 a_position, vec3 a_extent, vec3 a_translation,
-		vec3 angles, rgb a_color,
+		vec3 a_angles, rgb a_color,
 		panel_node* parent_ptr)
+		: panel_node(
+			geometry(a_position, a_extent, a_translation, a_angles, a_color), 
+			parent_ptr
+		)
+	{};
+
+	panel_node(geometry local_geo, panel_node* parent_ptr)
+		: cis(2), is_responsive(true)
 	{
 		add_to_tree(parent_ptr);
-		set_geometry(a_position, a_extent, a_translation, angles, a_color);
+		set_geometry(local_geo);
 	};
-
+	
 	void add_to_tree(panel_node* parent_ptr)
 	{
 		parent = parent_ptr;
@@ -45,171 +106,138 @@ public:
 	}
 
 	void set_geometry(vec3 a_position, vec3 a_extent, vec3 a_translation,
-		vec3 angles, rgb a_color)
+		vec3 a_angles, rgb a_color)
 	{
-		const quat rot_parent = parent ? parent->rotation : quat(vec3(1, 0, 0), 0);
+		geometry tmp;
+		tmp.position = a_position;
+		tmp.extent = a_extent;
+		tmp.translation = a_translation;
+
 		quat quat_x, quat_y, quat_z;
-		quat_x = quat(vec3(1, 0, 0), cgv::math::deg2rad(angles.x()));
-		quat_y = quat(vec3(0, 1, 0), cgv::math::deg2rad(angles.y()));
-		quat_z = quat(vec3(0, 0, 1), cgv::math::deg2rad(angles.z()));
-		rotation = rot_parent * quat_z * quat_y * quat_x;
-		
-		rot_parent.rotate(a_position);
-		vec3 pos_parent = parent ? parent->position : vec3(0);
-		position = a_position + pos_parent;
+		quat_x = quat(vec3(1, 0, 0), cgv::math::deg2rad(a_angles.x()));
+		quat_y = quat(vec3(0, 1, 0), cgv::math::deg2rad(a_angles.y()));
+		quat_z = quat(vec3(0, 0, 1), cgv::math::deg2rad(a_angles.z()));
+		tmp.rotation = quat_z * quat_y * quat_x;
 
-		if (a_extent.y() <= 0)
-		{
-			float height_parent = parent ? parent->height : .0099f;
-			height = height_parent + .0001f;
-			extent = vec3(a_extent.x(), height, a_extent.z());
-			extent.abs();
-		}
-		else
-		{
-			height = a_extent.y();
-		}
+		tmp.color = a_color;
 
-		vec3 t_parent = parent ? parent->translation : vec3(0);
-		translation = a_translation + t_parent;
-
-		color = a_color;
+		set_geometry(tmp);
 	}
 
-	virtual set<int> check_containments(vector<vec3> vecs, float tolerance)
+	void set_geometry(geometry g)
 	{
-		set<int> result;
+		geometry pgeo = parent ? parent->geo : geometry();
 
-		for (size_t i = 0; i < vecs.size(); i++)
+		pgeo.rotation.rotate(g.position);
+		geo.position = g.position + pgeo.position + pgeo.translation;
+		geo.extent = g.extent;
+
+		geo.rotation = pgeo.rotation * g.rotation;
+
+		geo.rotation.rotate(g.translation);
+		geo.translation = g.translation;
+
+		geo.extent = abs(g.extent);
+		if (geo.extent.y() == 0)
 		{
-			if (contains(vecs[i], tolerance))
+			geo.extent.y() = pgeo.extent.y() + .0001f;
+		}
+		geo.color = g.color;
+
+		geo.has_changed = true;
+	}
+
+	group_geometry get_geometry_rec()
+	{
+		if (geometry_changed())
+		{
+			group_geometry group_geo;
+			group_geo.push_back(geo);
+			for (auto child : children)
 			{
-				result.insert(i);
+				group_geo.append(child->get_geometry_rec());
+			}
+			geo.has_changed = false;
+			last_group_geo = group_geo;
+		}
+
+		return last_group_geo;
+	}
+
+	bool geometry_changed()
+	{
+		bool result = geo.has_changed;
+		for (auto child : children)
+		{
+			result |= child->geometry_changed();
+		}
+
+		return result;
+	}
+
+	map<int, float> check_containments(containment_info ci, int hand_loc)
+	{
+		map<int, float> ind_map_cp = ci.ind_map;
+		ci.ind_map = map<int, float>();
+		for (size_t i = 0; i < ci.positions.size(); i++)
+		{
+			if (contains(ci.positions[i], ci.tolerance))
+			{
+				ci.ind_map[i] = get_vibration_strength();
+				ind_map_cp[i] = ci.ind_map.count(i)
+					? max(ci.ind_map[i], get_vibration_strength())
+					: get_vibration_strength();
 			}
 		}
 
-		for (size_t i = 0; i < children.size(); i++)
+		for (auto child : children)
 		{
-			set<int> child_result = children[i]->check_containments(vecs, tolerance);
-			result.insert(child_result.begin(), child_result.end());
+			ci.ind_map = child->check_containments(ci, hand_loc);
 		}
 
-		if (result.size() > 0) on_touch();
-		has_been_touched = result.size() > 0;
-
-		return result;
+		cis[hand_loc] = ci;
+		calc_responsiveness();
+		if (is_responsive && ci.ind_map.size())
+		{
+			on_touch(hand_loc);
+		}
+		return ind_map_cp;
 	}
 
 	virtual bool contains(vec3 v, float tolerance)
 	{
-		v -= position + translation;
-		rotation.inverse().rotate(v);
+		v = to_local(v);
 
-		bool is_contained = -.5 * extent.x() - tolerance <= v.x()
-			&& -.5 * extent.y() - tolerance <= v.y()
-			&& -.5 * extent.z() - tolerance <= v.z()
-			&& v.x() <= .5 * extent.x() + tolerance
-			&& v.y() <= .5 * extent.y() + tolerance
-			&& v.z() <= .5 * extent.z() + tolerance;
+		bool is_contained = -.5 * geo.extent.x() - tolerance <= v.x()
+			&& -.5 * geo.extent.y() - tolerance <= v.y()
+			&& -.5 * geo.extent.z() - tolerance <= v.z()
+			&& v.x() <= .5 * geo.extent.x() + tolerance
+			&& v.y() <= .5 * geo.extent.y() + tolerance
+			&& v.z() <= .5 * geo.extent.z() + tolerance;
 
 		return is_contained;
 	}
 
-	virtual void on_touch() {};
+	virtual void on_touch(int hand_loc) {};
+	
+	virtual float get_vibration_strength() { return .1f; }
 
-	vector<vec3> get_positions_rec()
+	virtual void calc_responsiveness() 
 	{
-		vector<vec3> result{ position };
-		for (size_t i = 0; i < children.size(); i++)
-		{
-			vector<vec3> child_result = children[i]->get_positions_rec();
-			for (size_t j = 0; j < child_result.size(); j++)
-			{
-				result.push_back(child_result[j]);
-			}
-		}
-
-		return result;
+		is_responsive = is_responsive && cis[0].ind_map.size() + cis[0].ind_map.size() == 1
+			|| cis[0].ind_map.size() + cis[0].ind_map.size() == 0;
+	}
+	vec3 to_local(vec3 v)
+	{
+		v -= geo.position + geo.translation;
+		geo.rotation.inverse().rotate(v);
+		return v;
 	}
 
-	vector<vec3> get_extents_rec()
-	{
-		vector<vec3> result{ extent };
-		for (size_t i = 0; i < children.size(); i++)
-		{
-			vector<vec3> child_result = children[i]->get_extents_rec();
-			for (size_t j = 0; j < child_result.size(); j++)
-			{
-				result.push_back(child_result[j]);
-			}
-		}
-
-		return result;
-	}
-
-	vector<vec3> get_translations_rec()
-	{
-		vector<vec3> result{ translation };
-		for (size_t i = 0; i < children.size(); i++)
-		{
-			vector<vec3> child_result = children[i]->get_translations_rec();
-			for (size_t j = 0; j < child_result.size(); j++)
-			{
-				result.push_back(child_result[j]);
-			}
-		}
-
-		return result;
-	}
-
-	vector<quat> get_rotations_rec()
-	{
-		vector<quat> result{ rotation };
-		for (size_t i = 0; i < children.size(); i++)
-		{
-			vector<quat> child_result = children[i]->get_rotations_rec();
-			for (size_t j = 0; j < child_result.size(); j++)
-			{
-				result.push_back(child_result[j]);
-			}
-		}
-
-		return result;
-	}
-
-	vector<rgb> get_colors_rec()
-	{
-		vector<rgb> result{ color };
-		for (size_t i = 0; i < children.size(); i++)
-		{
-			vector<rgb> child_result = children[i]->get_colors_rec();
-			for (size_t j = 0; j < child_result.size(); j++)
-			{
-				result.push_back(child_result[j]);
-			}
-		}
-
-		return result;
-	}
-
-	rgb get_color() { return color; }
-	void set_color(rgb a_color) { color = a_color; }
-};
-
-class color_switch_button : public panel_node
-{
-public:
-	using panel_node::panel_node;
-
-	void on_touch()
-	{
-		if (!has_been_touched)
-		{
-			rgb tmp = color;
-			color = parent->get_color();
-			parent->set_color(tmp);
-			has_been_touched = true;
-		}
+	quat get_rotation() { return geo.rotation; }
+	void set_color(rgb a_color) { 
+		geo.color = a_color; 
+		geo.has_changed = true;
 	}
 };
 
@@ -220,17 +248,14 @@ protected:
 	float* controlled_val;
 	rgb active_color;
 
-	vector<vec3> last_contained_pos;
-
 	int NUM_INDICATOR_FIELDS = 7;
 	float BORDER_FRAC = .1f, TOLERANCE_NUMERATOR = .1f;
-
+	
 public:
-	// needs to be constructed with position on bottom left and extent to top right corner
 	slider(vec3 a_position, vec3 a_extent, vec3 a_translation,
-		vec3 angles, rgb base_color, rgb val_color,
-		float* a_controlled_val, float a_controlled_val_max,
-		panel_node* parent_ptr)
+		   vec3 angles, rgb base_color, rgb val_color,
+		   float* a_controlled_val, float a_controlled_val_max,
+		   panel_node* parent_ptr)
 	{
 		add_to_tree(parent_ptr);
 		set_geometry(a_position, a_extent, a_translation, angles, base_color);
@@ -256,28 +281,25 @@ public:
 		}
 	}
 
-	void on_touch()
+	void on_touch(int hand_loc) override
 	{
-		//cout << "contained" << endl;
-		if (last_contained_pos.size() >= 1)
+		int touch_ind = cis[hand_loc].ind_map.begin()->first;
+		float new_value = vec_to_val(cis[hand_loc].positions[touch_ind]);
+		if (abs(new_value - value) < value_tolerance)
 		{
-			float new_value = vec_to_val(last_contained_pos[0]);
-			if (abs(new_value - value) < value_tolerance)
-			{
-				value = new_value;
-				*controlled_val = controlled_val_max * value;
-				set_indicator_colors();
-			}
+			value = new_value;
+			*controlled_val = controlled_val_max * value;
+			set_indicator_colors();
 		}
 	}
-
+	
 	float vec_to_val(vec3 v)
 	{
-		float fraction = ((position.z() + .5f * extent.z()) - v.z()) / extent.z();
-		
+		float fraction = ((geo.position.z() + .5f * geo.extent.z()) - v.z()) / geo.extent.z();
+	
 		return min(1.0f, max(.0f, fraction));
 	}
-
+	
 	void set_indicator_colors()
 	{
 		float val = value;
@@ -292,54 +314,90 @@ public:
 			else if (value > 0)
 			{
 				val = val * NUM_INDICATOR_FIELDS;
-				children[i]->set_color(val * active_color + (1 - val) * color);
+				children[i]->set_color(val * active_color + (1 - val) * geo.color);
 				val = .0f;
 			}
 			else
 			{
-				children[i]->set_color(color);
+				children[i]->set_color(geo.color);
 			}
 		}
 	}
-
-	virtual bool contains(vec3 v, float tolerance) override
-	{
-		v -= position + translation;
-		rotation.inverse().rotate(v);
-
-		bool is_contained = -.5 * extent.x() - tolerance <= v.x()
-			&& -.5 * extent.y() - tolerance <= v.y()
-			&& -.5 * extent.z() - tolerance <= v.z()
-			&& v.x() <= .5 * extent.x() + tolerance
-			&& v.y() <= .5 * extent.y() + tolerance
-			&& v.z() <= .5 * extent.z() + tolerance;
-
-		if (is_contained) last_contained_pos.push_back(v);
-
-		return is_contained;
-	}
-
-	virtual set<int> check_containments(vector<vec3> vecs, float tolerance) override
-	{
-		last_contained_pos.clear();
-		return panel_node::check_containments(vecs, tolerance);
-	}
 };
 
-class lever
-	: public panel_node
+class lever : public panel_node
 {
+protected:
+	float max_deflection, length, value, controlled_val_max;
+	float* controlled_val;
+
+	quat quat_yz;
+	vector<geometry> child_geos;
+
 public:
 	// a_position - midpoint between lever arms
 	// a_extent - lever length, handle width, thickness
-	lever(vec3 a_position, vec3 a_extent, vec3 a_translation,
-		vec3 angles, rgb base_color, rgb val_color,
+	// angles - max rot. around own x in each direction, rot. around parent y, rot. around own z
+	lever(vec3 position, vec3 extent, vec3 translation,
+		vec3 angles, rgb color,
 		float* a_controlled_val, float a_controlled_val_max,
 		panel_node* parent_ptr)
 	{
+		max_deflection = cgv::math::deg2rad(angles.x());
+		value = 0;
+		controlled_val_max = a_controlled_val_max;
+		controlled_val = a_controlled_val;
+
+		quat_yz = quat(vec3(0, 0, 1), cgv::math::deg2rad(angles.z()))
+			* quat(vec3(0, 1, 0), cgv::math::deg2rad(angles.y()));
+		length = extent.y();
+		extent.y() = extent.z();
+
 		add_to_tree(parent_ptr);
-		set_geometry(a_position, a_extent, a_translation, angles, base_color);
+		set_geometry(position, extent, translation, angles, color);
 
+		child_geos = vector<geometry>{
+			geometry(vec3(0), extent, vec3(.0f, length, .0f), vec3(0), color),
+			geometry(vec3(-.5f * extent.x() + .5f * extent.y(), .0f, .0f), 
+					 vec3(extent.y(), length, extent.y()), 
+					 vec3(.0f, .5f * length, .0f), vec3(0), color),
+			geometry(vec3(.5f * extent.x() - .5f * extent.y(), .0f, .0f),
+					 vec3(extent.y(), length, extent.y()),
+					 vec3(.0f, .5f * length, .0f), vec3(0), color)
+		};
+		new panel_node(child_geos[0], this);
+		new panel_node(child_geos[1], this);
+		new panel_node(child_geos[2], this);
+	}
 
+	void calc_responsiveness() override
+	{
+		is_responsive = true;
+	}
+
+	void on_touch(int hand_loc) override
+	{
+		geo.rotation = parent->get_rotation() * quat_yz;
+
+		vec3 touch_loc = to_local(cis[hand_loc].positions[0]);
+		touch_loc.x() = 0;
+		touch_loc.normalize();
+		vec3 cr = cross(vec3(0, 1, 0), touch_loc);
+
+		float angle_x = min(max_deflection, asin(cr.length()));
+		angle_x = cr.x() >= 0 ? angle_x : -angle_x;
+		*controlled_val = .5f * controlled_val_max * (1 - angle_x / max_deflection);
+
+		geo.rotation = parent->get_rotation() * quat_yz * quat(vec3(1, 0, 0), angle_x);
+		update_children();
+		geo.has_changed = true;
+	}
+
+	void update_children()
+	{
+		for (size_t i = 0; i < children.size(); i++)
+		{
+			children[i]->set_geometry(child_geos[i]);
+		}
 	}
 };

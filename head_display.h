@@ -46,8 +46,8 @@ public:
 		success = fb.is_complete(ctx) && success;
 
 		cgv::render::shader_program& default_sh = ctx.ref_default_shader_program(true);
-		init_unit_square();
-		cgv::render::type_descriptor vec2type = cgv::render::element_descriptor_traits<cgv::render::render_types::vec2>::get_type_descriptor()
+		//cgv::render::type_descriptor vec2type = cgv::render::element_descriptor_traits<cgv::render::render_types::vec2>::get_type_descriptor();
+		return success;
 	}
 
 	void draw(cgv::render::context& ctx)
