@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cgv/render/render_types.h>
+#include <vr/vr_state.h>
 
 using namespace cgv::render;
 
@@ -36,5 +37,16 @@ public:
 	static vec3 inhom_dir(vec4 dir)
 	{
 		return vec3(dir.x(), dir.y(), dir.z());
+	}
+
+	static vec3 ave_pos(const vr::vr_controller_state* ctrls)
+	{
+		vec3 result(0);
+		for (size_t i = 0; i < 4; i++)
+		{
+			result += position_from_pose(ctrls[i].pose);
+		}
+
+		return result / 2;
 	}
 };

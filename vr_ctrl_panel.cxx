@@ -143,7 +143,7 @@ inline void vr_ctrl_panel::create_gui()
 
 void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 {
-	if (c.stage > NOT_CALIBRATING && t_id != c.t_id)
+	if (c.stage > NOT_CALIBRATING && hands[c.tr_assign[t_id]] != c.cal_hand)
 	{
 		return;
 	}
@@ -173,7 +173,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 	case NOT_CALIBRATING:
 		if (!c.is_signal_invalid && is_calibrating_hand_ack)
 		{
-			c.t_id = t_id;
+			c.cal_hand = hands[c.tr_assign[t_id]];
 			next_calibration_stage(false, false);
 		}
 		break;
@@ -230,7 +230,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		break;
 	case PANEL:
 		hd.set_text("Acknowledge when done");
-		calibrate_model_view(math_conversion::position_from_pose(state.controller[t_id].pose));
+		calibrate_model_view(math_conversion::ave_pos(state.controller) - c.hand_vs_panel_for_calibration);
 		if (!c.is_signal_invalid && is_calibrating_hand_ack)
 		{
 			next_calibration_stage();
@@ -258,6 +258,7 @@ void vr_ctrl_panel::next_calibration_stage(bool set_interactive_pulse, bool inva
 	if (c.stage == NUM_CALIBRATION_STEPS)
 	{
 		reset_calibration_stage();
+		reset_tracker_assigns();
 		for (auto loc : existing_hand_locs)
 		{
 			hands[loc]->init_interactive_pulse(hand::DONE);
@@ -269,7 +270,10 @@ void vr_ctrl_panel::next_calibration_stage(bool set_interactive_pulse, bool inva
 		c.is_signal_invalid = invalidate_ack ? true : c.is_signal_invalid;
 		if (set_interactive_pulse)
 		{
-			hands[c.tr_assign[c.t_id]]->init_interactive_pulse(hand::ACK);
+			for (auto loc : existing_hand_locs)
+			{
+				hands[loc]->init_interactive_pulse(hand::ACK);
+			}
 		}
 	}
 }
@@ -297,14 +301,7 @@ void vr_ctrl_panel::abort_calibration(bool restore)
 
 void vr_ctrl_panel::calibrate_new_z(const vr::vr_kit_state& state)
 {
-	vec3 hands_ave(0);
-	auto controllers = state.controller;
-	for (size_t i = 0; i < 4; i++)
-	{
-		hands_ave += math_conversion::position_from_pose(controllers[i].pose);
-	}
-	hands_ave /= c.tr_assign.size();
-	c.z_dir = c.user_position - hands_ave;
+	c.z_dir = c.user_position - math_conversion::ave_pos(state.controller);
 	c.z_dir.y() = .0f;
 	c.z_dir.normalize();
 }
@@ -362,14 +359,29 @@ void vr_ctrl_panel::assign_trackers(cgv::gui::vr_pose_event& vrpe)
 			return;
 		}
 
-		vec3 t_pos = math_conversion::position_from_pose(controllers[t_id].pose) - c.user_position,
-			 other_pos = math_conversion::position_from_pose(controllers[other_id].pose) - c.user_position;
-		if (cross(t_pos, c.z_dir).y() > 0 && cross(other_pos, c.z_dir).y() < 0)
+		vec3 user_pos, z_dir;
+		
+		if (vrpe.get_state().hmd.status == vr::VRS_TRACKED)
+		{
+			user_pos = math_conversion::position_from_pose(vrpe.get_state().hmd.pose);
+			z_dir = user_pos - math_conversion::ave_pos(controllers);
+			z_dir.y() = 0;
+			z_dir.normalize();
+		}
+		else
+		{
+			user_pos = c.user_position;
+			z_dir = c.z_dir;
+		}
+
+		vec3 t_pos = math_conversion::position_from_pose(controllers[t_id].pose) - user_pos,
+			 other_pos = math_conversion::position_from_pose(controllers[other_id].pose) - user_pos;
+		if (cross(t_pos, z_dir).y() > 0 && cross(other_pos, z_dir).y() < 0)
 		{
 			c.tr_assign[t_id] = NDAPISpace::LOC_LEFT_HAND;
 			c.tr_assign[other_id] = NDAPISpace::LOC_RIGHT_HAND;
 		} 
-		else if (cross(t_pos, c.z_dir).y() > 0 && cross(other_pos, c.z_dir).y() < 0)
+		else if (cross(t_pos, z_dir).y() < 0 && cross(other_pos, z_dir).y() > 0)
 		{
 			c.tr_assign[t_id] = NDAPISpace::LOC_RIGHT_HAND;
 			c.tr_assign[other_id] = NDAPISpace::LOC_LEFT_HAND;
@@ -421,7 +433,21 @@ void vr_ctrl_panel::load_calibration()
 				cal_file >> c.model_view_mat(i, j);
 			}
 		}
-		c.world_to_model = cgv::math::inv(c.model_view_mat);
+		for (size_t i = 0; i < 4; i++)
+		{
+			for (size_t j = 0; j < 4; j++)
+			{
+				cal_file >> c.world_to_model(i, j);
+			}
+		}
+		for (size_t i = 0; i < 3; i++)
+		{
+			cal_file >> c.user_position(i);
+		}
+		for (size_t i = 0; i < 3; i++)
+		{
+			cal_file >> c.z_dir(i);
+		}
 	}
 	catch (const std::exception&)
 	{

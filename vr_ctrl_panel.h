@@ -58,14 +58,14 @@ class vr_ctrl_panel
 
 		// vars used during calibration
 		int stage;
-		int t_id;
+		hand* cal_hand;
 		bool is_signal_invalid;
 		chrono::steady_clock::time_point last_tp;
 
 		// constants
 		int request_dur = 1000,
 			hand_calibration_prep = 5000;
-		vec3 hand_vs_panel_for_calibration = vec3(.0f, .1f, .2f);
+		vec3 hand_vs_panel_for_calibration = vec3(.0f, .05f, -.15f);
 
 		calibration()
 		{
@@ -82,7 +82,7 @@ class vr_ctrl_panel
 			render_bridge = false;
 
 			stage = NOT_CALIBRATING;
-			t_id = -1;
+			cal_hand = nullptr;
 			is_signal_invalid = false;
 		}
 	};
