@@ -125,7 +125,7 @@ addProjectDirs = [
 addProjectDeps = ["cgv_utils", "cgv_type", "cgv_data", "cgv_base", "cgv_math",
 				"cgv_media", "cgv_gui", "cgv_render", "cmi_io",
 				"cgv_viewer", "cg_fltk", "crg_grid", "cg_ext", "cgv_gl", 
-				"crg_vr_view", 
+				"crg_vr_view", "rect_pack",
 				"crg_vr_wall",
 				"cg_vr", "openvr_driver"];
 
@@ -175,7 +175,7 @@ addIncDirs = [INPUT_DIR, CGV_DIR."/libs", CGV_DIR."/3rd/glew/", CGV_DIR."/libs/d
 //To export defines to projects that depend on this project, specify
 //the define in a list of two strings with the second entry equal to "all"
 
-addDefines = ["LOCAL_DEFINE", ["EXPORTED_DEFINE", "all"] ];
+addDefines = ["LOCAL_DEFINE", ["EXPORTED_DEFINE", "all"], "HELLO_LABEL_EXPORTS", "CG_NUI_EXPORTS"];
 
 
 //additional preprocessor definitions for shared configurations

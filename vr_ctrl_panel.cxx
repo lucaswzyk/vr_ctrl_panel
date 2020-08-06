@@ -12,6 +12,7 @@ bool vr_ctrl_panel::init(context& ctx)
 	//cgv::render::ref_rounded_cone_renderer(ctx, 1);
 	cgv::render::ref_box_renderer(ctx, 1);
 	cgv::render::ref_sphere_renderer(ctx, 1);
+	cgv::render::ref_rectangle_renderer(ctx, 1);
 
 	switch (ndh.get_app_mode())
 	{
@@ -63,10 +64,11 @@ inline void vr_ctrl_panel::draw(cgv::render::context& ctx)
 	{
 		panel.draw(ctx);
 	}
-	auto t2 = std::chrono::steady_clock::now();
-	/*cout << "hand: " << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() << endl;
+	/*auto t2 = std::chrono::steady_clock::now();
+	cout << "hand: " << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() << endl;
 	cout << "mesh: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << endl << endl;*/
 	ctx.pop_modelview_matrix();
+	hd.draw(ctx);
 }
 
 inline void vr_ctrl_panel::destruct(context& ctx)

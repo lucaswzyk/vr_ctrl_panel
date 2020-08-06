@@ -1,9 +1,13 @@
 #pragma once
 
+#include <cgv/base/node.h>
+#include <cgv/render/context.h>
 #include <cgv/render/drawable.h>
 #include <cgv/render/shader_program.h>
-#include <cgv/render/frame_buffer.h>
-
+#include <cgv_gl/rectangle_renderer.h>
+#include <cg_nui/label_manager.h>
+#include <sstream>
+#include <iomanip>
 #include <string>
 
 using namespace std;
@@ -12,54 +16,60 @@ class head_display
 	: public cgv::render::drawable
 {
 protected:
-	string text;
-	unsigned int text_size;
-	ivec2 pos, fb_res;
+	cgv::nui::label_manager lm;
 
-	cgv::media::font::font_face_ptr ff;
-	cgv::render::frame_buffer fb;
-	cgv::render::texture texture;
-	cgv::media::color<float> bgcolor;
-
-	mat4 model_view_mat;
+	vec3 position;
+	quat orientation;
+	vec2 extents;
+	vec4 texture_ranges;
+	float scale;
 	bool is_visible;
+
+	plane_render_style prs;
+
+	void construct()
+	{
+		cgv::media::font::font_ptr f = cgv::media::font::find_font("Arial");
+		lm.set_font_face(f->get_font_face(cgv::media::font::FFA_REGULAR));
+		lm.set_font_size(20);
+		lm.set_text_color(rgba(0, 0, 0, 1));
+		lm.add_label("Hello", rgba(1, 0, 0, 1));
+		lm.compute_label_sizes();
+		lm.pack_labels();
+
+		const auto& l = lm.get_label(0);
+		position = vec3(0);
+		orientation = quat(vec3(0, 1, 0), 0);
+		extents = scale * vec2(l.get_width(), l.get_height());
+		texture_ranges = lm.get_texcoord_range(0);
+	}
 
 public:
 	head_display()
-		: text(""), is_visible(false)
-	{}
-
-	void set_text(string a_text) { text = a_text; }
-	void set_visible(bool is_vis = true) { is_visible = is_vis; }
-	void set_pose(mat4 a_mat) { model_view_mat = a_mat; }
-
-	bool init(cgv::render::context& ctx)
+		: scale(1.0f), is_visible(false)
 	{
-		bool success = true;
-
-		texture.set_width(fb_res.x());
-		texture.set_height(fb_res.y());
-		success = texture.create(ctx) && success;
-
-		success = fb.create(ctx, fb_res.x(), fb_res.y()) && success;
-		success = fb.attach(ctx, texture) && success;
-		success = fb.is_complete(ctx) && success;
-
-		cgv::render::shader_program& default_sh = ctx.ref_default_shader_program(true);
-		//cgv::render::type_descriptor vec2type = cgv::render::element_descriptor_traits<cgv::render::render_types::vec2>::get_type_descriptor();
-		return success;
+		prs.illumination_mode = cgv::render::IM_OFF;
+		construct();
 	}
 
-	void draw(cgv::render::context& ctx)
+	void draw(context& ctx)
 	{
-		ctx.push_modelview_matrix();
-		ctx.mul_modelview_matrix(model_view_mat);
-
-		ctx.ref_default_shader_program().enable(ctx);
-		ctx.output_stream() << text;
-		ctx.output_stream().flush();
-		ctx.ref_default_shader_program().disable(ctx);
-
-		ctx.pop_modelview_matrix();
+		lm.ensure_texture_uptodate(ctx);
+		auto& rr = ref_rectangle_renderer(ctx);
+		rr.set_position_array(ctx, vector<vec3>{position});
+		rr.set_rotation_array(ctx, vector<quat>{orientation});
+		rr.set_extent_array(ctx, vector<vec2>{extents});
+		rr.set_texcoord_array(ctx, vector<vec4>{texture_ranges});
+		if (rr.validate_and_enable(ctx))
+		{
+			lm.get_texture()->enable(ctx);
+			rr.draw(ctx, 0, lm.get_nr_labels());
+			lm.get_texture()->disable(ctx);
+			rr.disable(ctx);
+		}
 	}
+
+	void set_visible(bool a_visible = true) { is_visible = a_visible; }
+	void set_text(string bla) {}
+	void set_pose(mat4 pose_mat){}
 };

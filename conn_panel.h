@@ -38,7 +38,7 @@ public:
 		slider* left_slider = new slider(
 			vec3(.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
 			vec3(0), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
-			controlled_stars_sphere->get_speed_ptr(), controlled_stars_sphere->get_max_speed(),
+			controlled_stars_sphere->get_speed_ptr(), controlled_stars_sphere->get_max_speed_ahead(),
 			left_panel
 		);
 		vec3 right_ext(-left_ext.x(), left_ext.y(), left_ext.z());
@@ -51,7 +51,7 @@ public:
 		lever* right_lever = new lever(
 			vec3(0), vec3(.1f, .1f, .01f), vec3(0),
 			vec3(60.0f, .0f, .0f), rgb(0, 1, 1),
-			controlled_stars_sphere->get_speed_ptr(), controlled_stars_sphere->get_max_speed(),
+			controlled_stars_sphere->get_speed_ptr(), controlled_stars_sphere->get_max_speed_ahead(),
 			right_panel);
 	}
 

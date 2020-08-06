@@ -16,29 +16,30 @@ class stars_sphere
 	size_t num_stars;
 	float r_out, r_in;
 	
-	vec3* directions;
 	vec3* positions;
-	float* distances;
 	float* radii;
 	rgb* colors;
 
 	mt19937 gen;
-	uniform_real_distribution<float> dis_alpha, dis_beta;
+	normal_distribution<float> dis_angle;
 	normal_distribution<float> dis_radii;
 
-	float speed, max_speed;
-	quat rotation;
+	float speed_ahead, speed_pitch, speed_yaw, speed_roll;
+	const float max_speed_ahead = .01f, max_speed_pitch = .0001f, 
+		max_speed_yaw = .0001f, max_speed_roll = .0001f,
+		pi_half = acos(.0f);
 
 	chrono::steady_clock::time_point last_update;
 	float ms_per_step;
 
 	mat4 model_view_mat;
+	vec3 origin;
 
 	void update()
 	{
 		chrono::steady_clock::time_point now = chrono::steady_clock::now();
 		float steps_elapsed = chrono::duration_cast<chrono::milliseconds>(now - last_update).count();
-		float distance_elapsed = speed * steps_elapsed;
+		float distance_elapsed = speed_ahead * steps_elapsed;
 		if (distance_elapsed > r_out - r_in)
 		{
 			cout << "Rendering too slow. Not updating" << endl;
@@ -48,17 +49,19 @@ class stars_sphere
 
 		for (size_t i = 0; i < num_stars; i++)
 		{
-			distances[i] += distance_elapsed;
+			float old_length = positions[i].length(), 
+				  new_length = old_length + positions[i].z() * distance_elapsed;
+			positions[i] *= new_length / old_length;
 
-			if (distances[i] > r_out)
+			if (new_length > r_out)
 			{
-				float alpha = dis_alpha(gen), beta = dis_beta(gen);
-				directions[i] = vec3(
-					cos(alpha) * cos(beta),
-					cos(alpha) * sin(beta),
-					sin(alpha)
+				float alpha = get_new_angle(), beta = get_new_angle();
+				positions[i] = vec3(
+					sin(alpha) * cos(beta),
+					sin(beta),
+					cos(alpha) * cos(beta)
 				);
-				distances[i] -= r_out - r_in;
+				positions[i] *= new_length - r_out + r_in;
 				radii[i] = max(.0f, dis_radii(gen));
 			}
 		}
@@ -71,20 +74,20 @@ class stars_sphere
 		uniform_real_distribution<float> dis_distances = uniform_real_distribution<float>(r_in, r_out);
 		for (size_t i = 0; i < num_stars; i++)
 		{
-			float alpha = dis_alpha(gen), beta = dis_beta(gen);
-			directions[i] = vec3(
-				cos(alpha) * cos(beta),
-				cos(alpha) * sin(beta),
-				sin(alpha)
+			float alpha = get_new_angle(), beta = get_new_angle();
+			positions[i] = vec3(
+				sin(alpha) * cos(beta),
+				sin(beta),
+				cos(alpha) * cos(beta)
 			);
-			distances[i] = dis_distances(gen);
-			radii[i] = max(.0f, dis_radii(gen));
+			positions[i] *= dis_distances(gen);
+			radii[i] = get_new_radius();
 		}
 		last_update = chrono::steady_clock::now();
 	}
 
 public:
-	stars_sphere(float a_r_in, float a_r_out, vec3 origin, 
+	stars_sphere(float a_r_in, float a_r_out, vec3 a_origin, 
 		int a_num_stars = 100, float a_speed = 0, float a_max_speed = .01f,
 		float star_rad_mean = .01f, float star_rad_deviation = .005f)
 	{
@@ -92,36 +95,29 @@ public:
 		r_in = a_r_in;
 
 		num_stars = a_num_stars;
-		directions = new vec3[num_stars];
 		positions = new vec3[num_stars];
-		distances = new float[num_stars];
 		radii = new float[num_stars];
 		colors = new rgb[num_stars]{ rgb(1, 1, 1) };
 
-		float pi_half = acos(.0f);
 		gen = mt19937(random_device()());
-		dis_alpha = uniform_real_distribution<float>(-pi_half, .0f);
-		dis_beta = uniform_real_distribution<float>(.0f, 4 * pi_half);
+		dis_angle = normal_distribution<float>(0, pi_half / 2);
 		dis_radii = normal_distribution<float>(star_rad_mean, star_rad_deviation);
 
-		speed = a_speed;
-		max_speed = a_max_speed;
+		speed_ahead = a_speed;
 		model_view_mat.identity();
-		model_view_mat *= cgv::math::translate4(origin);
+		model_view_mat *= cgv::math::translate4(a_origin);
+		origin = a_origin;
 
 		init_stars();
 	}
 
-	void set_speed(float new_speed) { speed = new_speed; }
-	float* get_speed_ptr() { return &speed; }
-	float get_max_speed() { return max_speed; }
+	void set_speed(float new_speed) { speed_ahead = new_speed; }
+	float* get_speed_ptr() { return &speed_ahead; }
+	float get_max_speed_ahead() { return max_speed_ahead; }
+
 	void draw(cgv::render::context& ctx)
 	{
 		update();
-		for (size_t i = 0; i < num_stars; i++)
-		{
-			positions[i] = directions[i] * distances[i];
-		}
 
 		ctx.push_modelview_matrix();
 		ctx.mul_modelview_matrix(model_view_mat);
@@ -133,6 +129,26 @@ public:
 		glDrawArrays(GL_POINTS, 0, num_stars);
 		sr.disable(ctx);
 		ctx.pop_modelview_matrix();
+	}
+
+	float get_new_angle() {
+		float result = pi_half;
+		while (result <= -pi_half || result >= pi_half)
+		{
+			result = dis_angle(gen);
+		}
+
+		return result;
+	}
+
+	float get_new_radius() {
+		float result = 0;
+		while (result <= 0)
+		{
+			result = dis_radii(gen);
+		}
+
+		return result;
 	}
 };
 
