@@ -11,7 +11,7 @@
 
 using namespace std;
 
-vec3 const panel_pos_on_bridge = vec3(-.005f, .88f, -3.626f);
+vec3 const panel_pos_on_bridge = vec3(-.005f, .885f, -3.627f);
 
 class conn_panel
 	: public cgv::base::base,
@@ -19,26 +19,38 @@ class conn_panel
 {
 protected:
 	panel_node* panel_tree;
-	stars_sphere* controlled_stars_sphere;
+	stars_sphere* controlled_sky;
 
 public:
 
 	conn_panel()
 	{
-		controlled_stars_sphere = new stars_sphere(1.0f, 20.0f, vec3(.0f, .0f, -25.0f));
+		controlled_sky = new stars_sphere(10.0f, 500.0f);
 		panel_tree = new panel_node();
 
 		vec3 left_ext(-.48, .0f, .3);
-		vec3 left_rot(25, 6.3f, .2f);
+		vec3 left_rot(24.8, 6.3f, .15f);
 		panel_node* left_panel = new panel_node(
 			panel_pos_on_bridge, left_ext, .5f * left_ext,
 			left_rot, rgb(1, 0, 0), 
 			panel_tree
 		);
-		slider* left_slider = new slider(
+		slider* pitch_slider = new slider(
 			vec3(.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
 			vec3(0), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
-			controlled_stars_sphere->get_speed_ptr(), controlled_stars_sphere->get_max_speed_ahead(),
+			controlled_sky, stars_sphere::set_speed_pitch,
+			left_panel
+		);
+		slider* yaw_slider = new slider(
+			vec3(.0f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
+			vec3(0), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
+			controlled_sky, stars_sphere::set_speed_yaw,
+			left_panel
+		);
+		slider* roll_slider = new slider(
+			vec3(-.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
+			vec3(0), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
+			controlled_sky, stars_sphere::set_speed_roll,
 			left_panel
 		);
 		vec3 right_ext(-left_ext.x(), left_ext.y(), left_ext.z());
@@ -51,7 +63,7 @@ public:
 		lever* right_lever = new lever(
 			vec3(0), vec3(.1f, .1f, .01f), vec3(0),
 			vec3(60.0f, .0f, .0f), rgb(0, 1, 1),
-			controlled_stars_sphere->get_speed_ptr(), controlled_stars_sphere->get_max_speed_ahead(),
+			controlled_sky, stars_sphere::set_speed_ahead, 
 			right_panel);
 	}
 
@@ -74,7 +86,7 @@ public:
 		glDrawArrays(GL_POINTS, 0, gg.positions.size());
 		br.disable(ctx);
 
-		controlled_stars_sphere->draw(ctx);
+		controlled_sky->draw(ctx);
 	}
 
 	std::map<int, float> check_containments(containment_info ci, int hand_loc) const

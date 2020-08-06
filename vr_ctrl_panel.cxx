@@ -68,7 +68,7 @@ inline void vr_ctrl_panel::draw(cgv::render::context& ctx)
 	cout << "hand: " << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() << endl;
 	cout << "mesh: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << endl << endl;*/
 	ctx.pop_modelview_matrix();
-	hd.draw(ctx);
+	//hd.draw(ctx);
 }
 
 inline void vr_ctrl_panel::destruct(context& ctx)
@@ -348,7 +348,7 @@ void vr_ctrl_panel::assign_trackers(cgv::gui::vr_pose_event& vrpe)
 		auto controllers = vrpe.get_state().controller;
 		int other_id = -1;
 
-		for (size_t i = 0; i < sizeof(controllers)/sizeof(controllers[0]); i++)
+		for (size_t i = 0; i < 4; i++)
 		{
 			if (i != t_id && controllers[i].status == vr::VRS_TRACKED)
 			{

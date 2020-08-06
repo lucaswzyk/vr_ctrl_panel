@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cgv/render/drawable.h>
+
+#include "space.h"
+
 typedef cgv::render::render_types::vec3 vec3;
 typedef cgv::render::render_types::quat quat;
 typedef cgv::render::render_types::rgb rgb;
@@ -244,8 +247,9 @@ public:
 class slider : public panel_node
 {
 protected:
-	float value, value_tolerance, controlled_val_max;
-	float* controlled_val;
+	float value, value_tolerance;
+	stars_sphere* sphere;
+	void (*callback)(stars_sphere*, float);
 	rgb active_color;
 
 	int NUM_INDICATOR_FIELDS = 7;
@@ -254,15 +258,15 @@ protected:
 public:
 	slider(vec3 a_position, vec3 a_extent, vec3 a_translation,
 		   vec3 angles, rgb base_color, rgb val_color,
-		   float* a_controlled_val, float a_controlled_val_max,
+		   stars_sphere* a_sphere, void (*a_callback)(stars_sphere*, float),
 		   panel_node* parent_ptr)
 	{
 		add_to_tree(parent_ptr);
 		set_geometry(a_position, a_extent, a_translation, angles, base_color);
 
 		value = 0;
-		controlled_val = a_controlled_val;
-		controlled_val_max = a_controlled_val_max;
+		sphere = a_sphere;
+		callback = a_callback;
 		value_tolerance = abs(TOLERANCE_NUMERATOR / (a_extent.z() - a_position.z()));
 		active_color = val_color;
 
@@ -288,7 +292,7 @@ public:
 		if (abs(new_value - value) < value_tolerance)
 		{
 			value = new_value;
-			*controlled_val = controlled_val_max * value;
+			callback(sphere, value);
 			set_indicator_colors();
 		}
 	}
@@ -328,8 +332,9 @@ public:
 class lever : public panel_node
 {
 protected:
-	float max_deflection, length, value, controlled_val_max;
-	float* controlled_val;
+	float max_deflection, length, value;
+	stars_sphere* sphere;
+	void (*callback)(stars_sphere*, float);
 
 	quat quat_yz;
 	vector<geometry> child_geos;
@@ -339,14 +344,14 @@ public:
 	// a_extent - lever length, handle width, thickness
 	// angles - max rot. around own x in each direction, rot. around parent y, rot. around own z
 	lever(vec3 position, vec3 extent, vec3 translation,
-		vec3 angles, rgb color,
-		float* a_controlled_val, float a_controlled_val_max,
+		vec3 angles, rgb color, 
+		stars_sphere* a_sphere, void (*a_callback)(stars_sphere*, float),
 		panel_node* parent_ptr)
 	{
 		max_deflection = cgv::math::deg2rad(angles.x());
 		value = 0;
-		controlled_val_max = a_controlled_val_max;
-		controlled_val = a_controlled_val;
+		sphere = a_sphere;
+		callback = a_callback;
 
 		quat_yz = quat(vec3(0, 0, 1), cgv::math::deg2rad(angles.z()))
 			* quat(vec3(0, 1, 0), cgv::math::deg2rad(angles.y()));
@@ -386,7 +391,7 @@ public:
 
 		float angle_x = min(max_deflection, asin(cr.length()));
 		angle_x = cr.x() >= 0 ? angle_x : -angle_x;
-		*controlled_val = .5f * controlled_val_max * (1 - angle_x / max_deflection);
+		callback(sphere, .5f * (1 - angle_x / max_deflection));
 
 		geo.rotation = parent->get_rotation() * quat_yz * quat(vec3(1, 0, 0), angle_x);
 		update_children();

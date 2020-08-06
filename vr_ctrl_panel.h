@@ -72,8 +72,8 @@ class vr_ctrl_panel
 			model_view_mat.identity();
 			world_to_model.identity();
 			bridge_view_mat = rotate4(vec3(0, 180, 0));
-			user_position(0);
-			z_dir(0);
+			user_position = vec3(0);
+			z_dir = vec3(0);
 			z_dir.z() = 1.0f;
 
 			load_bridge = false;
