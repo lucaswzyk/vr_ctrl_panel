@@ -51,7 +51,7 @@ inline void vr_ctrl_panel::draw(cgv::render::context& ctx)
 	//auto t0 = std::chrono::steady_clock::now();
 	for (auto loc : existing_hand_locs)
 	{
-		hands[loc]->update_and_draw(ctx, panel, hand_poses[loc], hand_scale);
+		hands[loc]->update_and_draw(ctx, panel, hand_poses[loc]);
 	}
 	//auto t1 = std::chrono::steady_clock::now();
 

@@ -128,7 +128,7 @@ protected:
 	vector<vector<quat>> recursive_rotations;
 	vec3 origin;
 	joint_positions pose;
-	float scale = .01f;
+	const float scale = .007f;
 	map<pair<int, int>, NDAPISpace::Actuator> anat_to_actuators;
 	sphere_render_style srs;
 	bool man_ack;
@@ -232,17 +232,16 @@ public:
 		rcrs.surface_color = rgb(1, 1, 1);
 	}
 
-	void update_and_draw(cgv::render::context& ctx, const conn_panel& cp, mat4 pose, float ascale)
+	void update_and_draw(cgv::render::context& ctx, const conn_panel& cp, mat4 pose)
 	{
 		deliver_interactive_pulse();
-		set_pose_and_actuators(cp, pose, ascale);
+		set_pose_and_actuators(cp, pose);
 		draw(ctx);
 	}
 
-	void set_pose_and_actuators(const conn_panel& cp, mat4 tracker_pose, float ascale)
+	void set_pose_and_actuators(const conn_panel& cp, mat4 tracker_pose)
 	{
 		origin = math_conversion::inhom_pos(tracker_pose.col(3));
-		scale = ascale;
 		set_rotations(cp);
 
 		pose = joint_positions();

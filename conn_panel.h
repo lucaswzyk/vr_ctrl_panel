@@ -35,7 +35,7 @@ public:
 			left_rot, rgb(1, 0, 0), 
 			panel_tree
 		);
-		slider* pitch_slider = new slider(
+		pos_neg_slider* pitch_slider = new pos_neg_slider(
 			vec3(.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
 			vec3(0), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
 			controlled_sky, stars_sphere::set_speed_pitch,

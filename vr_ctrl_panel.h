@@ -92,7 +92,6 @@ protected:
 	vector<hand*> hands;
 	vector<NDAPISpace::Location> existing_hand_locs;
 	vector<mat4> hand_poses;
-	float hand_scale = .01f;
 
 	// panel
 	conn_panel panel;
