@@ -1,5 +1,5 @@
 type(vr_ctrl_panel):render_hands=true
-type(vr_ctrl_panel):render_panel=true
+type(vr_ctrl_panel):render_panel=false
 type(vr_ctrl_panel):load_bridge=false
 type(vr_ctrl_panel):render_bridge=false
 

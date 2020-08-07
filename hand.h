@@ -11,6 +11,7 @@
 #include <cgv/render/drawable.h>
 #include <cgv/math/quaternion.h>
 #include <cgv_gl/sphere_renderer.h>
+#include <cgv_gl/rounded_cone_renderer.h>
 #include <cgv_gl/gl/gl.h>
 #include <iostream>
 #include <chrono>
@@ -129,12 +130,15 @@ protected:
 	joint_positions pose;
 	float scale = .01f;
 	map<pair<int, int>, NDAPISpace::Actuator> anat_to_actuators;
-	cgv::render::sphere_render_style srs;
+	sphere_render_style srs;
 	bool man_ack;
+	vector<GLuint> cone_inds;
+	rounded_cone_render_style rcrs;
 
 	chrono::steady_clock::time_point pulse_start;
 	pulse_kind current_pulse;
-	int num_delivered_pulses, num_part_pulses_abort = 3, duration_done_pulse_ms = 1000, duration_abort_pulse = 600;
+	int num_delivered_pulses;
+	const int num_part_pulses_abort = 3, duration_done_pulse_ms = 1000, duration_abort_pulse = 600;
 
 public:
 	hand() 
@@ -144,7 +148,7 @@ public:
 		: man_ack(false), current_pulse(NONE)
 	{
 		device = nd_device(location);
-		set_geometry();
+		init();
 	}
 
 	string get_type_name(void) const
@@ -152,7 +156,7 @@ public:
 		return "hand";
 	}
 
-	void set_geometry()
+	void init()
 	{
 		vector<quat> identity_vec(NUM_BONES_PER_FINGER, quat(1, 0, 0, 0));
 		recursive_rotations = vector<vector<quat>>(NUM_HAND_PARTS, identity_vec);
@@ -164,7 +168,7 @@ public:
 
 		// thumb
 		bone_lengths.push_back(vec3(0, 4, 3));
-		palm_resting.push_back(vec3(-5, -3, 2.5));
+		palm_resting.push_back(vec3(-5, -2, 2));
 
 		// index
 		bone_lengths.push_back(vec3(5, 3, 2));
@@ -176,14 +180,14 @@ public:
 
 		// ring
 		bone_lengths.push_back(vec3(4.5, 3.5, 2.5));
-		palm_resting.push_back(vec3(1.5, 0, -4));
+		palm_resting.push_back(vec3(1.5, 0, -4.5));
 
 		// pinky
 		bone_lengths.push_back(vec3(4, 2.5, 2));
 		palm_resting.push_back(vec3(4, 0, -4));
 
-		palm_resting.push_back(vec3(3.5, 3, 3));
-		palm_resting.push_back(vec3(3, -2, 2.5));
+		palm_resting.push_back(vec3(3.5, 0, 2.5));
+		palm_resting.push_back(vec3(-3, 0, 3.5));
 
 		if (device.is_left())
 		{
@@ -192,11 +196,11 @@ public:
 				vec3 pos = palm_resting[i];
 				palm_resting[i] = vec3(-pos.x(), pos.y(), pos.z());
 			}
-			srs.surface_color = rgb(1, 0, 0);
+			srs.surface_color = rgb(0, 1, 0);
 		}
 		else
 		{
-			srs.surface_color = rgb(0, 0, 1);
+			srs.surface_color = rgb(1, 0, 0);
 		}
 
 		anat_to_actuators[pair<int, int>(THUMB, DISTAL)] = NDAPISpace::ACT_THUMB;
@@ -209,6 +213,23 @@ public:
 		anat_to_actuators[pair<int, int>(PALM, PINKY)] = NDAPISpace::ACT_PALM_PINKY_UP;
 		anat_to_actuators[pair<int, int>(PALM, NUM_HAND_PARTS)] = NDAPISpace::ACT_PALM_INDEX_DOWN;
 		anat_to_actuators[pair<int, int>(PALM, NUM_HAND_PARTS + 1)] = NDAPISpace::ACT_PALM_PINKY_DOWN;
+
+		cone_inds = vector<GLuint>{
+			// palm
+			2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 2,
+			// thumb
+			7, 8, 8, 9, 9, 10,
+			// index
+			2, 11, 11, 12, 12, 13,
+			// middle
+			3, 14, 14, 15, 15, 16,
+			// ring
+			4, 17, 17, 18, 18, 19,
+			// pinky
+			5, 20, 20, 21, 21, 22
+		};
+		rcrs.radius = .7 * scale;
+		rcrs.surface_color = rgb(1, 1, 1);
 	}
 
 	void update_and_draw(cgv::render::context& ctx, const conn_panel& cp, mat4 pose, float ascale)
@@ -222,7 +243,7 @@ public:
 	{
 		origin = math_conversion::inhom_pos(tracker_pose.col(3));
 		scale = ascale;
-		set_rotations();
+		set_rotations(cp);
 
 		pose = joint_positions();
 		pose.positions[PALM] = palm_resting;
@@ -263,33 +284,79 @@ public:
 		}
 	}
 
-	void draw(cgv::render::context& ctx)
+	void draw(context& ctx)
 	{
 		vector<vec3> positions = pose.make_array();
 		vector<float> radius_array = vector<float>(positions.size(), scale);
 		radius_array[0] = 2 * scale;
 
-		cgv::render::sphere_renderer& sr = cgv::render::ref_sphere_renderer(ctx);
+		sphere_renderer& sr = ref_sphere_renderer(ctx);
 		sr.set_position_array(ctx, positions);
 		sr.set_radius_array(ctx, radius_array);
 		sr.set_render_style(srs);
-		sr.validate_and_enable(ctx);
-		glDrawArrays(GL_POINTS, 0, positions.size());
-		sr.disable(ctx);
+		sr.render(ctx, 0, positions.size());
+
+		rounded_cone_renderer& rcr = ref_rounded_cone_renderer(ctx);
+		rcr.set_position_array(ctx, positions);
+		rcr.set_indices(ctx, cone_inds);
+		rcr.set_render_style(rcrs);
+		rcr.render(ctx, 0, cone_inds.size());
 	}
 
-	void set_rotations()
+	void set_rotations(const conn_panel& cp)
 	{
 		vector<quat> imu_rotations = device.get_rel_cgv_rotations();
 		quat thumb0_quat = imu_rotations[NDAPISpace::IMULOC_THUMB0];
 
-		recursive_rotations[PALM][0] = imu_rotations[NDAPISpace::IMULOC_PALM].inverse();
-		recursive_rotations[THUMB][INTERMED] = thumb0_quat.inverse();
-		recursive_rotations[THUMB][DISTAL] = thumb0_quat * imu_rotations[NDAPISpace::IMULOC_THUMB1].inverse();
-		recursive_rotations[INDEX][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_INDEX].inverse();
-		recursive_rotations[MIDDLE][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_MIDDLE].inverse();
-		recursive_rotations[RING][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_RING].inverse();
-		recursive_rotations[PINKY][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_PINKY].inverse();
+		const quat palm_rot = imu_rotations[NDAPISpace::IMULOC_PALM],
+			palm_inv = palm_rot.inverse();
+		recursive_rotations[PALM][0] = palm_rot;
+		recursive_rotations[THUMB][INTERMED] = thumb0_quat;
+		recursive_rotations[THUMB][DISTAL] = imu_rotations[NDAPISpace::IMULOC_THUMB1] * thumb0_quat.inverse();
+		recursive_rotations[INDEX][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_INDEX];
+		recursive_rotations[MIDDLE][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_MIDDLE];
+		recursive_rotations[RING][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_RING];
+		recursive_rotations[PINKY][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_PINKY];
+
+		quat rot;
+		float roll, pitch, yaw;
+		const vec3 rot_split = cp.get_rot_split(pose.positions[PALM][0]);
+		for (size_t finger = INDEX; finger < NUM_HAND_PARTS; finger++)
+		{
+			rot = palm_inv * recursive_rotations[finger][PROXIMAL];
+			float roll = atan2(
+				2 * (rot.w() * rot.x() + rot.y() * rot.z()),
+				1 - 2 * (rot.x() * rot.x() + rot.y() * rot.y())
+			);
+
+			if (roll < 0)
+			{
+				float sinp = 2 * (rot.w() * rot.y() - rot.z() * rot.x()), pitch;
+				if (abs(sinp) >= 1)
+				{
+					pitch = copysign(M_PI / 2, sinp);
+				}
+				else
+				{
+					pitch = asin(sinp);
+				}
+				float yaw = atan2(
+					2 * (rot.w() * rot.z() + rot.x() * rot.y()),
+					1 - 2 * (rot.y() * rot.y() + rot.z() * rot.z())
+				);
+
+				vec3 x(1, 0, 0), y(0, 1, 0), z(0, 0, 1);
+				recursive_rotations[finger][PROXIMAL] = palm_rot 
+					* quat(z, yaw) * quat(y, pitch) * quat(x, rot_split.x() * roll);
+				recursive_rotations[finger][INTERMED] = quat(x, rot_split.y() * roll);
+				recursive_rotations[finger][DISTAL] = quat(x, min(1.4f, rot_split.z() * roll));
+			}
+		}
+	}
+
+	void set_joint_rotations(int finger)
+	{
+		
 	}
 
 	int get_location() { return device.get_location(); }

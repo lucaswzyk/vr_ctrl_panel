@@ -93,4 +93,9 @@ public:
 	{
 		return panel_tree->check_containments(ci, hand_loc);
 	}
+
+	virtual vec3 get_rot_split(vec3 position) const
+	{
+		return vec3(.5f);
+	}
 };

@@ -42,11 +42,16 @@ public:
 	static vec3 ave_pos(const vr::vr_controller_state* ctrls)
 	{
 		vec3 result(0);
+		int num_tracked = 0;
 		for (size_t i = 0; i < 4; i++)
 		{
-			result += position_from_pose(ctrls[i].pose);
+			if (ctrls[i].status == vr::VRS_TRACKED)
+			{
+				result += position_from_pose(ctrls[i].pose);
+				num_tracked++;
+			}
 		}
 
-		return result / 2;
+		return result / num_tracked;
 	}
 };
