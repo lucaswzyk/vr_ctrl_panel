@@ -1,0 +1,16 @@
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{PGP{\etalchar{+}}10}
+
+\bibitem[lea]{leaphand}
+Introducing the skeletal tracking model.
+\newblock accessed 18 Aug 2020.
+
+\bibitem[PGP{\etalchar{+}}10]{POHLENZ2010560}
+Philipp Pohlenz, Alexander Gröbe, Andreas Petersik, Norman [von Sternberg],
+  Bernhard Pflesser, Andreas Pommert, Karl-Heinz Höhne, Ulf Tiede, Ingo
+  Springer, and Max Heiland.
+\newblock Virtual dental surgery as a new educational tool in dental school.
+\newblock {\em Journal of Cranio-Maxillofacial Surgery}, 38(8):560 -- 564,
+  2010.
+
+\end{thebibliography}
