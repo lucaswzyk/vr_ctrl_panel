@@ -48,7 +48,7 @@
 
 
 \chapter{Development}
-\section{Devices and Setup}
+\section{Devices and Software}
 \begin{figure}
 	\begin{subfigure}{.49\linewidth}
 		\includegraphics[width=\linewidth]{../pics/devices_uncoupled}
@@ -67,7 +67,25 @@
 
 For the purpose of thesis, I used a pair of haptic gloves called Avatar VR which is a registered trademark of NeuroDigital Technologies, S. L., referred to as \acrshort{nd} hereafter. The company's details can be found at \url{neurodigital.es}.
 
-Additionally, a Vive tracker was used to determine the user's hand position and orientation. The Avatar VR can be mechanically connected to the tracker using a coupling, that needs to be acquired separately. The named devices and the way of coupling can be seen in figure \ref{fig:devices}.
+To use the Avatar VR on a computer, one needs to download, install and run the \acrshort{nd} Suite. This program provides a background service and GUI for managing and accessing the devices. A connection can be established via Bluetooth after which all sensor data is graphically accessible from the GUI.
+
+\acrshort{nd} also supplies a developer's API in the form of three files (\lstinline|NDAPI.h, NDAPI_x64.lib and NDAPI_x64.dll| or \lstinline|x86| respectively) which need to be included into the respective project in a suitable manner. A singleton of the \lstinline|NDAPI.h| can be instanstiated and used to access the data of devices connected to \acrshort{nd} Suite.
+
+Additionally, a Vive tracker was used to determine the user's hand position and orientation. The Avatar VR can be mechanically connected to the tracker using a coupling, that needs to be acquired separately. The devices named so far and the way of coupling them can be seen in figure \ref{fig:devices}.
+
+The foundation for the graphics software I developed is given by the \gls{CGV} framework provided by the chair of computer graphics and visualization at TU Dresden.
+
+A user can view the plugin on a computer screen with the \lstinline|cgv_viewer| or on a \Gls{VIVE} \acrfull{hmd} simply by connecting one to computer.
+
+\section{Project Idea and Structure}
+\begin{figure}
+	\includegraphics[width=\linewidth]{../pics/uml}
+	\caption[Class diagram of \gls{VCP}]{Class diagram of \gls{VCP}, only most relevant elements shown}
+	\label{fig:uml}
+\end{figure}
+When developing a VR user interface, the first question is: what is it supposed to do? To give it some context rather than just moving boxes, I decided to design it as a conn panel on the USS Voyager (Star Trek). The term \emph{conn} is short for \emph{control and navigation}, so the panel is used to stear the ship. The classes used to implement this and their interaction are shown in figure \ref{fig:uml}.
+
+The main class and entry point carries the same name as the plugin itself. It is derived from the \gls{CGV} classes \lstinline|base|, \lstinline|drawable|, \lstinline|event_handler| and \lstinline|provider|, and used for management of all objects. Its capability to handle \lstinline|vr_pose_events| is used to forward tracker poses (position and orientation) to the \lstinline|hands| and \acrshort{hmd} poses to the \lstinline|head_up_display|. It distributes \lstinline|draw()| commands among the relevant members and manages the calibration routine described in section \ref{sec:cal}. This is the only class registered via object registration.
 
 \section{Skeletal Hand Model for the Avatar VR Haptic Glove}
 \subsection{Abstraction of the Human Hand Skeleton}
@@ -124,8 +142,6 @@ The most common representation includes cylinders for the bones and spheres for 
 	\caption{Sensors and actuators of the Avatar VR;\\screenshots of \acrshort{nd} Suite (b and c cropped)}
 \end{figure}
 
-To use the Avatar VR on a computer, one needs to download, install and run the \acrshort{nd} Suite. This program provides a background service and GUI for managing and accessing the devices. A connection can be established via Bluetooth after which all sensor data is graphically accessible from the GUI.
-
 The Avatar VR is equipped with three kinds of sensors: 
 \begin{itemize}
 	\item An \emph{\acrfull{imu}} is located on the \gls{IPh} of each finger to measure its 3D rotation. The thumb is even equipped with two \acrshort{imu}s (one per phalanx) and the palm with an \acrshort{imu} that can measure both 3D orientation and 3D rotation. The "Motion" tab of \acrshort{nd} Suite shown in figure \ref{fig:av_tech:imus} depicts the resulting orientations as orthonormal bases. 
@@ -136,8 +152,6 @@ The Avatar VR is equipped with three kinds of sensors:
 Furthermore, there are actuators at the locations marked in blue in figure \ref{fig:av_tech:actuators}. These can be used for haptic feedback in a way that "[$\dots$] the brain perceives it as 'Real Touch' input", according to the producer.
 
 \subsection{Using Data From the Avatar VR to Visualize the User's Hand}
-\acrshort{nd} supplies a developer's API in the form of three files (\lstinline|NDAPI.h, NDAPI_x64.lib and NDAPI_x64.dll| or \lstinline|x86| respectively) which need to be included into the respective project in a suitable manner. A singleton of the \lstinline|NDAPI.h| can be instanstiated and used to access the data of devices connected to \acrshort{nd} Suite in the form of quaternions for rotations and booleans for pairs of contacts.
-
 The same model used by the Leap Motion API version 2.0 will also be used here. Leap captures absolute joint positions and optimizes them for visualization. In contrast, my approach for the Avatar VR is to use a fixed resting state geometry of the user's hand (bone lengths and resting state joint positions). At the time of a \lstinline|draw()| command, the geometry is adjusted according to the data given by the glove and the Vive tracker. 
 
 The joint position data is managed by the following struct (only most important parts included):
@@ -173,11 +187,28 @@ The joint position data is managed by the following struct (only most important 
 	};
 \end{lstlisting}
 
+First, the palm joints' resting positions are rotated according to the orientation given by the Vive tracker. The construction of each finger begins at the end joint of the \gls{DPh} which is translated along the negative $ z $-axis by the hard-coded length of the \gls{DPh} and rotated by the respective quaternion (see below). The other phalanges are constructed in the same manner, before the whole finger is translated to the respective \gls{MPJ}. Finally, the whole hand is scaled to model view space and translated to the model view position of the Vive tracker.
 
+Because the Avatar VR only returns one quaternion per finger (except for the thumb), I had to think of a way to distribute the orientation along all three phalanges: First, the Euler angles are calculated from the quaternion\newcite{quat_to_euler}
+\begin{align*}
+	\alpha \quad&=\quad \mbox{arctan} \frac {2(q_0 q_1 + q_2 q_3)} {1 - 2(q_1^2 + q_2^2)} \\
+	\beta \quad&=\quad \mbox{arcsin} (2(q_0 q_2 - q_3 q_1)) \\
+	\gamma \quad&=\quad \mbox{arctan} \frac {2(q_0 q_3 + q_1 q_2)} {1 - 2(q_2^2 + q_3^2)}
+\end{align*}
+where $ \alpha $ is the roll angle, $ \beta $ the pitch angle and $ \gamma $ the yaw angle, and the quaternion can be written as $ (q_{0}, q_{1}, q_{2}, q_{3}) $. For implementation, one has to use the \lstinline|atan2| function, because \lstinline|arctan| only return values between $ -\frac{\pi}{2} $ and $ \frac{\pi}{2} $.
 
-First, the palm joints' resting positions are rotated according to the orientation given by the Vive tracker. The construction of each finger begins at the end joint of the \gls{DPh} which is translated along the negative z-axis by the hard-coded length of the \gls{DPh} and rotated by the respective quaternion (see below). The other phalanges are constructed in the same manner, before the whole finger is translated to the respective \gls{MPJ}. Finally, the whole hand is scaled to model view space and translated to the model view position of the Vive tracker.
+The \lstinline|NDAPI| quaternions live in a space where the resting hand lies on the $ xz $-plane and the fingers point along the positive $ z $-axis. However, \gls{VCP} is oriented with the negative $ z $-axis as "front" direction, so $ q_{1} $ and $ q_{2} $ need to be negated before use. Then roll corresponds to bending the finger, pitch to a left-right-motion and yaw to a motion humans can hardly perform with their fingers.
 
-Because the Avatar VR only returns one quaternion per finger (except for the thumb), I had to think of a way to distribute the orientation along all three phalanges 
+Since the interphalangeal jionts act as revolute joints, only a roll component can be applied to them. As shown in the code below, the roll angle is distributed according to three floats (\lstinline|rot_split|). After some experimenting, $ (.5, .5, .25) $ is an option for these numbers that gives a good approximation of most actual hand poses. It corresponds to phalanx rotation during grabbing. Yaw and pitch are completely executed in the \gls{MPJ}. 
+\begin{lstlisting}
+	vec3 x(1, 0, 0), y(0, 1, 0), z(0, 0, 1);
+	recursive_rotations[finger][PROXIMAL] = palm_rotation
+		* quat(z, yaw) * quat(y, pitch) * quat(x, rot_split.x() * roll);
+	recursive_rotations[finger][INTERMED] = quat(x, rot_split.y() * roll);
+	recursive_rotations[finger][DISTAL] = quat(x, min(1.4f, rot_split.z() * roll));
+\end{lstlisting}
+
+\section{calibration} \label{sec:cal}
 
 \printglossary[type=gloss_terms]
 \printglossary[type=gloss_acr]
