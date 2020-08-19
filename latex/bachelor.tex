@@ -45,10 +45,32 @@
 \glsaddall
 	
 \chapter{Introduction}
-For the purpose of thesis, I will use a pair of haptic gloves called Avatar VR which is a registered trademark of NeuroDigital Technologies, S. L., referred to as \acrshort{nd} hereafter. The company's details can be found at \url{neurodigital.es}.
 
-\chapter{Skeletal Hand Model for the Avatar VR Haptic Glove}
-\section{Abstraction of the Human Hand Skeleton}
+
+\chapter{Development}
+\section{Devices and Setup}
+\begin{figure}
+	\begin{subfigure}{.49\linewidth}
+		\includegraphics[width=\linewidth]{../pics/devices_uncoupled}
+		\caption{Uncoupled devices, colors mark coupling point}
+		\label{fig:devices:unc}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.49\linewidth}
+		\includegraphics[width=\linewidth]{../pics/devices_coupled}
+		\caption{Coupled devices on user hand}
+		\label{fig:devices:cou}
+	\end{subfigure}
+	\caption[Devices used to track the user's hand]{Devices used to track the user's hand: Vive tracker, coupling, Avatar VR}
+	\label{fig:devices}
+\end{figure}
+
+For the purpose of thesis, I used a pair of haptic gloves called Avatar VR which is a registered trademark of NeuroDigital Technologies, S. L., referred to as \acrshort{nd} hereafter. The company's details can be found at \url{neurodigital.es}.
+
+Additionally, a Vive tracker was used to determine the user's hand position and orientation. The Avatar VR can be mechanically connected to the tracker using a coupling, that needs to be acquired separately. The named devices and the way of coupling can be seen in figure \ref{fig:devices}.
+
+\section{Skeletal Hand Model for the Avatar VR Haptic Glove}
+\subsection{Abstraction of the Human Hand Skeleton}
 \begin{figure}
 	\begin{subfigure}{.5\linewidth}
 		\includegraphics[width=\linewidth]{../pics/leap_anat}
@@ -78,7 +100,7 @@ The Leap Motion API version 2.0\newcite{leaphand} uses the abstraction described
 
 The most common representation includes cylinders for the bones and spheres for the joints. It is shown in figure \ref{fig:hand_model:leap}.
 
-\section{Technology and Function of the Avatar VR}
+\subsection{Technology and Function of the Avatar VR}
 \begin{figure}
 	\centering
 	\begin{subfigure}{\linewidth}
@@ -99,7 +121,7 @@ The most common representation includes cylinders for the bones and spheres for 
 		\caption{Positions of actuators}
 		\label{fig:av_tech:actuators}
 	\end{subfigure}
-	\caption{Sensors and actuators of the Avatar VR}
+	\caption{Sensors and actuators of the Avatar VR;\\screenshots of \acrshort{nd} Suite (b and c cropped)}
 \end{figure}
 
 To use the Avatar VR on a computer, one needs to download, install and run the \acrshort{nd} Suite. This program provides a background service and GUI for managing and accessing the devices. A connection can be established via Bluetooth after which all sensor data is graphically accessible from the GUI.
@@ -113,7 +135,9 @@ The Avatar VR is equipped with three kinds of sensors:
 
 Furthermore, there are actuators at the locations marked in blue in figure \ref{fig:av_tech:actuators}. These can be used for haptic feedback in a way that "[$\dots$] the brain perceives it as 'Real Touch' input", according to the producer.
 
-\section{Using Data From the Avatar VR to Visualize the User's Hand}
+\subsection{Using Data From the Avatar VR to Visualize the User's Hand}
+\acrshort{nd} supplies a developer's API in the form of three files (\lstinline|NDAPI.h, NDAPI_x64.lib and NDAPI_x64.dll| or \lstinline|x86| respectively) which need to be included into the respective project in a suitable manner. A singleton of the \lstinline|NDAPI.h| can be instanstiated and used to access the data of devices connected to \acrshort{nd} Suite in the form of quaternions for rotations and booleans for pairs of contacts.
+
 The same model used by the Leap Motion API version 2.0 will also be used here. Leap captures absolute joint positions and optimizes them for visualization. In contrast, my approach for the Avatar VR is to use a fixed resting state geometry of the user's hand (bone lengths and resting state joint positions). At the time of a \lstinline|draw()| command, the geometry is adjusted according to the data given by the glove and the Vive tracker. 
 
 The joint position data is managed by the following struct (only most important parts included):
@@ -149,7 +173,11 @@ The joint position data is managed by the following struct (only most important 
 	};
 \end{lstlisting}
 
+
+
 First, the palm joints' resting positions are rotated according to the orientation given by the Vive tracker. The construction of each finger begins at the end joint of the \gls{DPh} which is translated along the negative z-axis by the hard-coded length of the \gls{DPh} and rotated by the respective quaternion (see below). The other phalanges are constructed in the same manner, before the whole finger is translated to the respective \gls{MPJ}. Finally, the whole hand is scaled to model view space and translated to the model view position of the Vive tracker.
+
+Because the Avatar VR only returns one quaternion per finger (except for the thumb), I had to think of a way to distribute the orientation along all three phalanges 
 
 \printglossary[type=gloss_terms]
 \printglossary[type=gloss_acr]

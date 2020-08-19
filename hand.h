@@ -42,8 +42,14 @@ class hand
 	};
 
 	struct joint_positions {
+		// positions of hand joints in model space
+		// structure: hand_part<phalanx<position>>
 		vector<vector<vec3>> positions;
+		// positions linearized in hand_part major format
+		// set by make_array() 
 		vector<vec3> linearized;
+		// correspondence of indices in linearized
+		// to double indices in positions
 		map<int, pair<int, int>> lin_to_anat;
 
 		joint_positions()
@@ -59,6 +65,7 @@ class hand
 			positions[part].push_back(v);
 		}
 
+		// rotate complete part
 		void rotate(int part, quat rotation)
 		{
 			for (size_t i = 0; i < positions[part].size(); i++)
@@ -67,6 +74,7 @@ class hand
 			}
 		}
 
+		// translate complete part
 		void translate(int part, vec3 translation)
 		{
 			for (size_t i = 0; i < positions[part].size(); i++)
@@ -75,11 +83,15 @@ class hand
 			}
 		}
 
+		// translate complete part along neg. z-axis
 		void translate_neg_z(int part, float z)
 		{
 			translate(part, vec3(0, 0, -z));
 		}
 
+		// translate all positions
+		// used to move hand from construction origin
+		// to model view location
 		void translate(vec3 translation)
 		{
 			for (size_t part = 0; part < positions.size(); part++)
@@ -88,6 +100,8 @@ class hand
 			}
 		}
 
+		// scale all positions
+		// used to realize hand size at construction origin
 		void scale(float scale)
 		{
 			for (size_t part = 0; part < positions.size(); part++)
@@ -99,6 +113,7 @@ class hand
 			}
 		}
 
+		// generate linearized from positions
 		vector<vec3> make_array()
 		{
 			vector<vec3> result;
