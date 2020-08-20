@@ -96,6 +96,6 @@ public:
 
 	virtual vec3 get_rot_split(vec3 position) const
 	{
-		return vec3(.5f);
+		return vec3(.5f, .5f, .25f);
 	}
 };

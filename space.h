@@ -34,7 +34,6 @@ class stars_sphere
 		star_rad_mean = .05f, star_rad_deviation = .01f;
 
 	chrono::steady_clock::time_point last_update;
-	float ms_per_step;
 
 	mat4 model_view_mat;
 	vec3 origin;

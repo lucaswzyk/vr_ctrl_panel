@@ -25,7 +25,16 @@
 \betreuer{Prof. Stefan Gumhold}
 \bibfiles{lib.bib}
 \problem{Write down your task...}
-\copyrighterklaerung{If the author used ressources from third parties (texts, images, code) he or she should state the consents of the copyright owners here or cite the given general conditions (e.g. CC/(L)GPL/BSD copyright notices)}
+\copyrighterklaerung{\textbf{Voyager Bridge Mesh}\\
+Acquired from \url{https://www.trekmeshes.ch/} on 20 June 2020.
+
+This mesh remains the property of Chainsaw\_NL and Star trek Meshes.
+It however may be used to create images and scenes for non-profit use only.
+
+Any images produced with this mesh do NOT have to be credited to the
+mesh author. But it would be nice.
+
+Star Trek and Enterprise are copyright Paramount Pictures.}
 \acknowledgments{I'd like to thank...}
 \abstracten{abstract text english}
 \abstractde{ abstract text german}
@@ -52,7 +61,7 @@
 \begin{figure}
 	\begin{subfigure}{.49\linewidth}
 		\includegraphics[width=\linewidth]{../pics/devices_uncoupled}
-		\caption{Uncoupled devices, colors mark coupling point}
+		\caption{Uncoupled devices, colors mark coupling points}
 		\label{fig:devices:unc}
 	\end{subfigure}
 	\hfill
@@ -67,15 +76,15 @@
 
 For the purpose of thesis, I used a pair of haptic gloves called Avatar VR which is a registered trademark of NeuroDigital Technologies, S. L., referred to as \acrshort{nd} hereafter. The company's details can be found at \url{neurodigital.es}.
 
-To use the Avatar VR on a computer, one needs to download, install and run the \acrshort{nd} Suite. This program provides a background service and GUI for managing and accessing the devices. A connection can be established via Bluetooth after which all sensor data is graphically accessible from the GUI.
+To use the Avatar VR on a computer, one needs to download, install and run the \acrshort{nd} Suite. This program provides a background service and GUI for managing and accessing the devices. A connection can be established via Bluetooth after which all sensor data is graphically displayed in the GUI.
 
-\acrshort{nd} also supplies a developer's API in the form of three files (\lstinline|NDAPI.h, NDAPI_x64.lib and NDAPI_x64.dll| or \lstinline|x86| respectively) which need to be included into the respective project in a suitable manner. A singleton of the \lstinline|NDAPI.h| can be instanstiated and used to access the data of devices connected to \acrshort{nd} Suite.
+\acrshort{nd} also supplies a developer's API in the form of three files (\lstinline|NDAPI.h, NDAPI_x64.lib and NDAPI_x64.dll| or \lstinline|x86| respectively) which need to be included into the respective project in a suitable manner. An instance of the \lstinline|NDAPI.h| can be used to access the data of devices connected to \acrshort{nd} Suite.
 
 Additionally, a Vive tracker was used to determine the user's hand position and orientation. The Avatar VR can be mechanically connected to the tracker using a coupling, that needs to be acquired separately. The devices named so far and the way of coupling them can be seen in figure \ref{fig:devices}.
 
-The foundation for the graphics software I developed is given by the \gls{CGV} framework provided by the chair of computer graphics and visualization at TU Dresden.
+The foundation for the graphics software I developed is implemented in the \gls{CGV} framework provided by the chair of computer graphics and visualization at TU Dresden.
 
-A user can view the plugin on a computer screen with the \lstinline|cgv_viewer| or on a \Gls{VIVE} \acrfull{hmd} simply by connecting one to computer.
+A user can view the plugin on a computer screen with the \lstinline|cgv_viewer| or on a \Gls{VIVE} \acrfull{hmd} simply by connecting one to the computer.
 
 \section{Project Idea and Structure}
 \begin{figure}
@@ -83,11 +92,24 @@ A user can view the plugin on a computer screen with the \lstinline|cgv_viewer| 
 	\caption[Class diagram of \gls{VCP}]{Class diagram of \gls{VCP}, only most relevant elements shown}
 	\label{fig:uml}
 \end{figure}
-When developing a VR user interface, the first question is: what is it supposed to do? To give it some context rather than just moving boxes, I decided to design it as a conn panel on the USS Voyager (Star Trek). The term \emph{conn} is short for \emph{control and navigation}, so the panel is used to stear the ship. The classes used to implement this and their interaction are shown in figure \ref{fig:uml}.
+
+When developing a VR user interface, the first question is: what is it supposed to do? To give this some context rather than just moving boxes, I decided to design it as a conn panel on the USS Voyager (Star Trek). The term \emph{conn} is short for \emph{control and navigation}, meaning the panel is used to stear the ship. The classes used to implement this and their interaction are shown in figure \ref{fig:uml}.
 
 The main class and entry point carries the same name as the plugin itself. It is derived from the \gls{CGV} classes \lstinline|base|, \lstinline|drawable|, \lstinline|event_handler| and \lstinline|provider|, and used for management of all objects. Its capability to handle \lstinline|vr_pose_events| is used to forward tracker poses (position and orientation) to the \lstinline|hands| and \acrshort{hmd} poses to the \lstinline|head_up_display|. It distributes \lstinline|draw()| commands among the relevant members and manages the calibration routine described in section \ref{sec:cal}. This is the only class registered via object registration.
 
-\section{Skeletal Hand Model for the Avatar VR Haptic Glove}
+Written information can be displayed to the user with the \lstinline|head_up_display| if an \acrshort{hmd} is connected and on the console alternatively. The \lstinline|head_up_display| is permanently adjusted to be displayed in the upper left corner of the user's visual field.
+
+The \lstinline|mesh| class renders the Voyager bridge. It uses the basic functionality of \lstinline|mesh_render_info| provided in \gls{CGV} to load and draw.
+
+Around the bridge, space is simulated by a spherical shell filled with stars. The user never actually changes position in model space. Instead, stars are moved in the opposite direction of the simulated motion, the speed of which can be set via static \lstinline|set_speed_*()| methods. The details of this are described in section \ref{sec:space}.
+
+All interactive elements are implemented as \lstinline|panel_node| or its derived classes. A \lstinline|conn_panel| constructs and manages a tree of such nodes. Elements are represented as boxes and combinations of boxes placed relative to their parent element. The \lstinline|slider| and \lstinline|lever| classes require a callback function and pointer to a \lstinline|stars_sphere| as arguments in their constructor that are used to set some speed in the \lstinline|stars_sphere|. The \lstinline|conn_panel| is positioned right on top of the mesh's conn.
+
+Interaction with the \Gls{AVR} is managed by the singleton \lstinline|nd_handler| which can be used to pass function calls through to an instance of \lstinline|NDAPI|. This is frequently done in \lstinline|nd_device|, a class for querying sensor data from the gloves and converting it for better compatibility with \lstinline|cgv| and \gls{VCP}.
+
+Finally, a representation of the user's hands is implemented in \lstinline|hand|. It keeps track of several points and joints the details of which are described in section \ref{sec:hand_model}. During a \lstinline|draw()| call, \lstinline|vr_ctrl_panel| passes a pointer to its \lstinline|conn_panel| to each \lstinline|hand| which then passes on information about the current hand geometry wrapped as \lstinline|containment_info| to the \lstinline|conn_panel| for containment check. During this check, each \lstinline|panel_node| containing some hand part can react with its \lstinline|on_touch()| method. A \lstinline|map<int, float>| describing the contained positions is returned to the hand, enabling it to react as well.
+
+\section{Skeletal Hand Model for the Avatar VR Haptic Glove} \label{sec:hand_model}
 \subsection{Abstraction of the Human Hand Skeleton}
 \begin{figure}
 	\begin{subfigure}{.5\linewidth}
@@ -149,7 +171,7 @@ The Avatar VR is equipped with three kinds of sensors:
 	\item The thumb also has a flex sensor, that will not be relevant for this thesis.
 \end{itemize}
 
-Furthermore, there are actuators at the locations marked in blue in figure \ref{fig:av_tech:actuators}. These can be used for haptic feedback in a way that "[$\dots$] the brain perceives it as 'Real Touch' input", according to the producer.
+Furthermore, there are actuators at the locations marked in blue in figure \ref{fig:av_tech:actuators}. These can be used to generate vibrations of variable intensity as haptic feedback in a way that "[$\dots$] the brain perceives it as 'Real Touch' input", according to the producer.
 
 \subsection{Using Data From the Avatar VR to Visualize the User's Hand}
 The same model used by the Leap Motion API version 2.0 will also be used here. Leap captures absolute joint positions and optimizes them for visualization. In contrast, my approach for the Avatar VR is to use a fixed resting state geometry of the user's hand (bone lengths and resting state joint positions). At the time of a \lstinline|draw()| command, the geometry is adjusted according to the data given by the glove and the Vive tracker. 
@@ -208,7 +230,86 @@ Since the interphalangeal jionts act as revolute joints, only a roll component c
 	recursive_rotations[finger][DISTAL] = quat(x, min(1.4f, rot_split.z() * roll));
 \end{lstlisting}
 
+\section{Simulation of Space} \label{sec:space}
+\begin{figure}
+	\centering
+	\includegraphics[width=.7\linewidth]{../pics/stars_sphere_schema}
+	\caption{Schematic of the elements used in \lstinline|stars_sphere| to simulate space}
+	\label{fig:space}
+\end{figure}
+
+A schematic of the spherical shell used to simulate space is shown in figure \ref{fig:space}. The outer radius determines the overall size of the sphere. A spherical region around the user that does not contain any stars is defined by the inner radius. This should include the complete bridge mesh to assure stars are only visible to the user on the view screen. Congruent with other parts of the plugin, the flight and view direction points along the negative $ z $-axis. 
+
+Stars are rendered as small spheres whose radii follow a normal distribution. The shell is initialized with a constant number of stars with uniformally distributed positions. It saves the forward and angular speeds as float values. During a \lstinline|draw()| call, the method \lstinline|update()| calculates new positions for all stars. The following code is explained below.
+
+\begin{lstlisting}
+void update()
+{
+	// to ensure realistic movement independent of frame rate
+	chrono::steady_clock::time_point now = chrono::steady_clock::now();
+	float ms_elapsed = chrono::duration_cast<chrono::milliseconds>(now - last_update).count();
+	
+	float distance_elapsed = speed_ahead * ms_elapsed;
+	vec3 angles = ms_elapsed * vec3(speed_pitch, speed_yaw, speed_roll);
+	mat3 rotation = cgv::math::rotate3(angles),
+	     inv_rotation = cgv::math::rotate3(-r_out / 2 * angles);
+	
+	vec3 p;
+	for (size_t i = 0; i < num_stars; i++)
+	{
+		// the following lines model dead ahead movement
+		p = positions[i];
+		float l = p.length();
+		p.normalize();
+		// now, p.z() is the cosine of the angle between
+		// p and the pos. z-axis
+		p *= l + p.z() * distance_elapsed;
+		// translate p to model space
+		p += origin;
+		
+		// check if p is outside the shell
+		if (p.length() > r_out)
+		{
+			// get random angles from uniform distribution
+			float alpha = dis_angles(gen), beta = dis_angles(gen);
+			// init new position on spawn sphere
+			p = r_out / 10 * vec3(
+				sin(alpha) * cos(beta),
+				sin(beta),
+				cos(alpha) * cos(beta)
+			) + origin;
+			positions[i] = inv_rotation * p - origin;
+		}
+		else
+		{
+			positions[i] = rotation * p - origin;
+		}
+	}
+
+	last_update = now;
+}
+\end{lstlisting}
+
+To somewhat simplify the math behind this calculation, I used the point on the outer hull right in front of the user as origin for the shell space, instead of the center of the shell. The origin is marked with a cross in figure \ref{fig:space}. A model view matrix then translates the shell to model space. 
+
+When moving dead ahead (angular speeds are zero), stars are moved along the yellow "forward motion" arrows in figure \ref{fig:space}. The bigger the angle between their position vector and the positive $ z $-axis, the slower they move. More precisely, the length of a star's position vector is increased by the product of the cosine of the angle between the position vector and the positive $ z $-axis, and the general distance it covered, calculated from \lstinline|speed_ahead| and the time since the last update.
+
+If a star moves outside the outer hull of the shell, its position is re-initialized randomly somewhere on a sphere of the spawn radius around the origin. It cannot be simply set to the origin because it needs a direction and the spawn radius should not be too small in order to also avoid the impression of stars spawning very densly.
+
+An additional rotation is realized by simply rotating the stars around the user. After some experimenting, I realized the spawn sphere needs to be rotated inversely around the user as well to achieve a realistic experience and because otherwise, the newly spawned stars converge to a line at slow forward motion and fast rotations.
+
 \section{calibration} \label{sec:cal}
+To make it possible to use \gls{VCP} in different rooms and setups, a calibration routine is required. This can be activated by joining index and thumb of one hand for three seconds. The objects in the scene are then no longer rendered.
+
+The user position is determined from the \acrshort{hmd} if connected. Otherwise, the user is asked to tap index and thumb above their head and the position of the respective tracker at that time is used.
+
+After that, a countdown of $ 3s $ is displayed and the user is instructed to hold their hands straight with the fingers pointing forward. At the end of the countdown, the hands are rendered again and the current pose is passed on to the \lstinline|hand| instances for calibration. It becomes a new reference pose from which all following orientations are inferred. 
+
+This is necessary because the \Gls{AVR} does not give sufficiently accurate measurements for a period longer than a few minutes. Since the device apparently accumulates quaternions from instantaneous acceleration rates, the resulting rotations tend to quickly diverge from the actual hand pose. This effect is stronger if the device was moved even slightly during its intrinsic calibration at startup time.
+
+Finally, the conn panel is moved close to the hands and the new $ z $-axis is set to run from the average of the hand positions and the user position. One can continue to adjust the panel position and $ z $-axis by moving their hands until satisfied. A final acknowledgement by tapping index and thumb ends the calibration.
+
+Between two stages, a short feedback pulse  is generated by the actuators simultaneously to notify the user of the change. When the calibration is finished, a final pulse utilizes all actuators successively. The calibration can also be aborted resulting in three short pulses. One can then choose to reset to the previous calibration or keep the partially altered one.
 
 \printglossary[type=gloss_terms]
 \printglossary[type=gloss_acr]

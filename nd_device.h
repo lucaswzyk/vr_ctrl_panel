@@ -80,7 +80,7 @@ public:
 	{
 		if (nd_q.w || nd_q.x || nd_q.y || nd_q.z)
 		{
-			return quat(-nd_q.w, nd_q.x, nd_q.y, -nd_q.z);
+			return quat(nd_q.w, -nd_q.x, -nd_q.y, nd_q.z);
 		}
 		else
 		{

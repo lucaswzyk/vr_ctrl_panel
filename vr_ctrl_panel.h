@@ -25,7 +25,7 @@
 #include "hand.h"
 #include "mesh.h"
 #include "math_conversion.h"
-#include "head_display.h"
+#include "head_up_display.h"
 
 using namespace std;
 
@@ -99,7 +99,7 @@ protected:
 	// bridge mesh
 	mesh bridge;
 
-	head_display hd;
+	head_up_display hd;
 
 	// calibration
 	calibration c, last_cal;

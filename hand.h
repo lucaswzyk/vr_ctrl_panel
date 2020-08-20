@@ -360,17 +360,13 @@ public:
 				);
 
 				vec3 x(1, 0, 0), y(0, 1, 0), z(0, 0, 1);
+				// TODO should palm_rot stay here?
 				recursive_rotations[finger][PROXIMAL] = palm_rot 
 					* quat(z, yaw) * quat(y, pitch) * quat(x, rot_split.x() * roll);
 				recursive_rotations[finger][INTERMED] = quat(x, rot_split.y() * roll);
 				recursive_rotations[finger][DISTAL] = quat(x, min(1.4f, rot_split.z() * roll));
 			}
 		}
-	}
-
-	void set_joint_rotations(int finger)
-	{
-		
 	}
 
 	int get_location() { return device.get_location(); }
