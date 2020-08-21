@@ -1,11 +1,12 @@
 \contentsline {chapter}{\numberline {1}Introduction}{3}{chapter.1}%
-\contentsline {chapter}{\numberline {2}Development}{4}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Devices and Software}{4}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Project Idea and Structure}{4}{section.2.2}%
-\contentsline {section}{\numberline {2.3}Skeletal Hand Model for the Avatar VR Haptic Glove}{7}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Abstraction of the Human Hand Skeleton}{7}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}Technology and Function of the Avatar VR}{8}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}Using Data From the Avatar VR to Visualize the User's Hand}{8}{subsection.2.3.3}%
-\contentsline {section}{\numberline {2.4}Simulation of Space}{11}{section.2.4}%
-\contentsline {section}{\numberline {2.5}calibration}{13}{section.2.5}%
-\contentsline {chapter}{\nonumberline Bibliography}{16}{chapter*.11}%
+\contentsline {section}{\numberline {1.1}Principles of Data Gloves}{3}{section.1.1}%
+\contentsline {chapter}{\numberline {2}Development}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Devices and Software}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Project Idea and Structure}{5}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Skeletal Hand Model for the Avatar VR Haptic Glove}{8}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Abstraction of the Human Hand Skeleton}{8}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Technology and Function of the Avatar VR}{9}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Using Data From the Avatar VR to Visualize the User's Hand}{9}{subsection.2.3.3}%
+\contentsline {section}{\numberline {2.4}Simulation of Space}{12}{section.2.4}%
+\contentsline {section}{\numberline {2.5}calibration}{14}{section.2.5}%
+\contentsline {chapter}{\nonumberline Bibliography}{18}{chapter*.14}%

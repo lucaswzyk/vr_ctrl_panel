@@ -1,16 +1,22 @@
 \newcommand{\etalchar}[1]{$^{#1}$}
-\begin{thebibliography}{PGP{\etalchar{+}}10}
+\begin{thebibliography}{WGL{\etalchar{+}}19}
 
 \bibitem[lea]{leaphand}
 Introducing the skeletal tracking model.
 \newblock accessed 18 Aug 2020.
 
-\bibitem[PGP{\etalchar{+}}10]{POHLENZ2010560}
-Philipp Pohlenz, Alexander Gröbe, Andreas Petersik, Norman [von Sternberg],
-  Bernhard Pflesser, Andreas Pommert, Karl-Heinz Höhne, Ulf Tiede, Ingo
-  Springer, and Max Heiland.
-\newblock Virtual dental surgery as a new educational tool in dental school.
-\newblock {\em Journal of Cranio-Maxillofacial Surgery}, 38(8):560 -- 564,
-  2010.
+\bibitem[qua]{quat_to_euler}
+Conversion between quaternions and euler angles.
+\newblock accessed 19 Aug 2020.
+
+\bibitem[Sut65]{sutherland65}
+Ivan~E. Sutherland.
+\newblock The ultimate display.
+\newblock In {\em Proceedings of the IFIP Congress}, pages 506--508, 1965.
+
+\bibitem[WGL{\etalchar{+}}19]{wang19}
+Dangxiao WANG, Yuan GUO, Shiyi LIU, Yuru ZHANG, Weiliang XU, and Jing XIAO.
+\newblock Haptic display for virtual reality: progress and challenges.
+\newblock {\em Virtual Reality \& Intelligent Hardware}, 1(2):136 -- 162, 2019.
 
 \end{thebibliography}

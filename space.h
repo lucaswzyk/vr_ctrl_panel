@@ -42,13 +42,14 @@ class stars_sphere
 
 	void update()
 	{
+		// to ensure realistic movement independent of frame rate
 		chrono::steady_clock::time_point now = chrono::steady_clock::now();
-		float steps_elapsed = chrono::duration_cast<chrono::milliseconds>(now - last_update).count();
+		float ms_elapsed = chrono::duration_cast<chrono::milliseconds>(now - last_update).count();
 		
-		float distance_elapsed = speed_ahead * steps_elapsed;
-		vec3 angles(speed_pitch, speed_yaw, speed_roll);
+		float distance_elapsed = speed_ahead * ms_elapsed;
+		vec3 angles = ms_elapsed * vec3(speed_pitch, speed_yaw, speed_roll);
 		mat3 rotation = cgv::math::rotate3(angles),
-			inv_rotation = cgv::math::rotate3(-r_out / 2 * angles);
+			 inv_rotation = cgv::math::rotate3(-r_out / 2 * angles);
 
 		if (distance_elapsed > 100.0f)
 		{
@@ -57,18 +58,27 @@ class stars_sphere
 			return;
 		}
 
+		// TODO inner radius (in latex too)
+		// TODO dynamic radii (distance)
 		vec3 p;
 		for (size_t i = 0; i < num_stars; i++)
 		{
+			// the following lines model dead ahead movement
 			p = positions[i];
 			float l = p.length();
 			p.normalize();
+			// now, p.z() is the cosine of the angle between
+			// p and the pos. z-axis
 			p *= l + p.z() * distance_elapsed;
+			// translate p to model space
 			p += origin;
 
+			// check if p is outside the shell
 			if (p.length() > r_out)
 			{
+				// get random angles from uniform distribution
 				float alpha = dis_angles(gen), beta = dis_angles(gen);
+				// init new position on spawn sphere
 				p = r_out / 10 * vec3(
 						sin(alpha) * cos(beta),
 						sin(beta),

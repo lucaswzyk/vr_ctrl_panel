@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  20 AUG 2020 19:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  21 AUG 2020 19:21
 entering extended mode
 **./bachelor.tex
 (bachelor.tex
@@ -944,11 +944,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 53--53
 ] [4
 
 ] (bachelor.toc
-LaTeX Font Info:    Trying to load font information for U+msa on input line 3.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 2.
  ("C:\Program Files\MiKTeX\tex/latex/amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 3.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 2.
 
 ("C:\Program Files\MiKTeX\tex/latex/amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -988,180 +988,165 @@ Class scrreprt Warning: \float@addtolists detected!
 (scrreprt)              a package that still implements the
 (scrreprt)              deprecated \float@addtolist interface.
 
+
+LaTeX Warning: Citation `li19' on page 3 undefined on input line 59.
+
+<../pics/wang01.jpg, id=81, 340.2446pt x 156.05203pt>
+File: ../pics/wang01.jpg Graphic file (type jpg)
+<use ../pics/wang01.jpg>
+Package pdftex.def Info: ../pics/wang01.jpg  used on input line 68.
+(pdftex.def)             Requested size: 364.19664pt x 167.04782pt.
 pdfTeX warning (ext4): destination with the same identifier (name{page.3}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.59 \chapter
-             {Development} [3
+l.71 \end{figure}
+                  [3
 
 ]
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 7
+5.
+ ("C:\Program Files\MiKTeX\tex/latex/psnfss\ts1ptm.fd"
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+)pdfTeX warning (ext4): destination with the same identifier (name{page.4}) has
+ been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.82 \chapter
+             {Development} [4 <../pics/wang01.jpg>]
 chapter 2.
-<../pics/devices_uncoupled.jpg, id=58, 722.7pt x 722.7pt>
+<../pics/devices_uncoupled.jpg, id=105, 722.7pt x 722.7pt>
 File: ../pics/devices_uncoupled.jpg Graphic file (type jpg)
 <use ../pics/devices_uncoupled.jpg>
-Package pdftex.def Info: ../pics/devices_uncoupled.jpg  used on input line 63.
+Package pdftex.def Info: ../pics/devices_uncoupled.jpg  used on input line 86.
 (pdftex.def)             Requested size: 223.0721pt x 223.07529pt.
-<../pics/devices_coupled.jpg, id=59, 722.7pt x 722.7pt>
+<../pics/devices_coupled.jpg, id=106, 722.7pt x 722.7pt>
 File: ../pics/devices_coupled.jpg Graphic file (type jpg)
 <use ../pics/devices_coupled.jpg>
-Package pdftex.def Info: ../pics/devices_coupled.jpg  used on input line 69.
+Package pdftex.def Info: ../pics/devices_coupled.jpg  used on input line 92.
 (pdftex.def)             Requested size: 223.0721pt x 223.07529pt.
-LaTeX Font Info:    Trying to load font information for T1+pcr on input line 77
-.
+LaTeX Font Info:    Trying to load font information for T1+pcr on input line 10
+0.
 ("C:\Program Files\MiKTeX\tex/latex/psnfss\t1pcr.fd"
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
-<../pics/uml.png, id=71, 1205.50375pt x 1958.31625pt>
+<../pics/uml.png, id=118, 1205.50375pt x 1958.31625pt>
 File: ../pics/uml.png Graphic file (type png)
 <use ../pics/uml.png>
-Package pdftex.def Info: ../pics/uml.png  used on input line 91.
+Package pdftex.def Info: ../pics/uml.png  used on input line 114.
 (pdftex.def)             Requested size: 455.24408pt x 739.50641pt.
 
 
-LaTeX Warning: Float too large for page by 72.81389pt on input line 94.
+LaTeX Warning: Float too large for page by 72.81389pt on input line 117.
 
-pdfTeX warning (ext4): destination with the same identifier (name{page.4}) has 
-been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.99 
-      [4
+[5
 
-] [5 <../pics/devices_uncoupled.jpg> <../pics/devices_coupled.jpg>]
-[6 <../pics/uml.png>]
-<../pics/leap_anat.png, id=106, 434.37282pt x 307.1475pt>
+] [6 <../pics/devices_uncoupled.jpg> <../pics/devices_coupled.jpg>] [7 <../pics
+/uml.png>]
+<../pics/leap_anat.png, id=154, 434.37282pt x 307.1475pt>
 File: ../pics/leap_anat.png Graphic file (type png)
 <use ../pics/leap_anat.png>
-Package pdftex.def Info: ../pics/leap_anat.png  used on input line 116.
+Package pdftex.def Info: ../pics/leap_anat.png  used on input line 139.
 (pdftex.def)             Requested size: 227.62204pt x 160.9549pt.
-<../pics/leap_example.png, id=107, 274.02374pt x 222.8325pt>
+<../pics/leap_example.png, id=155, 274.02374pt x 222.8325pt>
 File: ../pics/leap_example.png Graphic file (type png)
 <use ../pics/leap_example.png>
-Package pdftex.def Info: ../pics/leap_example.png  used on input line 122.
+Package pdftex.def Info: ../pics/leap_example.png  used on input line 145.
 (pdftex.def)             Requested size: 213.96527pt x 173.99565pt.
- [7 <../pics/leap_anat.png> <../pics/leap_example.png>]
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 1
-36.
-
-("C:\Program Files\MiKTeX\tex/latex/psnfss\ts1ptm.fd"
-File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-)
-<../pics/av_imus.jpg, id=151, 1102.1175pt x 903.375pt>
+ [8 <../pics/leap_anat.png> <../pics/leap_example.png>]
+<../pics/av_imus.jpg, id=199, 1102.1175pt x 903.375pt>
 File: ../pics/av_imus.jpg Graphic file (type jpg)
 <use ../pics/av_imus.jpg>
-Package pdftex.def Info: ../pics/av_imus.jpg  used on input line 147.
+Package pdftex.def Info: ../pics/av_imus.jpg  used on input line 170.
 (pdftex.def)             Requested size: 455.24408pt x 373.15681pt.
-<../pics/av_contacts.jpg, id=152, 502.87875pt x 502.87875pt>
+<../pics/av_contacts.jpg, id=200, 502.87875pt x 502.87875pt>
 File: ../pics/av_contacts.jpg Graphic file (type jpg)
 <use ../pics/av_contacts.jpg>
-Package pdftex.def Info: ../pics/av_contacts.jpg  used on input line 154.
+Package pdftex.def Info: ../pics/av_contacts.jpg  used on input line 177.
 (pdftex.def)             Requested size: 204.85844pt x 204.85414pt.
-<../pics/av_actu.png, id=153, 217.81375pt x 217.81375pt>
+<../pics/av_actu.png, id=201, 217.81375pt x 217.81375pt>
 File: ../pics/av_actu.png Graphic file (type png)
 <use ../pics/av_actu.png>
-Package pdftex.def Info: ../pics/av_actu.png  used on input line 160.
+Package pdftex.def Info: ../pics/av_actu.png  used on input line 183.
 (pdftex.def)             Requested size: 204.85844pt x 204.85794pt.
- [8] [9 <../pics/av_imus.jpg> <../pics/av_contacts.jpg> <../pics/av_actu.png>]
-
-LaTeX Warning: Citation `quat_to_euler' on page 10 undefined on input line 214.
-
-
-[10]
-<../pics/stars_sphere_schema.png, id=223, 1551.7975pt x 1513.655pt>
+ [9]
+[10 <../pics/av_imus.jpg> <../pics/av_contacts.jpg> <../pics/av_actu.png>]
+[11]
+<../pics/stars_sphere_schema.png, id=270, 1551.7975pt x 1513.655pt>
 File: ../pics/stars_sphere_schema.png Graphic file (type png)
 <use ../pics/stars_sphere_schema.png>
-Package pdftex.def Info: ../pics/stars_sphere_schema.png  used on input line 23
-6.
+Package pdftex.def Info: ../pics/stars_sphere_schema.png  used on input line 25
+9.
 (pdftex.def)             Requested size: 318.66946pt x 310.8325pt.
 
-Overfull \hbox (15.1607pt too wide) in paragraph at lines 250--252
+Overfull \hbox (15.1607pt too wide) in paragraph at lines 273--275
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
-[11] [12 <../pics/stars_sphere_schema.png>] [13] (bachelor.tld [14])
-(bachelor.sot) [15
+[12] [13 <../pics/stars_sphere_schema.png>] [14] (bachelor.tld [15])
+(bachelor.sot [16
+
+
+]) [17
 
 
 ] (bachelor.bbl
 chapter without number
-) [16
+) [18
 
 
-] [17
+] [19
 
 
 
 
-] [18
+] [20
 
 
 
 ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 316.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 316.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 339.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 339.
  (bachelor.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 316.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 316.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 339.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 339.
 Package rerunfilecheck Info: File `bachelor.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
 
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 316.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 339.
  )
 (\end occurred inside a group at level 1)
 
 ### semi simple group (level 1) entered at line 53 (\begingroup)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 18407 strings out of 480790
- 295164 string characters out of 2907056
+ 18468 strings out of 480790
+ 295936 string characters out of 2907056
  772781 words of memory out of 3000000
- 33914 multiletter control sequences out of 15000+200000
- 591288 words of font info for 82 fonts, out of 3000000 for 9000
+ 33960 multiletter control sequences out of 15000+200000
+ 594187 words of font info for 88 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,12n,77p,10113b,3644s stack positions out of 5000i,500n,10000p,200000b,50000s
-pdfTeX warning (dest): name{glo:IMU} has been referenced but do
+ 60i,12n,77p,10113b,3672s stack positions out of 5000i,500n,10000p,200000b,50000s
+pdfTeX warning (dest): name{glo:CGV} has been referenced but do
 es not exist, replaced by a fixed one
-
-pdfTeX warning (dest): name{glo:imu} has been referenced but does not exist, re
-placed by a fixed one
-
-pdfTeX warning (dest): name{glo:AVR} has been referenced but does not exist, re
-placed by a fixed one
-
-pdfTeX warning (dest): name{glo:VCP} has been referenced but does not exist, re
-placed by a fixed one
-
-pdfTeX warning (dest): name{glo:HMD} has been referenced but does not exist, re
-placed by a fixed one
-
-pdfTeX warning (dest): name{glo:hmd} has been referenced but does not exist, re
-placed by a fixed one
-
-pdfTeX warning (dest): name{glo:VIVE} has been referenced but does not exist, r
-eplaced by a fixed one
-
-pdfTeX warning (dest): name{glo:CGV} has been referenced but does not exist, re
-placed by a fixed one
-
-pdfTeX warning (dest): name{glo:nd} has been referenced but does not exist, rep
-laced by a fixed one
 
 {C:/Program Files/MiKTeX/fonts/enc/dvips/base/8r.enc}<C:/Program Files/MiKTeX/f
 onts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX/fonts/type1/p
 ublic/amsfonts/cm/cmmi8.pfb><C:/Program Files/MiKTeX/fonts/type1/public/amsfont
-s/cm/cmr10.pfb><C:/Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb
-><C:/Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program
- Files/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Program Files/MiKTeX/fonts
-/type1/urw/helvetic/uhvb8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/u
-tmb8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Program
- Files/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on bachelor.pdf (22 pages, 877709 bytes).
+s/cm/cmr10.pfb><C:/Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb
+><C:/Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program F
+iles/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX/
+fonts/type1/urw/courier/ucrb8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/cou
+rier/ucrr8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C
+:/Program Files/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTe
+X/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/tim
+es/utmri8a.pfb>
+Output written on bachelor.pdf (24 pages, 967781 bytes).
 PDF statistics:
- 446 PDF objects out of 1000 (max. 8388607)
- 142 named destinations out of 1000 (max. 500000)
- 134 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 557 PDF objects out of 1000 (max. 8388607)
+ 152 named destinations out of 1000 (max. 500000)
+ 147 words of extra memory for PDF output out of 10000 (max. 10000000)
 

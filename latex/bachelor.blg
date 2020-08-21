@@ -6,45 +6,46 @@ The style file: alpha.bst
 Reallocating 'name_of_file' (item size: 1) to 8 items.
 Database file #1: lib.bib
 Warning--to sort, need author or key in leaphand
-You've used 2 entries,
+Warning--to sort, need author or key in quat_to_euler
+You've used 4 entries,
             2543 wiz_defined-function locations,
-            570 strings with 4853 characters,
-and the built_in function-call counts, 911 in all, are:
-= -- 79
-> -- 61
-< -- 0
-+ -- 23
-- -- 23
-* -- 81
-:= -- 153
-add.period$ -- 5
-call.type$ -- 2
-change.case$ -- 18
-chr.to.int$ -- 2
-cite$ -- 4
-duplicate$ -- 24
-empty$ -- 60
-format.name$ -- 23
-if$ -- 178
+            576 strings with 4885 characters,
+and the built_in function-call counts, 1470 in all, are:
+= -- 141
+> -- 50
+< -- 2
++ -- 18
+- -- 17
+* -- 100
+:= -- 212
+add.period$ -- 10
+call.type$ -- 4
+change.case$ -- 23
+chr.to.int$ -- 4
+cite$ -- 8
+duplicate$ -- 61
+empty$ -- 131
+format.name$ -- 19
+if$ -- 317
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 1
-newline$ -- 13
-num.names$ -- 3
-pop$ -- 24
+missing$ -- 2
+newline$ -- 22
+num.names$ -- 6
+pop$ -- 41
 preamble$ -- 1
-purify$ -- 20
+purify$ -- 27
 quote$ -- 0
-skip$ -- 19
+skip$ -- 51
 stack$ -- 0
-substring$ -- 42
-swap$ -- 2
-text.length$ -- 0
-text.prefix$ -- 0
+substring$ -- 90
+swap$ -- 14
+text.length$ -- 2
+text.prefix$ -- 1
 top$ -- 0
-type$ -- 16
-warning$ -- 1
-while$ -- 4
-width$ -- 3
-write$ -- 25
-(There was 1 warning)
+type$ -- 32
+warning$ -- 2
+while$ -- 9
+width$ -- 5
+write$ -- 47
+(There were 2 warnings)

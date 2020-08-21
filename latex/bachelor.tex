@@ -54,7 +54,30 @@ Star Trek and Enterprise are copyright Paramount Pictures.}
 \glsaddall
 	
 \chapter{Introduction}
+What makes a good \acrfull{vr} application? What qualities should it have and how well developed is the necessary technology? In their review \emph{Haptic display for virtual reality: progress and challenges}\newcite{wang19}, Wang et al. state that \gls{vr} was born in 1965 with Ivan Sutherlands proposal of a concept named "The Ultimate Display"\newcite{sutherland65}. In that report of the IFIP Congress, Sutherland names immersion, interaction and imagination as three important features of \acrshort{vr}. 
 
+There has been a multitude of approaches to making interaction with virtual environments possible\newcite{li19}. Touch screens and stylus pens have become quite common in everyday life. Devices capable of capturing scene depth like Microsoft Kinect and Leap Motion make touchless interaction possible, e. g. during games. This thesis focuses especially on wearable devices called \emph{data gloves}.
+
+\section{Principles of Data Gloves}
+The general principles of data gloves can be divided into two main parts: sensing and actuation. The first part deals with the issue of capturing a user's hand poses and motions and relaying that information to a computer for further processing. In most cases, a fabric glove is equipped with an \acrfull{imu} placed on each rigid hand part or flex sensors placed on joints. The latter have the advantage of measuring absolute values which, however, are only scalar and need further interpretation involving anatomical knowledge ("Something is happening: we have a $ .7 $."). An \acrfull{imu}, on the other hand, usually accumulates an absolute measurement from instantaneous rates of change, but can be designed to return 3D rotations and positions ("The index is facing upwards.").
+
+The matter of actuation belongs to the broader field of haptic feedback. According to Wang et al.\newcite{wang19}, the visual and auditory feedback of \acrshort{vr} systems has become fairly realistic over time. However, haptic feedback is still rather poor even though it is "$\dots$ indespensable for enhancing immersion, interaction and imagination of \acrshort{vr} systems. Interaction can be enhanced by haptic feedback as users can directly manipulate virtual objects, and obtain immediate haptic feedback. Immersion of the \acrshort{vr} system can be enhanced in terms of providing more realistic sensation to mimic the physical interaction process. Imagination of users can be inspired when haptics can provide more cues for user[s] to mentally construct an imagined virtual world beyond spatial and or temporal limitations."
+
+\begin{figure}
+	\centering
+	\includegraphics[width=.8\linewidth]{../pics/wang01}
+	\caption[Schematic paradigm of haptic human computer interfaces]{Schematic paradigm of haptic human computer interfaces consisting of three components, i. e. human user, interface device, and virtual environment; from \cite{wang19}}
+	\label{fig:hci}
+\end{figure}
+
+A schematic of the general paradigm of haptic human computer interfaces is shown in figure \ref{fig:hci}. It consists of three main components:
+\begin{itemize}
+	\item the user, who perceives virtual objects through biological receptors, processes them in the somatosensory and motor cortex, and requests manipulation by mechanical movement,
+	\item the interface device which causes perception via actuation and collects information about requested manipulation with its sensors,
+	\item the virtual environment which evaluates the interface device's data, realizes the manipulation of virtual objects with possible constraints, and motivates actuation in the interface device via haptic feedback.
+\end{itemize}
+
+As the following examples will demonstrate, not all data gloves are designed with the capability of both sensing and actuation. Some are only used to evaluate the user's hand pose, and it is conceivable to deal only with the issue of actuation and utilize an external device for sensing, such as Leap Motion. However, actuation on its own does not seem useful, as it needs to variable based on the current hand pose.
 
 \chapter{Development}
 \section{Devices and Software}
