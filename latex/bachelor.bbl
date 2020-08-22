@@ -1,9 +1,31 @@
 \newcommand{\etalchar}[1]{$^{#1}$}
 \begin{thebibliography}{WGL{\etalchar{+}}19}
 
+\bibitem[KS18]{kakoty18}
+Nayan~M. Kakoty and Manalee~Dev Sharma.
+\newblock Recognition of sign language alphabets and numbers based on hand
+  kinematics using a data glove.
+\newblock {\em Procedia Computer Science}, 133:55 -- 62, 2018.
+\newblock International Conference on Robotics and Smart Manufacturing
+  (RoSMa2018).
+
 \bibitem[lea]{leaphand}
 Introducing the skeletal tracking model.
 \newblock accessed 18 Aug 2020.
+
+\bibitem[LHT{\etalchar{+}}19]{li19}
+Yang LI, Jin HUANG, Feng TIAN, Hong-An WANG, and Guo-Zhong DAI.
+\newblock Gesture interaction in virtual reality.
+\newblock {\em Virtual Reality \& Intelligent Hardware}, 1(1):84 -- 112, 2019.
+
+\bibitem[MRB{\etalchar{+}}19]{maitre19}
+Julien Maitre, Clément Rendu, Kévin Bouchard, Bruno Bouchard, and Sébastien
+  Gaboury.
+\newblock Basic daily activity recognition with a data glove.
+\newblock {\em Procedia Computer Science}, 151:108 -- 115, 2019.
+\newblock The 10th International Conference on Ambient Systems, Networks and
+  Technologies (ANT 2019) / The 2nd International Conference on Emerging Data
+  and Industry 4.0 (EDI40 2019) / Affiliated Workshops.
 
 \bibitem[qua]{quat_to_euler}
 Conversion between quaternions and euler angles.

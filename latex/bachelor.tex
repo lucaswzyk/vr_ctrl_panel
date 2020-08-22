@@ -40,6 +40,7 @@ Star Trek and Enterprise are copyright Paramount Pictures.}
 \abstractde{ abstract text german}
 
 \usepackage{subcaption}
+\usepackage{algpseudocode}
 
 \usepackage{glossaries}
 \newglossary[tlg]{gloss_terms}{tld}{tdn}{Glossary}
@@ -56,7 +57,7 @@ Star Trek and Enterprise are copyright Paramount Pictures.}
 \chapter{Introduction}
 What makes a good \acrfull{vr} application? What qualities should it have and how well developed is the necessary technology? In their review \emph{Haptic display for virtual reality: progress and challenges}\newcite{wang19}, Wang et al. state that \gls{vr} was born in 1965 with Ivan Sutherlands proposal of a concept named "The Ultimate Display"\newcite{sutherland65}. In that report of the IFIP Congress, Sutherland names immersion, interaction and imagination as three important features of \acrshort{vr}. 
 
-There has been a multitude of approaches to making interaction with virtual environments possible\newcite{li19}. Touch screens and stylus pens have become quite common in everyday life. Devices capable of capturing scene depth like Microsoft Kinect and Leap Motion make touchless interaction possible, e. g. during games. This thesis focuses especially on wearable devices called \emph{data gloves}.
+There has been a multitude of approaches to making interaction with virtual environments possible\newcite{li19}. Touch screens and stylus pens have become quite common in everyday life. Devices capable of capturing scene depth like Microsoft Kinect and Leap Motion make touchless interaction possible, e.g. during games. This thesis focuses especially on wearable devices called \emph{data gloves}.
 
 \section{Principles of Data Gloves}
 The general principles of data gloves can be divided into two main parts: sensing and actuation. The first part deals with the issue of capturing a user's hand poses and motions and relaying that information to a computer for further processing. In most cases, a fabric glove is equipped with an \acrfull{imu} placed on each rigid hand part or flex sensors placed on joints. The latter have the advantage of measuring absolute values which, however, are only scalar and need further interpretation involving anatomical knowledge ("Something is happening: we have a $ .7 $."). An \acrfull{imu}, on the other hand, usually accumulates an absolute measurement from instantaneous rates of change, but can be designed to return 3D rotations and positions ("The index is facing upwards.").
@@ -79,6 +80,78 @@ A schematic of the general paradigm of haptic human computer interfaces is shown
 
 As the following examples will demonstrate, not all data gloves are designed with the capability of both sensing and actuation. Some are only used to evaluate the user's hand pose, and it is conceivable to deal only with the issue of actuation and utilize an external device for sensing, such as Leap Motion. However, actuation on its own does not seem useful, as it needs to variable based on the current hand pose.
 
+\section{Examples and Applications of Data Gloves}
+\subsection{Sign Language Recognition}
+In 2018, Kakoty et al. developed a data glove and processing system for the recognition of sign language alphabets (Indian, American and numbers) and their translation into speech\newcite{kakoty18}. In their paper, several earlier projects with similar purposes are reviewed, most of which are vision based. The authors point out that glove based systems are more useful because they "[$\dots$] allow one with the freedom for locomotion during the recognition process and [are] independent of the environmental lighting conditions."
+
+\begin{figure}
+	\begin{subfigure}{.4\linewidth}
+		\includegraphics[width=\linewidth]{../pics/kakoty_glove}
+		\caption{Data glove developed by Kakoty et al.}
+		\label{fig:kakoty_glove}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.43\linewidth}
+		\includegraphics[width=\linewidth]{../pics/kakoty_principle}
+		\caption{Proposed methodology for sign language recognition}
+		\label{fig:kakoty_principle}
+	\end{subfigure}
+	\caption[A system for sign language recognition]{A system for sign language recognition; from \cite{kakoty18}}
+	\label{fig:kakoty}
+\end{figure}
+
+The data glove used for this project is shown in figure \ref{fig:kakoty_glove}. It was constructed from a leather glove by equipping it with ten angle sensors, a microcontroller, and a transceiver module. The original paper describes this design in detail.
+
+A preprocessing unit as in figure \ref{fig:kakoty_principle} handles the conversion from sensor output voltage to denoised, constrained standardized feature vectors. These are then processed by a radial base function kernel support vector machine and finally, the recognized sign language is translated into speech using label matching with a pre-recorded speech database. The whole process is implemented to run in real-time with the sensor data acquisition.
+
+With an average recognition rate of 96.7\%, this approach achieves similar results as previous projects while recognizing more alphabets. Kakoty et al. further conclude that their approach "[$\dots$] overcomes the limitations of vision based systems. [$\dots$] An extension of the presented work for sentence-based sign language recognition will lead to an enterprising device; which is part of on-going research."
+
+\subsection{Daily Activity Recognition}
+Alzheimer's disease is a common cause for the loss of cognitive abilities amongst the elderly. Well known symptoms include language problems, loss of memory and degrading functioning of the hand. To better understand the latter, Maitre et al. investigated a method to recognize daily activities using a data glove developed over the course of the project\newcite{maitre19}.
+
+\begin{figure}
+	\begin{subfigure}{.57\linewidth}
+		\includegraphics[width=\linewidth]{../pics/maitre_sensors}
+		\caption{Arrangement of sensors on the hand}
+		\label{fig:maitre_sensors}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.3\linewidth}
+		\includegraphics[width=\linewidth]{../pics/maitre_glove}
+		\caption{Prototype device}
+		\label{fig:maitre_glove}
+	\end{subfigure}
+
+	\vspace{.5cm}
+	\begin{subfigure}{\linewidth}
+		\includegraphics[width=\linewidth]{../pics/maitre_results}
+		\caption{Evaluation of the recognition results}
+		\label{fig:maitre_results}
+	\end{subfigure}
+	\caption[A data glove for recognition of basic daily activities]{A data glove for recognition of basic daily activities; from \cite{maitre19}}
+	\label{fig:maitre}
+\end{figure}
+
+Several reasons are named as motivation to develop the device from scratch:
+\begin{itemize}
+	\item Prices for commercial data gloves are situated between ca. 600 USD and several thousand USD. The authors propose a design that can be recreated for only about 220 USD.
+	\item Commercial gloves are generally only compatible with Windows, but the SDK is not suitable for many other sensors.
+	\item The new design can be specialized for recognizing the required types of grasp.
+\end{itemize}
+
+Discerning a daily activity is based on recognizing the involved item, e.g. a plate for the task \emph{Hold a plate}. For this, the presence of an object needs to be detected and information about its shape is required. Figure \ref{fig:maitre_sensors} shows the resulting sensor locations, where red and yellow mark flex sensors and blue marks force sensors. A prototype device can be seen in figure \ref{fig:maitre_glove}. 
+
+A group of nine participants was asked to perform the daily activities listed in the evaluation tables in figure \ref{fig:maitre_results}. The acquired data sets were used to train (70\%) and test (30\%) a k Nearest Neighbours (k-NN) model whose precision (P), recall (R) and f-score (F) can be found in the left table, and a random forest (RF) to which the right table refers.
+
+Maitre et al. conclude that the performance of their approach is "[$\dots$] almost perfect [$\dots$]. This result is surprising and encouraging [$\dots$]." Another experiment shows that both models perform significantly worse on data collected from a person that was not recorded during training. The authors therefore suggest to train the models with data from a patient that is supposed to use the system. The device can then even be worn in the comfort of the patient's home to monitor their hand activity.
+
+\subsection{Refined Myoelectric Control in Below-Elbow Amputees}
+
+\subsection{Commercial Products}
+Dexmo, CyberGrasp, \Gls{AVR}
+
+\subsection{A Lightweight Force-Feedback Glove}
+
 \chapter{Development}
 \section{Devices and Software}
 \begin{figure}
@@ -97,7 +170,7 @@ As the following examples will demonstrate, not all data gloves are designed wit
 	\label{fig:devices}
 \end{figure}
 
-For the purpose of thesis, I used a pair of haptic gloves called Avatar VR which is a registered trademark of NeuroDigital Technologies, S. L., referred to as \acrshort{nd} hereafter. The company's details can be found at \url{neurodigital.es}.
+For the purpose of thesis, I used a pair of haptic gloves called Avatar VR which is a registered trademark of NeuroDigital Technologies, S. L.\newcite{nd}, referred to as \acrshort{nd} hereafter..
 
 To use the Avatar VR on a computer, one needs to download, install and run the \acrshort{nd} Suite. This program provides a background service and GUI for managing and accessing the devices. A connection can be established via Bluetooth after which all sensor data is graphically displayed in the GUI.
 
@@ -116,7 +189,7 @@ A user can view the plugin on a computer screen with the \lstinline|cgv_viewer| 
 	\label{fig:uml}
 \end{figure}
 
-When developing a VR user interface, the first question is: what is it supposed to do? To give this some context rather than just moving boxes, I decided to design it as a conn panel on the USS Voyager (Star Trek). The term \emph{conn} is short for \emph{control and navigation}, meaning the panel is used to stear the ship. The classes used to implement this and their interaction are shown in figure \ref{fig:uml}.
+The following sections describe the development of a VR user interface utilizing these technologies in real-time. To give this some context rather than just moving boxes, I decided to design it as a conn panel on the USS Voyager (Star Trek). The term \emph{conn} is short for \emph{control and navigation}, meaning the panel is used to stear the ship. The classes used to implement this and their interaction are shown in figure \ref{fig:uml}.
 
 The main class and entry point carries the same name as the plugin itself. It is derived from the \gls{CGV} classes \lstinline|base|, \lstinline|drawable|, \lstinline|event_handler| and \lstinline|provider|, and used for management of all objects. Its capability to handle \lstinline|vr_pose_events| is used to forward tracker poses (position and orientation) to the \lstinline|hands| and \acrshort{hmd} poses to the \lstinline|head_up_display|. It distributes \lstinline|draw()| commands among the relevant members and manages the calibration routine described in section \ref{sec:cal}. This is the only class registered via object registration.
 
@@ -197,40 +270,13 @@ The Avatar VR is equipped with three kinds of sensors:
 Furthermore, there are actuators at the locations marked in blue in figure \ref{fig:av_tech:actuators}. These can be used to generate vibrations of variable intensity as haptic feedback in a way that "[$\dots$] the brain perceives it as 'Real Touch' input", according to the producer.
 
 \subsection{Using Data From the Avatar VR to Visualize the User's Hand}
-The same model used by the Leap Motion API version 2.0 will also be used here. Leap captures absolute joint positions and optimizes them for visualization. In contrast, my approach for the Avatar VR is to use a fixed resting state geometry of the user's hand (bone lengths and resting state joint positions). At the time of a \lstinline|draw()| command, the geometry is adjusted according to the data given by the glove and the Vive tracker. 
+The same model used by the Leap Motion API version 2.0 will also be used here. Leap captures absolute joint positions and optimizes them for visualization. In contrast, my approach for the Avatar VR is to use a fixed resting state geometry of the user's hand (bone lengths and resting state joint positions). At the time of a \lstinline|draw()| command, the geometry is adjusted according to the data given by the glove and the Vive tracker. The joint position data is managed by the struct shown in figure \ref{fig:joint_positions} (only most important parts included).
 
-The joint position data is managed by the following struct (only most important parts included):
-\begin{lstlisting}
-	struct joint_positions {
-		// positions of hand joints in model space
-		// structure: hand_part<phalanx<position>>
-		vector<vector<vec3>> positions;
-		// positions linearized in hand_part major format
-		// set by make_array() 
-		vector<vec3> linearized;
-		// correspondence of indices in linearized
-		// to double indices in positions
-		map<int, pair<int, int>> lin_to_anat;
-				
-		// rotate complete part
-		void rotate(int part, quat rotation) {...}
-		
-		// translate complete part along neg. z-axis
-		void translate_neg_z(int part, float z) {...}
-		
-		// translate all positions
-		// used to move hand from construction origin
-		// to model view location
-		void translate(vec3 translation) {...}
-		
-		// scale all positions
-		// used to realize hand size at construction origin
-		void scale(float scale) {...}
-		
-		// generate linearized from positions
-		vector<vec3> make_array() {...}
-	};
-\end{lstlisting}
+\begin{figure}
+	\includegraphics[width=.4\linewidth]{../pics/joint_positions}
+	\caption{Struct for managing positions of hand joints}
+	\label{fig:joint_positions}
+\end{figure}
 
 First, the palm joints' resting positions are rotated according to the orientation given by the Vive tracker. The construction of each finger begins at the end joint of the \gls{DPh} which is translated along the negative $ z $-axis by the hard-coded length of the \gls{DPh} and rotated by the respective quaternion (see below). The other phalanges are constructed in the same manner, before the whole finger is translated to the respective \gls{MPJ}. Finally, the whole hand is scaled to model view space and translated to the model view position of the Vive tracker.
 
@@ -263,55 +309,18 @@ Since the interphalangeal jionts act as revolute joints, only a roll component c
 
 A schematic of the spherical shell used to simulate space is shown in figure \ref{fig:space}. The outer radius determines the overall size of the sphere. A spherical region around the user that does not contain any stars is defined by the inner radius. This should include the complete bridge mesh to assure stars are only visible to the user on the view screen. Congruent with other parts of the plugin, the flight and view direction points along the negative $ z $-axis. 
 
-Stars are rendered as small spheres whose radii follow a normal distribution. The shell is initialized with a constant number of stars with uniformally distributed positions. It saves the forward and angular speeds as float values. During a \lstinline|draw()| call, the method \lstinline|update()| calculates new positions for all stars. The following code is explained below.
+Stars are rendered as small spheres whose radii follow a normal distribution. The shell is initialized with a constant number of stars with uniformally distributed positions. It saves the forward and angular speeds as float values. During a \lstinline|draw()| call, the method \lstinline|update()| calculates new positions for all stars. It can be summarized as follows:
 
-\begin{lstlisting}
-void update()
-{
-	// to ensure realistic movement independent of frame rate
-	chrono::steady_clock::time_point now = chrono::steady_clock::now();
-	float ms_elapsed = chrono::duration_cast<chrono::milliseconds>(now - last_update).count();
-	
-	float distance_elapsed = speed_ahead * ms_elapsed;
-	vec3 angles = ms_elapsed * vec3(speed_pitch, speed_yaw, speed_roll);
-	mat3 rotation = cgv::math::rotate3(angles),
-	     inv_rotation = cgv::math::rotate3(-r_out / 2 * angles);
-	
-	vec3 p;
-	for (size_t i = 0; i < num_stars; i++)
-	{
-		// the following lines model dead ahead movement
-		p = positions[i];
-		float l = p.length();
-		p.normalize();
-		// now, p.z() is the cosine of the angle between
-		// p and the pos. z-axis
-		p *= l + p.z() * distance_elapsed;
-		// translate p to model space
-		p += origin;
-		
-		// check if p is outside the shell
-		if (p.length() > r_out)
-		{
-			// get random angles from uniform distribution
-			float alpha = dis_angles(gen), beta = dis_angles(gen);
-			// init new position on spawn sphere
-			p = r_out / 10 * vec3(
-				sin(alpha) * cos(beta),
-				sin(beta),
-				cos(alpha) * cos(beta)
-			) + origin;
-			positions[i] = inv_rotation * p - origin;
-		}
-		else
-		{
-			positions[i] = rotation * p - origin;
-		}
-	}
-
-	last_update = now;
-}
-\end{lstlisting}
+\begin{algorithmic}
+	\ForAll{stars}
+		\State Move star away from origin
+		\If{star is outside of shell}
+			\State Respawn star
+		\Else
+			\State Rotate star around user
+		\EndIf
+	\EndFor
+\end{algorithmic}
 
 To somewhat simplify the math behind this calculation, I used the point on the outer hull right in front of the user as origin for the shell space, instead of the center of the shell. The origin is marked with a cross in figure \ref{fig:space}. A model view matrix then translates the shell to model space. 
 
@@ -321,7 +330,7 @@ If a star moves outside the outer hull of the shell, its position is re-initiali
 
 An additional rotation is realized by simply rotating the stars around the user. After some experimenting, I realized the spawn sphere needs to be rotated inversely around the user as well to achieve a realistic experience and because otherwise, the newly spawned stars converge to a line at slow forward motion and fast rotations.
 
-\section{calibration} \label{sec:cal}
+\section{Calibration} \label{sec:cal}
 To make it possible to use \gls{VCP} in different rooms and setups, a calibration routine is required. This can be activated by joining index and thumb of one hand for three seconds. The objects in the scene are then no longer rendered.
 
 The user position is determined from the \acrshort{hmd} if connected. Otherwise, the user is asked to tap index and thumb above their head and the position of the respective tracker at that time is used.

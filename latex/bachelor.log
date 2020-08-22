@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  21 AUG 2020 19:21
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  22 AUG 2020 23:13
 entering extended mode
 **./bachelor.tex
 (bachelor.tex
@@ -665,12 +665,31 @@ Package: ltcaption 2020/05/30 v1.4b longtable captions (AR)
 \c@subfigure=\count284
 \c@subtable=\count285
 )
-("C:\Program Files\MiKTeX\tex/latex/glossaries/base\glossaries.sty"
-Package: glossaries 2020/03/19 v4.46 (NLCT)
+("C:\Program Files\MiKTeX\tex/latex/algorithmicx\algpseudocode.sty"
+Package: algpseudocode 
 
 ("C:\Program Files\MiKTeX\tex/latex/base\ifthen.sty"
 Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
 )
+("C:\Program Files\MiKTeX\tex/latex/algorithmicx\algorithmicx.sty"
+Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
+
+Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
+\c@ALG@line=\count286
+\c@ALG@rem=\count287
+\c@ALG@nested=\count288
+\ALG@tlm=\skip83
+\ALG@thistlm=\skip84
+\c@ALG@Lnr=\count289
+\c@ALG@blocknr=\count290
+\c@ALG@storecount=\count291
+\c@ALG@tmpcounter=\count292
+\ALG@tmplength=\skip85
+)
+Document Style - pseudocode environments for use with the `algorithmicx' style
+) ("C:\Program Files\MiKTeX\tex/latex/glossaries/base\glossaries.sty"
+Package: glossaries 2020/03/19 v4.46 (NLCT)
+
 ("C:\Program Files\MiKTeX\tex/latex/xkeyval\xkeyval.sty"
 Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
 
@@ -679,7 +698,7 @@ Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
 \XKV@toks=\toks28
 \XKV@tempa@toks=\toks29
 )
-\XKV@depth=\count286
+\XKV@depth=\count293
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 ("C:\Program Files\MiKTeX\tex/latex/mfirstuc\mfirstuc.sty"
@@ -687,7 +706,7 @@ Package: mfirstuc 2017/11/14 v2.06 (NLCT)
 
 ("C:\Program Files\MiKTeX\tex/latex/etoolbox\etoolbox.sty"
 Package: etoolbox 2019/09/21 v2.5h e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count287
+\etb@tempcnta=\count294
 )
 \@glsmfirst=\toks30
 \@glsmrest=\toks31
@@ -703,7 +722,7 @@ Package: datatool-base 2019/09/27 v2.32 (NLCT)
 
 ("C:\Program Files\MiKTeX\tex/latex/substr\substr.sty"
 Package: substr 2009/10/20 v1.2 Handle substrings
-\c@su@anzahl=\count288
+\c@su@anzahl=\count295
 )
 ("C:\Program Files\MiKTeX\tex/latex/datatool\datatool-fp.sty"
 Package: datatool-fp 2019/09/27 v2.32 (NLCT)
@@ -714,19 +733,19 @@ Package: fp 1995/04/02
 `Fixed Point Package', Version 0.8, April 2, 1995 (C) Michael Mehlich
 ("C:\Program Files\MiKTeX\tex/latex/fp\defpattern.sty"
 Package: defpattern 1994/10/12
-\actioncount=\count289
+\actioncount=\count296
 )
 ("C:\Program Files\MiKTeX\tex/latex/fp\fp-basic.sty"
 Package: fp-basic 1996/05/13
-\FP@xs=\count290
-\FP@xia=\count291
-\FP@xib=\count292
-\FP@xfa=\count293
-\FP@xfb=\count294
-\FP@rega=\count295
-\FP@regb=\count296
-\FP@regs=\count297
-\FP@times=\count298
+\FP@xs=\count297
+\FP@xia=\count298
+\FP@xib=\count299
+\FP@xfa=\count300
+\FP@xfb=\count301
+\FP@rega=\count302
+\FP@regb=\count303
+\FP@regs=\count304
+\FP@times=\count305
 )
 ("C:\Program Files\MiKTeX\tex/latex/fp\fp-addons.sty"
 Package: fp-addons 1995/03/15
@@ -745,7 +764,7 @@ Package: fp-pas 1994/08/29
 )
 ("C:\Program Files\MiKTeX\tex/latex/fp\fp-random.sty"
 Package: fp-random 1995/02/23
-\FPseed=\count299
+\FPseed=\count306
 )
 ("C:\Program Files\MiKTeX\tex/latex/fp\fp-eqn.sty"
 Package: fp-eqn 1995/04/03
@@ -757,22 +776,22 @@ Package: fp-upn 1996/10/21
 Package: fp-eval 1995/04/03
 )))
 \@dtl@toks=\toks32
-\@dtl@tmpcount=\count300
-\dtl@tmplength=\skip83
-\dtl@sortresult=\count301
-\@dtl@numgrpsepcount=\count302
-\@dtl@datatype=\count303
-\dtl@codeA=\count304
-\dtl@codeB=\count305
-\@dtl@foreach@level=\count306
+\@dtl@tmpcount=\count307
+\dtl@tmplength=\skip86
+\dtl@sortresult=\count308
+\@dtl@numgrpsepcount=\count309
+\@dtl@datatype=\count310
+\dtl@codeA=\count311
+\dtl@codeB=\count312
+\@dtl@foreach@level=\count313
 )
 ("C:\Program Files\MiKTeX\tex/latex/glossaries/base\glossaries-compatible-307.s
 ty"
 Package: glossaries-compatible-307 2020/03/19 v4.46 (NLCT)
 )
-\gls@level=\count307
+\gls@level=\count314
 \@gls@tmpb=\toks33
-\gls@tmplen=\skip84
+\gls@tmplen=\skip87
 \glskeylisttok=\toks34
 \glslabeltok=\toks35
 \glsshorttok=\toks36
@@ -781,23 +800,23 @@ Package: glossaries-compatible-307 2020/03/19 v4.46 (NLCT)
 Package: glossary-hypernav 2020/03/19 v4.46 (NLCT)
 ) ("C:\Program Files\MiKTeX\tex/latex/glossaries/styles\glossary-list.sty"
 Package: glossary-list 2020/03/19 v4.46 (NLCT)
-\glslistdottedwidth=\skip85
+\glslistdottedwidth=\skip88
 )
 ("C:\Program Files\MiKTeX\tex/latex/glossaries/styles\glossary-long.sty"
 Package: glossary-long 2020/03/19 v4.46 (NLCT)
-\glsdescwidth=\skip86
-\glspagelistwidth=\skip87
+\glsdescwidth=\skip89
+\glspagelistwidth=\skip90
 )
 ("C:\Program Files\MiKTeX\tex/latex/glossaries/styles\glossary-super.sty"
 Package: glossary-super 2020/03/19 v4.46 (NLCT)
 
 ("C:\Program Files\MiKTeX\tex/latex/supertabular\supertabular.sty"
 Package: supertabular 2020/02/02 v4.1g the supertabular environment
-\c@tracingst=\count308
+\c@tracingst=\count315
 \ST@wd=\dimen169
-\ST@rightskip=\skip88
-\ST@leftskip=\skip89
-\ST@parfillskip=\skip90
+\ST@rightskip=\skip91
+\ST@leftskip=\skip92
+\ST@parfillskip=\skip93
 \ST@pageleft=\dimen170
 \ST@headht=\dimen171
 \ST@tailht=\dimen172
@@ -811,70 +830,70 @@ Package: supertabular 2020/02/02 v4.1g the supertabular environment
 ))
 ("C:\Program Files\MiKTeX\tex/latex/glossaries/styles\glossary-tree.sty"
 Package: glossary-tree 2020/03/19 v4.46 (NLCT)
-\glstreeindent=\skip91
+\glstreeindent=\skip94
 ))
 \glswrite=\write4
 \glo@main@file=\write5
 \openout5 = `bachelor.glo'.
 
-Package glossaries Info: Writing glossary file bachelor.glo on input line 47.
+Package glossaries Info: Writing glossary file bachelor.glo on input line 48.
 \glo@gloss_terms@file=\write6
 \openout6 = `bachelor.tdn'.
 
-Package glossaries Info: Writing glossary file bachelor.tdn on input line 47.
+Package glossaries Info: Writing glossary file bachelor.tdn on input line 48.
 \glo@gloss_acr@file=\write7
 \openout7 = `bachelor.stn'.
 
-Package glossaries Info: Writing glossary file bachelor.stn on input line 47.
+Package glossaries Info: Writing glossary file bachelor.stn on input line 48.
 
 (gloss_terms.tex) (gloss_acr.tex)
 ("C:\Program Files\MiKTeX\tex/latex/l3backend\l3backend-pdfmode.def"
 File: l3backend-pdfmode.def 2020-06-23 L3 backend support: PDF mode
-\l__kernel_color_stack_int=\count309
+\l__kernel_color_stack_int=\count316
 \l__pdf_internal_box=\box59
 )
 (bachelor.aux)
 \openout1 = `bachelor.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
  ("C:\Program Files\MiKTeX\tex/context/base/mkii\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count310
+\scratchcounter=\count317
 \scratchdimen=\dimen179
 \scratchbox=\box60
-\nofMPsegments=\count311
-\nofMParguments=\count312
+\nofMPsegments=\count318
+\nofMParguments=\count319
 \everyMPshowfont=\toks38
-\MPscratchCnt=\count313
+\MPscratchCnt=\count320
 \MPscratchDim=\dimen180
-\MPnumerator=\count314
-\makeMPintoPDFobject=\count315
+\MPnumerator=\count321
+\makeMPintoPDFobject=\count322
 \everyMPtoPDFconversion=\toks39
 ) ("C:\Program Files\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty"
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 85.
 )
-Package scrbase Info: activating english \contentsname on input line 53.
-Package scrbase Info: activating english \listfigurename on input line 53.
-Package scrbase Info: activating english \listtablename on input line 53.
+Package scrbase Info: activating english \contentsname on input line 54.
+Package scrbase Info: activating english \listfigurename on input line 54.
+Package scrbase Info: activating english \listtablename on input line 54.
 \AtBeginShipoutBox=\box61
-Package hyperref Info: Link coloring OFF on input line 53.
+Package hyperref Info: Link coloring OFF on input line 54.
 
 ("C:\Program Files\MiKTeX\tex/latex/hyperref\nameref.sty"
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
@@ -885,11 +904,11 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 ("C:\Program Files\MiKTeX\tex/generic/gettitlestring\gettitlestring.sty"
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count316
+\c@section@level=\count323
 )
-LaTeX Info: Redefining \ref on input line 53.
-LaTeX Info: Redefining \pageref on input line 53.
-LaTeX Info: Redefining \nameref on input line 53.
+LaTeX Info: Redefining \ref on input line 54.
+LaTeX Info: Redefining \pageref on input line 54.
+LaTeX Info: Redefining \nameref on input line 54.
 
 (bachelor.out) (bachelor.out)
 \@outlinefile=\write8
@@ -902,7 +921,7 @@ Class scrreprt Info: loading recommended package `bookmark'.
 (scrreprt)           `bookmarkpackage=false' before \begin{document} and
 (scrreprt)           you can avoid this message adding:
 (scrreprt)             \usepackage{bookmark}
-(scrreprt)           before \begin{document} on input line 53.
+(scrreprt)           before \begin{document} on input line 54.
 
 ("C:\Program Files\MiKTeX\tex/latex/bookmark\bookmark.sty"
 Package: bookmark 2019/12/03 v1.28 PDF bookmarks (HO)
@@ -912,9 +931,9 @@ File: bkm-pdftex.def 2019/12/03 v1.28 bookmark driver for pdfTeX (HO)
 Package auxhook Info: \AddLineBeginMainAux comes a little late,
 (auxhook)             because the main .aux file is already opened on input lin
 e 168.
-\BKM@id=\count317
+\BKM@id=\count324
 ))
-\c@lstlisting=\count318
+\c@lstlisting=\count325
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: supertabular package is loaded.
 Package caption Info: End \AtBeginDocument code.
@@ -924,7 +943,7 @@ Package caption Info: End \AtBeginDocument code.
 
 
 {C:/Users/CC42D/AppData/Local/MiKTeX/pdftex/config/pdftex.map}]
-LaTeX Font Info:    Trying to load font information for T1+phv on input line 53
+LaTeX Font Info:    Trying to load font information for T1+phv on input line 54
 .
 
 ("C:\Program Files\MiKTeX\tex/latex/psnfss\t1phv.fd"
@@ -934,7 +953,7 @@ File: t1phv.fd 2020/03/25 scalable font definitions for T1/phv.
 
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 53--53
+Underfull \hbox (badness 10000) in paragraph at lines 54--54
 
  []
 
@@ -960,7 +979,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.53 \begin{document}
+l.54 \begin{document}
                       [1
 
 
@@ -968,7 +987,7 @@ l.53 \begin{document}
  been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.56 \chapter
+l.57 \chapter
              {Introduction} [2
 
 ]
@@ -989,147 +1008,188 @@ Class scrreprt Warning: \float@addtolists detected!
 (scrreprt)              deprecated \float@addtolist interface.
 
 
-LaTeX Warning: Citation `li19' on page 3 undefined on input line 59.
+Overfull \hbox (7.37953pt too wide) in paragraph at lines 60--61
+[]\T1/ptm/m/n/10.95 There has been a mul-ti-tude of ap-proaches to mak-ing in-t
+er-ac-tion with vir-tual en-vi-ron-ments possible$[]$.
+ []
 
-<../pics/wang01.jpg, id=81, 340.2446pt x 156.05203pt>
+<../pics/wang01.jpg, id=97, 340.2446pt x 156.05203pt>
 File: ../pics/wang01.jpg Graphic file (type jpg)
 <use ../pics/wang01.jpg>
-Package pdftex.def Info: ../pics/wang01.jpg  used on input line 68.
+Package pdftex.def Info: ../pics/wang01.jpg  used on input line 69.
 (pdftex.def)             Requested size: 364.19664pt x 167.04782pt.
 pdfTeX warning (ext4): destination with the same identifier (name{page.3}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.71 \end{figure}
+l.72 \end{figure}
                   [3
 
 ]
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 7
-5.
+6.
  ("C:\Program Files\MiKTeX\tex/latex/psnfss\ts1ptm.fd"
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )pdfTeX warning (ext4): destination with the same identifier (name{page.4}) has
  been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.82 \chapter
-             {Development} [4 <../pics/wang01.jpg>]
+l.86 
+      [4 <../pics/wang01.jpg>]
+<../pics/kakoty_glove.png, id=126, 320.69812pt x 516.42938pt>
+File: ../pics/kakoty_glove.png Graphic file (type png)
+<use ../pics/kakoty_glove.png>
+Package pdftex.def Info: ../pics/kakoty_glove.png  used on input line 89.
+(pdftex.def)             Requested size: 182.09485pt x 293.24095pt.
+<../pics/kakoty_principle.png, id=128, 401.24907pt x 566.115pt>
+File: ../pics/kakoty_principle.png Graphic file (type png)
+<use ../pics/kakoty_principle.png>
+Package pdftex.def Info: ../pics/kakoty_principle.png  used on input line 95.
+(pdftex.def)             Requested size: 195.75162pt x 276.18942pt.
+
+Underfull \hbox (badness 2334) in paragraph at lines 96--96
+[][][]|\T1/ptm/m/n/10 Pro-posed method-ol-ogy for sign lan-guage
+ []
+
+[5 <../pics/kakoty_glove.png> <../pics/kakoty_principle.png>]
+<../pics/maitre_sensors.png, id=144, 298.11375pt x 228.10219pt>
+File: ../pics/maitre_sensors.png Graphic file (type png)
+<use ../pics/maitre_sensors.png>
+Package pdftex.def Info: ../pics/maitre_sensors.png  used on input line 114.
+(pdftex.def)             Requested size: 259.49245pt x 198.56213pt.
+<../pics/maitre_glove.png, id=145, 153.57375pt x 225.84375pt>
+File: ../pics/maitre_glove.png Graphic file (type png)
+<use ../pics/maitre_glove.png>
+Package pdftex.def Info: ../pics/maitre_glove.png  used on input line 120.
+(pdftex.def)             Requested size: 136.5746pt x 200.859pt.
+<../pics/maitre_results.png, id=146, 1238.37656pt x 424.58624pt>
+File: ../pics/maitre_results.png Graphic file (type png)
+<use ../pics/maitre_results.png>
+Package pdftex.def Info: ../pics/maitre_results.png  used on input line 127.
+(pdftex.def)             Requested size: 455.24408pt x 156.08377pt.
+ [6 <../pics/maitre_sensors.png> <../pics/maitre_glove.png> <../pics/maitre_res
+ults.png>]
+[7]
 chapter 2.
-<../pics/devices_uncoupled.jpg, id=105, 722.7pt x 722.7pt>
+<../pics/devices_uncoupled.jpg, id=167, 722.7pt x 722.7pt>
 File: ../pics/devices_uncoupled.jpg Graphic file (type jpg)
 <use ../pics/devices_uncoupled.jpg>
-Package pdftex.def Info: ../pics/devices_uncoupled.jpg  used on input line 86.
+Package pdftex.def Info: ../pics/devices_uncoupled.jpg  used on input line 159.
+
 (pdftex.def)             Requested size: 223.0721pt x 223.07529pt.
-<../pics/devices_coupled.jpg, id=106, 722.7pt x 722.7pt>
+<../pics/devices_coupled.jpg, id=168, 722.7pt x 722.7pt>
 File: ../pics/devices_coupled.jpg Graphic file (type jpg)
 <use ../pics/devices_coupled.jpg>
-Package pdftex.def Info: ../pics/devices_coupled.jpg  used on input line 92.
+Package pdftex.def Info: ../pics/devices_coupled.jpg  used on input line 165.
 (pdftex.def)             Requested size: 223.0721pt x 223.07529pt.
-LaTeX Font Info:    Trying to load font information for T1+pcr on input line 10
-0.
+
+LaTeX Warning: Citation `nd' on page 8 undefined on input line 173.
+
+LaTeX Font Info:    Trying to load font information for T1+pcr on input line 17
+7.
 ("C:\Program Files\MiKTeX\tex/latex/psnfss\t1pcr.fd"
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
-<../pics/uml.png, id=118, 1205.50375pt x 1958.31625pt>
+<../pics/uml.png, id=179, 1205.50375pt x 1958.31625pt>
 File: ../pics/uml.png Graphic file (type png)
 <use ../pics/uml.png>
-Package pdftex.def Info: ../pics/uml.png  used on input line 114.
+Package pdftex.def Info: ../pics/uml.png  used on input line 187.
 (pdftex.def)             Requested size: 455.24408pt x 739.50641pt.
 
 
-LaTeX Warning: Float too large for page by 72.81389pt on input line 117.
+LaTeX Warning: Float too large for page by 72.81389pt on input line 190.
 
-[5
+[8
 
-] [6 <../pics/devices_uncoupled.jpg> <../pics/devices_coupled.jpg>] [7 <../pics
-/uml.png>]
-<../pics/leap_anat.png, id=154, 434.37282pt x 307.1475pt>
+] [9 <../pics/devices_uncoupled.jpg> <../pics/devices_coupled.jpg>] [10 <../pic
+s/uml.png>]
+<../pics/leap_anat.png, id=216, 434.37282pt x 307.1475pt>
 File: ../pics/leap_anat.png Graphic file (type png)
 <use ../pics/leap_anat.png>
-Package pdftex.def Info: ../pics/leap_anat.png  used on input line 139.
+Package pdftex.def Info: ../pics/leap_anat.png  used on input line 212.
 (pdftex.def)             Requested size: 227.62204pt x 160.9549pt.
-<../pics/leap_example.png, id=155, 274.02374pt x 222.8325pt>
+<../pics/leap_example.png, id=217, 274.02374pt x 222.8325pt>
 File: ../pics/leap_example.png Graphic file (type png)
 <use ../pics/leap_example.png>
-Package pdftex.def Info: ../pics/leap_example.png  used on input line 145.
+Package pdftex.def Info: ../pics/leap_example.png  used on input line 218.
 (pdftex.def)             Requested size: 213.96527pt x 173.99565pt.
- [8 <../pics/leap_anat.png> <../pics/leap_example.png>]
-<../pics/av_imus.jpg, id=199, 1102.1175pt x 903.375pt>
+ [11 <../pics/leap_anat.png> <../pics/leap_example.png>]
+<../pics/av_imus.jpg, id=261, 1102.1175pt x 903.375pt>
 File: ../pics/av_imus.jpg Graphic file (type jpg)
 <use ../pics/av_imus.jpg>
-Package pdftex.def Info: ../pics/av_imus.jpg  used on input line 170.
+Package pdftex.def Info: ../pics/av_imus.jpg  used on input line 243.
 (pdftex.def)             Requested size: 455.24408pt x 373.15681pt.
-<../pics/av_contacts.jpg, id=200, 502.87875pt x 502.87875pt>
+<../pics/av_contacts.jpg, id=262, 502.87875pt x 502.87875pt>
 File: ../pics/av_contacts.jpg Graphic file (type jpg)
 <use ../pics/av_contacts.jpg>
-Package pdftex.def Info: ../pics/av_contacts.jpg  used on input line 177.
+Package pdftex.def Info: ../pics/av_contacts.jpg  used on input line 250.
 (pdftex.def)             Requested size: 204.85844pt x 204.85414pt.
-<../pics/av_actu.png, id=201, 217.81375pt x 217.81375pt>
+<../pics/av_actu.png, id=263, 217.81375pt x 217.81375pt>
 File: ../pics/av_actu.png Graphic file (type png)
 <use ../pics/av_actu.png>
-Package pdftex.def Info: ../pics/av_actu.png  used on input line 183.
+Package pdftex.def Info: ../pics/av_actu.png  used on input line 256.
 (pdftex.def)             Requested size: 204.85844pt x 204.85794pt.
- [9]
-[10 <../pics/av_imus.jpg> <../pics/av_contacts.jpg> <../pics/av_actu.png>]
-[11]
-<../pics/stars_sphere_schema.png, id=270, 1551.7975pt x 1513.655pt>
+<../pics/joint_positions.png, id=277, 624.3325pt x 951.555pt>
+File: ../pics/joint_positions.png Graphic file (type png)
+<use ../pics/joint_positions.png>
+Package pdftex.def Info: ../pics/joint_positions.png  used on input line 276.
+(pdftex.def)             Requested size: 182.09485pt x 277.5265pt.
+ [12]
+[13 <../pics/av_imus.jpg> <../pics/av_contacts.jpg> <../pics/av_actu.png>]
+[14 <../pics/joint_positions.png>]
+<../pics/stars_sphere_schema.png, id=307, 1551.7975pt x 1513.655pt>
 File: ../pics/stars_sphere_schema.png Graphic file (type png)
 <use ../pics/stars_sphere_schema.png>
-Package pdftex.def Info: ../pics/stars_sphere_schema.png  used on input line 25
-9.
+Package pdftex.def Info: ../pics/stars_sphere_schema.png  used on input line 30
+5.
 (pdftex.def)             Requested size: 318.66946pt x 310.8325pt.
-
-Overfull \hbox (15.1607pt too wide) in paragraph at lines 273--275
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-[12] [13 <../pics/stars_sphere_schema.png>] [14] (bachelor.tld [15])
-(bachelor.sot [16
+ [15 <../pics/stars_sphere_schema.png>]
+[16] (bachelor.tld [17]) (bachelor.sot [18
 
 
-]) [17
+]) [19
 
 
 ] (bachelor.bbl
 chapter without number
-) [18
+) [20
 
 
-] [19
+] [21
 
 
 
 
-] [20
+] [22
 
 
 
 ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 339.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 339.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 348.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 348.
  (bachelor.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 339.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 339.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 348.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 348.
 Package rerunfilecheck Info: File `bachelor.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
 
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 339.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 348.
  )
 (\end occurred inside a group at level 1)
 
-### semi simple group (level 1) entered at line 53 (\begingroup)
+### semi simple group (level 1) entered at line 54 (\begingroup)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 18468 strings out of 480790
- 295936 string characters out of 2907056
- 772781 words of memory out of 3000000
- 33960 multiletter control sequences out of 15000+200000
+ 18870 strings out of 480790
+ 302601 string characters out of 2907056
+ 759781 words of memory out of 3000000
+ 34411 multiletter control sequences out of 15000+200000
  594187 words of font info for 88 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,12n,77p,10113b,3672s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 60i,12n,77p,10113b,3438s stack positions out of 5000i,500n,10000p,200000b,50000s
 pdfTeX warning (dest): name{glo:CGV} has been referenced but do
 es not exist, replaced by a fixed one
 
@@ -1144,9 +1204,9 @@ rier/ucrr8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C
 :/Program Files/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTe
 X/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/tim
 es/utmri8a.pfb>
-Output written on bachelor.pdf (24 pages, 967781 bytes).
+Output written on bachelor.pdf (26 pages, 2119276 bytes).
 PDF statistics:
- 557 PDF objects out of 1000 (max. 8388607)
- 152 named destinations out of 1000 (max. 500000)
- 147 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 555 PDF objects out of 1000 (max. 8388607)
+ 90 named destinations out of 1000 (max. 500000)
+ 225 words of extra memory for PDF output out of 10000 (max. 10000000)
 

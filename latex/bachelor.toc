@@ -1,12 +1,18 @@
 \contentsline {chapter}{\numberline {1}Introduction}{3}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Principles of Data Gloves}{3}{section.1.1}%
-\contentsline {chapter}{\numberline {2}Development}{5}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Devices and Software}{5}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Project Idea and Structure}{5}{section.2.2}%
-\contentsline {section}{\numberline {2.3}Skeletal Hand Model for the Avatar VR Haptic Glove}{8}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Abstraction of the Human Hand Skeleton}{8}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}Technology and Function of the Avatar VR}{9}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}Using Data From the Avatar VR to Visualize the User's Hand}{9}{subsection.2.3.3}%
-\contentsline {section}{\numberline {2.4}Simulation of Space}{12}{section.2.4}%
-\contentsline {section}{\numberline {2.5}calibration}{14}{section.2.5}%
-\contentsline {chapter}{\nonumberline Bibliography}{18}{chapter*.14}%
+\contentsline {section}{\numberline {1.2}Examples and Applications of Data Gloves}{4}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Sign Language Recognition}{4}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}Daily Activity Recognition}{6}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.2.3}Refined Myoelectric Control in Below-Elbow Amputees}{7}{subsection.1.2.3}%
+\contentsline {subsection}{\numberline {1.2.4}Commercial Products}{7}{subsection.1.2.4}%
+\contentsline {subsection}{\numberline {1.2.5}A Lightweight Force-Feedback Glove}{7}{subsection.1.2.5}%
+\contentsline {chapter}{\numberline {2}Development}{8}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Devices and Software}{8}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Project Idea and Structure}{8}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Skeletal Hand Model for the Avatar VR Haptic Glove}{11}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Abstraction of the Human Hand Skeleton}{11}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Technology and Function of the Avatar VR}{12}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Using Data From the Avatar VR to Visualize the User's Hand}{12}{subsection.2.3.3}%
+\contentsline {section}{\numberline {2.4}Simulation of Space}{15}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Calibration}{17}{section.2.5}%
+\contentsline {chapter}{\nonumberline Bibliography}{20}{chapter*.17}%
