@@ -146,6 +146,38 @@ A group of nine participants was asked to perform the daily activities listed in
 Maitre et al. conclude that the performance of their approach is "[$\dots$] almost perfect [$\dots$]. This result is surprising and encouraging [$\dots$]." Another experiment shows that both models perform significantly worse on data collected from a person that was not recorded during training. The authors therefore suggest to train the models with data from a patient that is supposed to use the system. The device can then even be worn in the comfort of the patient's home to monitor their hand activity.
 
 \subsection{Refined Myoelectric Control in Below-Elbow Amputees}
+\begin{figure}
+	\centering
+	\begin{subfigure}{.35\linewidth}
+		\includegraphics[width=\linewidth]{../pics/amputees_poses}
+		\caption{Hand poses performed during training data acquisition}
+		\label{fig:amputees:poses}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.3\linewidth}
+		\includegraphics[width=\linewidth]{../pics/amputees_a}
+		\caption{Recognition results of phantom hand movements for a subject with traumatic amputation (Subject A)}
+		\label{fig:amputees:a}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.3\linewidth}
+		\includegraphics[width=\linewidth]{../pics/amputees_f}
+		\caption{Recognition results of phantom hand movements for a subject with congenital failure of formation (Subject F)}
+		\label{fig:amputees:f}
+	\end{subfigure}
+	\caption[Hand poses used in \cite{sebelius05} and recognition results]{Hand poses used in \cite{sebelius05} and recognition results; in (b) and (c), grey bars depict average performance, black depicts best-session performance and white the reference glove performance}
+	\label{fig:amputees}
+\end{figure}
+
+A group of PhD students in Sweden trained an \acrfull{ann} to recognize myoelectric activity of below-elbow amputees as certain hand poses\newcite{sebelius05}. To generate training data, a group of five subjects with a traumatic amputation and one subject with a congenital failure of formation was asked to perform the movements shown in figure \ref{fig:amputees:poses} with their healthy hand and their phantom hand simultaneously.
+
+The healthy hand was therewhile tracked with a data glove to match the performed movement to one of M1 - M10. The arm stump on the side of the amputation was covered with considerably many electrodes to record detailed information about the remaining myoelectric activity. The (pre-processed) data was then used to train a tree-structured \acrshort{ann}.
+
+As shown in figure \ref{fig:amputees} and more diagrams from the original paper, certain poses were recognized especially well or badly for certain subjects. An interesting process to see was how the performance of the subjects became more accurate over the course of the experiment. As this could be seen within minutes, the authors theorized, it might be due to unmasking of existing brain structures instead of the formation of new ones. 
+
+The subject with congenital failure was of special interest because it showed that some movements could be accurately induced in the phantom hand even though they had never been executed before, possibly indicating the awakening of sleeping motor cortical areas in the brain that had been present since birth. Among the subjects with traumatic amputations, the accuracy and training effect did not seem related to the time since the amputation.
+
+An important aspect for the training effect might be the simultaneous execution of movements with the healthy hand, as suggested in the original paper. The authors moreover suppose that a subject's performance might increase with visual feedback of a virtual phantom hand that was not present during these experiments. This thesis might be useful for this purpose, as it describes the use of a well established hand model in section \ref{sec:hand_model}. Work in this direction was continued by the authors of the original paper\newcite{sebelius06}.
 
 \subsection{Commercial Products}
 Dexmo, CyberGrasp, \Gls{AVR}
