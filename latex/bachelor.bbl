@@ -1,5 +1,5 @@
 \newcommand{\etalchar}[1]{$^{#1}$}
-\begin{thebibliography}{WGL{\etalchar{+}}19}
+\begin{thebibliography}{ZWW{\etalchar{+}}18}
 
 \bibitem[KS18]{kakoty18}
 Nayan~M. Kakoty and Manalee~Dev Sharma.
@@ -27,9 +27,26 @@ Julien Maitre, Clément Rendu, Kévin Bouchard, Bruno Bouchard, and Sébastien
   Technologies (ANT 2019) / The 2nd International Conference on Emerging Data
   and Industry 4.0 (EDI40 2019) / Affiliated Workshops.
 
+\bibitem[nd]{nd}
+Neurodigital technologies, s. l.
+
 \bibitem[qua]{quat_to_euler}
 Conversion between quaternions and euler angles.
 \newblock accessed 19 Aug 2020.
+
+\bibitem[SEBL06]{sebelius06}
+Fredrik Sebelius, L~Eriksson, Christian Balkenius, and T~Laurell.
+\newblock Myoelectric control of a computer animated hand: A new concept based
+  on the combined use of a tree-structured artificial neural network and a data
+  glove.
+\newblock {\em Journal of medical engineering \& technology}, 30:2--10, 02
+  2006.
+
+\bibitem[SRL05]{sebelius05}
+Fredrik~C.P. Sebelius, Birgitta~N. Ros{\'e}n, and G{\"o}ran~N. Lundborg.
+\newblock Refined myoelectric control in below-elbow amputees using artificial
+  neural networks and a data glove.
+\newblock {\em Journal of Hand Surgery}, 30(4):780--789, Jul 2005.
 
 \bibitem[Sut65]{sutherland65}
 Ivan~E. Sutherland.
@@ -40,5 +57,10 @@ Ivan~E. Sutherland.
 Dangxiao WANG, Yuan GUO, Shiyi LIU, Yuru ZHANG, Weiliang XU, and Jing XIAO.
 \newblock Haptic display for virtual reality: progress and challenges.
 \newblock {\em Virtual Reality \& Intelligent Hardware}, 1(2):136 -- 162, 2019.
+
+\bibitem[ZWW{\etalchar{+}}18]{zheng18}
+Yukai Zheng, Dangxiao Wang, Ziqi Wang, Yu~Zhang, Yuru Zhang, and Weiliang Xu.
+\newblock Design of a lightweight force-feedback glove with a large workspace.
+\newblock {\em Engineering}, 4(6):869 -- 880, 2018.
 
 \end{thebibliography}

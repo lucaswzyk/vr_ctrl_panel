@@ -5,47 +5,48 @@ Reallocating 'name_of_file' (item size: 1) to 6 items.
 The style file: alpha.bst
 Reallocating 'name_of_file' (item size: 1) to 8 items.
 Database file #1: lib.bib
+Warning--to sort, need author or key in nd
 Warning--to sort, need author or key in leaphand
 Warning--to sort, need author or key in quat_to_euler
-You've used 7 entries,
+You've used 11 entries,
             2543 wiz_defined-function locations,
-            594 strings with 5615 characters,
-and the built_in function-call counts, 2917 in all, are:
-= -- 283
-> -- 139
+            618 strings with 6354 characters,
+and the built_in function-call counts, 4568 in all, are:
+= -- 440
+> -- 236
 < -- 2
-+ -- 50
-- -- 49
-* -- 223
-:= -- 462
-add.period$ -- 21
-call.type$ -- 7
-change.case$ -- 47
-chr.to.int$ -- 7
-cite$ -- 11
-duplicate$ -- 103
-empty$ -- 222
-format.name$ -- 52
-if$ -- 604
++ -- 86
+- -- 85
+* -- 365
+:= -- 732
+add.period$ -- 31
+call.type$ -- 11
+change.case$ -- 76
+chr.to.int$ -- 11
+cite$ -- 17
+duplicate$ -- 155
+empty$ -- 337
+format.name$ -- 90
+if$ -- 935
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 5
-newline$ -- 39
-num.names$ -- 15
-pop$ -- 54
+missing$ -- 8
+newline$ -- 57
+num.names$ -- 24
+pop$ -- 80
 preamble$ -- 1
-purify$ -- 54
+purify$ -- 87
 quote$ -- 0
-skip$ -- 86
+skip$ -- 133
 stack$ -- 0
-substring$ -- 183
-swap$ -- 17
+substring$ -- 272
+swap$ -- 21
 text.length$ -- 2
 text.prefix$ -- 1
 top$ -- 0
-type$ -- 56
-warning$ -- 2
-while$ -- 21
-width$ -- 8
-write$ -- 90
-(There were 2 warnings)
+type$ -- 88
+warning$ -- 3
+while$ -- 33
+width$ -- 12
+write$ -- 136
+(There were 3 warnings)

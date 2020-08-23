@@ -41,6 +41,8 @@ Star Trek and Enterprise are copyright Paramount Pictures.}
 
 \usepackage{subcaption}
 \usepackage{algpseudocode}
+\usepackage{booktabs}
+\usepackage{tabularx}
 
 \usepackage{glossaries}
 \newglossary[tlg]{gloss_terms}{tld}{tdn}{Glossary}
@@ -78,7 +80,7 @@ A schematic of the general paradigm of haptic human computer interfaces is shown
 	\item the virtual environment which evaluates the interface device's data, realizes the manipulation of virtual objects with possible constraints, and motivates actuation in the interface device via haptic feedback.
 \end{itemize}
 
-As the following examples will demonstrate, not all data gloves are designed with the capability of both sensing and actuation. Some are only used to evaluate the user's hand pose, and it is conceivable to deal only with the issue of actuation and utilize an external device for sensing, such as Leap Motion. However, actuation on its own does not seem useful, as it needs to variable based on the current hand pose.
+As the following examples will demonstrate, not all data gloves are designed with the capability of both sensing and actuation. Some are only used to evaluate the user's hand pose, and it is conceivable to deal only with the issue of actuation and utilize an external device for sensing, such as Leap Motion. However, actuation on its own does not seem useful for VR applications, as it needs to be variable based on the current hand pose for which tracking of the user's hand pose is required.
 
 \section{Examples and Applications of Data Gloves}
 \subsection{Sign Language Recognition}
@@ -179,12 +181,65 @@ The subject with congenital failure was of special interest because it showed th
 
 An important aspect for the training effect might be the simultaneous execution of movements with the healthy hand, as suggested in the original paper. The authors moreover suppose that a subject's performance might increase with visual feedback of a virtual phantom hand that was not present during these experiments. This thesis might be useful for this purpose, as it describes the use of a well established hand model in section \ref{sec:hand_model}. Work in this direction was continued by the authors of the original paper\newcite{sebelius06}.
 
-\subsection{Commercial Products}
-Dexmo, CyberGrasp, \Gls{AVR}
-
 \subsection{A Lightweight Force-Feedback Glove}
+\begin{figure}
+	\centering
+	\includegraphics{../pics/force_feedback_proto}
+	\caption{Physical prototype of a lightweight force-feedback glove with large workspace; from 
+		\cite{zheng18}}
+	\label{fig:force_feedback_proto}
+\end{figure}
 
-\chapter{Development}
+In terms of haptic feedback, a recent project is the \emph{Design of a Lightweight Force-Feedback Glove with a Large Workspace}\newcite{zheng18}. From their review of existing technology, the authors of the respective paper conclude the following "[$\dots$] requirements of ideal force feedback for VR interaction":
+
+\begin{itemize}
+	\item The device weight should not exceed $ 100g $. This value is based on the success of desktop force-feedback devices, e.g. the PHANTOM Desktop. The prototype shown in figure \ref{fig:force_feedback_proto} has a final mass of $ 245g $ which was achieved by a pneumatically actuated design with an outsourced construction for air compression and regulation. Force can be excerted onto the fingers by releasing compressed air into the pneumatic pistons (silver) which then pull back the links (black). Special materials were chosen for weight reduction: the links are made from $ 2mm $ thick carbon. Lightweight plastic was used for the base parts and finger caps (white).
+	\item Typical grasping motions should be possible to simulate realistically. The device should therefor have a large motion and force range. The form of the links is specifically designed to ensure the necessary freedom of motion and makes it possible to mount the construction on the dorsal side of the hand. The authors emphasize that the key to obtaining optimal normal force at the finger cap while ensuring free movement of the finger joints is the curved profile of the sliding slot connecting the base components to the links. Its design and the respective calculations are described in detail in the original paper.
+	\item "[$\dots$] the gloves should be easy to put on and remove, and should be adaptable for users with different hand sizes." This could, however, not be achieved and is suggested for future work.
+\end{itemize}
+
+A commercial data glove was used to track the user's hand. The pose was then evaluated by a PC that coordinated the release of air from the compression system into the pistons via a microcontroller. 
+
+Experiments showed that the prototype developed by the Zheng et al. can excert forces between $ 0.1N $ during free motion of the finger joints and $ 4N $ for constrained space simulation. It does indeed have a large working space in which a minimal virtual sphere with a diameter of $ 30mm $ can be simulated.
+
+However, the normal force at the finger cap could not be controlled accurately. According to the authors, a possible solution might be the use of a force sensor at the finger tip to design a closed-loop control system. Moreover, the force-feedback showed significant delay due to the time of airflow between compression system and pistons.
+
+For future work, the original paper suggests the development of new control hardware and software. They see the possibility of integrating the glove with a \acrfull{hmd} for novel applications such as e-shopping and plan to add components for haptic feedback on the hand palm as well.
+
+\subsection{Commercial Products}
+Numerous types of data gloves have been available on the market over the past years. Some examples capable of haptic feedback are shown in figure \ref{fig:commercial_gloves} and a summary of their technological properties is compiled in table \ref{tab:commercial_gloves}. Another example is the Avatar VR glove which will be used for the purposes of this thesis and explained in more detail in chapter \ref{ch:devel}.
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{../pics/commercial_gloves}
+	\caption{Examples of commercial data gloves as named in table \ref{tab:commercial_gloves} (fltr, top-row first); from \cite{wang19}}
+	\label{fig:commercial_gloves}
+\end{figure}
+
+\begin{table}
+	\footnotesize
+	\centering
+	\begin{tabularx}{\textwidth}{llXXXXXX}		
+		\toprule[2pt] \midrule
+		Device name & Company & Motion tracking DoF & Force feedback & Tactile feedback & Actuation principle & Sensing principle & Typical features\\
+		\midrule
+		CyberGrasp & Immersion & --- & One actuator per finger & --- & Electric motor & 22-sensor Cyber-Glove device & Feel the size and shape \\
+		\midrule
+		H-glove & Haption & Each finger posesses 3 DoF & Force feedback on 3 fingers & --- & Electric motor & --- & Can be attached to a Virtuose 6D\\
+		\midrule
+		Dexmo & DextaRobotics & Tracking 11 DoF for hand & Force feedback on 5 fingers & Three linear resonant actuators & Electric motor & Rotary sensors & Feel the shape, size and stiffness \\
+		\midrule
+		Haptx glove & Haptx & Tracking 6 DoF per digit & Light-weight exoskeleton applies up to $ 4lbs $ per finger & 130 stimuli points & Microfluidic array & Magnetic tracking & Feel shape, texture, motion in sub-mm precision\\
+		\midrule
+		Plexus & Plexus & 21 DoF per hand & --- & One tactile actuator per finger & --- & Using tracing adapters for other technology & Track with .01 deg precision\\
+		\midrule
+		VRgluv & VRgluv & 12 DoF for the fingers on each hand & Apply up to $ 5lbs $ of varying force per finger & --- & DC motors & 5 sensors per finger & Simulate stiffness, shape, and mechanical features\\
+		\midrule \bottomrule[2pt]
+	\end{tabularx}
+	\caption{Existing commercial haptic feedback gloves; adapted, from \cite{wang19}}
+	\label{tab:commercial_gloves}
+\end{table}
+
+\chapter{Development} \label{ch:devel}
 \section{Devices and Software}
 \begin{figure}
 	\begin{subfigure}{.49\linewidth}
