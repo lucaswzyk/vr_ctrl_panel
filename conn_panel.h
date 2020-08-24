@@ -36,21 +36,21 @@ public:
 			panel_tree
 		);
 		pos_neg_slider* pitch_slider = new pos_neg_slider(
-			vec3(.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
-			vec3(0), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
+			vec3(-.1f, .0f, -.05f), vec3(.05f, 0, .15f), vec3(0),
+			vec3(.0f, 90.0f, .0f), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
 			controlled_sky, stars_sphere::set_speed_pitch,
 			left_panel
 		);
-		slider* yaw_slider = new slider(
-			vec3(.0f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
-			vec3(0), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
-			controlled_sky, stars_sphere::set_speed_yaw,
-			left_panel
-		);
-		slider* roll_slider = new slider(
-			vec3(-.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
+		pos_neg_slider* roll_slider = new pos_neg_slider(
+			vec3(.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
 			vec3(0), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
 			controlled_sky, stars_sphere::set_speed_roll,
+			left_panel
+		);
+		pos_neg_slider* yaw_slider = new pos_neg_slider(
+			vec3(-.1f, .0f, .05f), vec3(.05f, 0, .15f), vec3(0),
+			vec3(.0f, 90.0f, .0f), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
+			controlled_sky, stars_sphere::set_speed_yaw,
 			left_panel
 		);
 		vec3 right_ext(-left_ext.x(), left_ext.y(), left_ext.z());

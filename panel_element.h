@@ -362,10 +362,11 @@ public:
 
 		for (size_t i = 0; i < NUM_INDICATOR_FIELDS; i++)
 		{
+			vec3 new_pos(0, 0, -(1.0f + i) * z_frac);
 			new panel_node(
-				vec3(0, 0, -(1 + i) * z_frac),
+				new_pos,
 				indicator_extent,
-				vec3(0), vec3(0), active_color, this
+				vec3(0), vec3(0), base_color, this
 			);
 		}
 		for (size_t i = 0; i < NUM_INDICATOR_FIELDS; i++)
