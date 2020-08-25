@@ -231,7 +231,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		break;
 	case PANEL:
 		hd.set_text("Acknowledge when done");
-		calibrate_model_view(math_conversion::ave_pos(state.controller) - c.hand_vs_panel_for_calibration);
+		calibrate_model_view(math_conversion::ave_pos(state.controller));
 		if (!c.is_signal_invalid && is_calibrating_hand_ack)
 		{
 			next_calibration_stage();
@@ -309,6 +309,8 @@ void vr_ctrl_panel::calibrate_new_z(const vr::vr_kit_state& state)
 
 inline void vr_ctrl_panel::calibrate_model_view(vec3 panel_origin)
 {
+	panel_origin = panel_origin + vec3(0, c.hand_vs_panel_for_calibration.y(), 0)
+		+ c.z_dir * c.hand_vs_panel_for_calibration.z();
 	mat4 new_model_view_mat;
 	new_model_view_mat.identity();
 	float rad_to_deg = 45.0f / atan(1.0f);

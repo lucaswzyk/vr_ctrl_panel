@@ -5,6 +5,7 @@
 
 #include <cgv/render/drawable.h>
 #include <cgv_gl/sphere_renderer.h>
+#include <cgv_gl/rounded_cone_renderer.h>
 #include <cgv_gl/gl/gl.h>
 #include <cgv/math/ftransform.h>
 
@@ -12,14 +13,16 @@
 
 using namespace std;
 
-class stars_sphere
+class space
 	: public cgv::render::drawable
 {
 	float r_out, r_in;
 	
+	// positions of stars and target (last max_num_targets indices)
 	vec3* positions;
 	float* radii;
 	rgb* colors;
+	int num_targets;
 
 	mt19937 gen;
 	uniform_real_distribution<float> dis_angles;
@@ -27,11 +30,19 @@ class stars_sphere
 
 	float speed_ahead, speed_pitch, speed_yaw, speed_roll;
 
-	const size_t num_stars = 100;
+	const size_t num_stars = 100, max_num_targets = 3;
 	const float max_speed_ahead = .1f,
-		max_angular_speed = .1f,
+		max_angular_speed = .02f,
 		pi_half = acos(.0f),
-		star_rad_mean = .05f, star_rad_deviation = .01f;
+		star_rad_mean = .05f, star_rad_deviation = .01f,
+		target_radius = 1.0f;
+	const rgb star_color = rgb(1.0f, 1.0f, 1.0f),
+			  target_color = rgb(1.0f, .0f, .0f);
+
+	const vec3 phaser_loc = vec3(2.5f, 1.0f, -5.0f);
+	vector<vec3> phaser_positions, phaser_directions;
+	const vector<GLuint> phaser_indices = { 1, 0, 2, 0 };
+	const vector<float> phaser_radii = { .0f, .1f, .1f };
 
 	chrono::steady_clock::time_point last_update;
 
@@ -39,6 +50,7 @@ class stars_sphere
 	vec3 origin;
 
 	sphere_render_style srs;
+	rounded_cone_render_style rcrs;
 
 	void update()
 	{
@@ -47,8 +59,8 @@ class stars_sphere
 		float ms_elapsed = chrono::duration_cast<chrono::milliseconds>(now - last_update).count();
 		
 		float distance_elapsed = speed_ahead * ms_elapsed;
-		vec3 angles = ms_elapsed * vec3(speed_pitch, speed_yaw, speed_roll);
-		mat3 rotation = cgv::math::rotate3(angles),
+		vec3 angles = vec3(speed_roll, speed_pitch, speed_yaw);
+		mat3 rotation = cgv::math::rotate3(ms_elapsed * angles),
 			 inv_rotation = cgv::math::rotate3(-r_out / 2 * angles);
 
 		if (distance_elapsed > 100.0f)
@@ -61,7 +73,7 @@ class stars_sphere
 		// TODO inner radius (in latex too)
 		// TODO dynamic radii (distance)
 		vec3 p;
-		for (size_t i = 0; i < num_stars; i++)
+		for (size_t i = 0; i < num_stars + num_targets; i++)
 		{
 			// the following lines model dead ahead movement
 			p = positions[i];
@@ -86,6 +98,10 @@ class stars_sphere
 					) + origin;
 				positions[i] = inv_rotation * p - origin;
 			}
+			else if (p.length() < r_in)
+			{
+				positions[i] = -p;
+			}
 			else
 			{
 				positions[i] = rotation * p - origin;
@@ -98,7 +114,7 @@ class stars_sphere
 	void init_stars()
 	{
 		uniform_real_distribution<float> dis_distances = uniform_real_distribution<float>(r_in, r_out);
-		for (size_t i = 0; i < num_stars; i++)
+		for (size_t i = 0; i < num_stars + max_num_targets; i++)
 		{
 			float alpha = 2*dis_angles(gen), beta = dis_angles(gen);
 			positions[i] = vec3(
@@ -114,14 +130,20 @@ class stars_sphere
 	}
 
 public:
-	stars_sphere(float a_r_in, float a_r_out)
+	space(float a_r_in, float a_r_out)
 	{
 		r_out = a_r_out;
 		r_in = a_r_in;
 
-		positions = new vec3[num_stars];
-		radii = new float[num_stars];
-		colors = new rgb[num_stars]{ rgb(1, 1, 1) };
+		positions = new vec3[num_stars + max_num_targets];
+		radii = new float[num_stars + max_num_targets];
+		colors = new rgb[num_stars + max_num_targets]{ rgb(1, 1, 1) };
+		for (size_t i = num_stars; i < num_stars + max_num_targets; i++)
+		{
+			radii[i] = target_radius;
+			colors[i] = target_color;
+		}
+		num_targets = 0;
 
 		gen = mt19937(random_device()());
 		dis_angles = uniform_real_distribution<float>(-pi_half, pi_half);
@@ -136,25 +158,44 @@ public:
 		model_view_mat.identity();
 		model_view_mat *= cgv::math::translate4(origin);
 
+		phaser_positions = {
+			vec3(0),
+			vec3(-phaser_loc.x(), phaser_loc.y(), phaser_loc.z()) - origin,
+			vec3(phaser_loc.x(), phaser_loc.y(), phaser_loc.z()) - origin
+		};
+		phaser_directions = { phaser_positions[1], phaser_positions[2] };
+		phaser_directions[0].normalize();
+		phaser_directions[1].normalize();
+
+		rcrs.surface_color = rgb(1.0f, .0f, .0f);
+
 		init_stars();
 	}
 
 	void set_speed_ahead(float new_speed) { speed_ahead = new_speed; }
 	float get_max_speed_ahead() { return max_speed_ahead; }
 
-	void draw(cgv::render::context& ctx)
+	void draw(context& ctx)
 	{
 		update();
 
 		ctx.push_modelview_matrix();
 		ctx.mul_modelview_matrix(model_view_mat);
-		cgv::render::sphere_renderer& sr = cgv::render::ref_sphere_renderer(ctx);
-		sr.set_position_array(ctx, positions, num_stars);
-		sr.set_radius_array(ctx, radii, num_stars);
-		sr.set_color_array(ctx, colors, num_stars);
-		sr.validate_and_enable(ctx);
-		glDrawArrays(GL_POINTS, 0, num_stars);
-		sr.disable(ctx);
+
+		sphere_renderer& sr = ref_sphere_renderer(ctx);
+		sr.set_position_array(ctx, positions, num_stars + num_targets);
+		sr.set_radius_array(ctx, radii, num_stars + num_targets);
+		sr.set_color_array(ctx, colors, num_stars + num_targets);
+		sr.set_render_style(srs);
+		sr.render(ctx, 0, num_stars + num_targets);
+
+		rounded_cone_renderer& rcr = ref_rounded_cone_renderer(ctx);
+		rcr.set_position_array(ctx, phaser_positions);
+		rcr.set_indices(ctx, phaser_indices);
+		rcr.set_radius_array(ctx, phaser_radii);
+		rcr.set_render_style(rcrs);
+		rcr.render(ctx, 0, phaser_indices.size());
+
 		ctx.pop_modelview_matrix();
 	}
 
@@ -168,9 +209,11 @@ public:
 		return result;
 	}
 	
-	static void set_speed_ahead(stars_sphere* s, float val) { s->speed_ahead = val * s->max_speed_ahead; }
-	static void set_speed_pitch(stars_sphere* s, float val) { s->speed_pitch = val * s->max_angular_speed; }
-	static void set_speed_yaw(stars_sphere* s, float val) { s->speed_yaw = val * s->max_angular_speed; }
-	static void set_speed_roll(stars_sphere* s, float val) { s->speed_roll = val * s->max_angular_speed; }
+	static void set_speed_ahead(space* s, float val) { s->speed_ahead = val * s->max_speed_ahead; }
+	static void set_speed_pitch(space* s, float val) { s->speed_pitch = val * s->max_angular_speed; }
+	static void set_speed_yaw(space* s, float val) { s->speed_yaw = val * s->max_angular_speed; }
+	static void set_speed_roll(space* s, float val) { s->speed_roll = val * s->max_angular_speed; }
+
+	static void add_target(space* s) { s->num_targets++; }
 };
 

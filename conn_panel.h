@@ -19,13 +19,13 @@ class conn_panel
 {
 protected:
 	panel_node* panel_tree;
-	stars_sphere* controlled_sky;
+	space* controlled_sky;
 
 public:
 
 	conn_panel()
 	{
-		controlled_sky = new stars_sphere(10.0f, 500.0f);
+		controlled_sky = new space(10.0f, 500.0f);
 		panel_tree = new panel_node();
 
 		vec3 left_ext(-.48, .0f, .3);
@@ -38,19 +38,19 @@ public:
 		pos_neg_slider* pitch_slider = new pos_neg_slider(
 			vec3(-.1f, .0f, -.05f), vec3(.05f, 0, .15f), vec3(0),
 			vec3(.0f, 90.0f, .0f), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
-			controlled_sky, stars_sphere::set_speed_pitch,
+			controlled_sky, space::set_speed_pitch,
 			left_panel
 		);
 		pos_neg_slider* roll_slider = new pos_neg_slider(
 			vec3(.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
 			vec3(0), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
-			controlled_sky, stars_sphere::set_speed_roll,
+			controlled_sky, space::set_speed_roll,
 			left_panel
 		);
 		pos_neg_slider* yaw_slider = new pos_neg_slider(
 			vec3(-.1f, .0f, .05f), vec3(.05f, 0, .15f), vec3(0),
 			vec3(.0f, 90.0f, .0f), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
-			controlled_sky, stars_sphere::set_speed_yaw,
+			controlled_sky, space::set_speed_yaw,
 			left_panel
 		);
 		vec3 right_ext(-left_ext.x(), left_ext.y(), left_ext.z());
@@ -63,7 +63,7 @@ public:
 		lever* right_lever = new lever(
 			vec3(0), vec3(.1f, .1f, .01f), vec3(0),
 			vec3(60.0f, .0f, .0f), rgb(0, 1, 1),
-			controlled_sky, stars_sphere::set_speed_ahead, 
+			controlled_sky, space::set_speed_ahead, 
 			right_panel);
 	}
 

@@ -199,7 +199,7 @@ public:
 		}
 
 		cis[hand_loc] = ci;
-		calc_responsiveness();
+		calc_responsiveness(ci);
 		if (is_responsive && ci.ind_map.size())
 		{
 			on_touch(hand_loc);
@@ -225,11 +225,12 @@ public:
 	
 	virtual float get_vibration_strength() { return .1f; }
 
-	virtual void calc_responsiveness() 
+	virtual void calc_responsiveness(containment_info ci) 
 	{
 		is_responsive = is_responsive && cis[0].ind_map.size() + cis[0].ind_map.size() == 1
 			|| cis[0].ind_map.size() + cis[0].ind_map.size() == 0;
 	}
+
 	vec3 to_local(vec3 v)
 	{
 		v -= geo.position + geo.translation;
@@ -248,8 +249,8 @@ class slider : public panel_node
 {
 protected:
 	float value, value_tolerance;
-	stars_sphere* sphere;
-	void (*callback)(stars_sphere*, float);
+	space* sphere;
+	void (*callback)(space*, float);
 	rgb active_color;
 
 	int NUM_INDICATOR_FIELDS = 7;
@@ -258,7 +259,7 @@ protected:
 public:
 	slider(vec3 a_position, vec3 a_extent, vec3 a_translation,
 		   vec3 angles, rgb base_color, rgb val_color,
-		   stars_sphere* a_sphere, void (*a_callback)(stars_sphere*, float),
+		   space* a_sphere, void (*a_callback)(space*, float),
 		   panel_node* parent_ptr)
 	{
 		add_to_tree(parent_ptr);
@@ -333,8 +334,8 @@ class pos_neg_slider : public panel_node
 {
 protected:
 	float value, value_tolerance;
-	stars_sphere* sphere;
-	void (*callback)(stars_sphere*, float);
+	space* sphere;
+	void (*callback)(space*, float);
 	rgb active_color;
 
 	float z_frac;
@@ -344,7 +345,7 @@ protected:
 public:
 	pos_neg_slider(vec3 a_position, vec3 a_extent, vec3 a_translation,
 		   vec3 angles, rgb base_color, rgb val_color,
-		   stars_sphere* a_sphere, void (*a_callback)(stars_sphere*, float),
+		   space* a_sphere, void (*a_callback)(space*, float),
 		   panel_node* parent_ptr)
 	{
 		add_to_tree(parent_ptr);
@@ -454,8 +455,8 @@ class lever : public panel_node
 {
 protected:
 	float max_deflection, length, value;
-	stars_sphere* sphere;
-	void (*callback)(stars_sphere*, float);
+	space* sphere;
+	void (*callback)(space*, float);
 
 	quat quat_yz;
 	vector<geometry> child_geos;
@@ -466,7 +467,7 @@ public:
 	// angles - max rot. around own x in each direction, rot. around parent y, rot. around own z
 	lever(vec3 position, vec3 extent, vec3 translation,
 		vec3 angles, rgb color, 
-		stars_sphere* a_sphere, void (*a_callback)(stars_sphere*, float),
+		space* a_sphere, void (*a_callback)(space*, float),
 		panel_node* parent_ptr)
 	{
 		max_deflection = cgv::math::deg2rad(angles.x());
@@ -496,9 +497,9 @@ public:
 		new panel_node(child_geos[2], this);
 	}
 
-	void calc_responsiveness() override
+	void calc_responsiveness(containment_info ci) override
 	{
-		is_responsive = true;
+		is_responsive = ci.contacts[2] && ci.contacts[3];
 	}
 
 	void on_touch(int hand_loc) override

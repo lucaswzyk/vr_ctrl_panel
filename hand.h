@@ -286,6 +286,10 @@ public:
 		containment_info ci;
 		ci.tolerance = scale;
 		ci.positions = pose.make_array();
+		ci.contacts[0] = device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_INDEX);
+		ci.contacts[1] = device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_MIDDLE);
+		ci.contacts[2] = device.are_contacts_joined(NDAPISpace::CONT_PALM, NDAPISpace::CONT_INDEX);
+		ci.contacts[3] = device.are_contacts_joined(NDAPISpace::CONT_PALM, NDAPISpace::CONT_MIDDLE);
 		std::map<int, float> touching_indices = cp.check_containments(ci, device.get_location());
 
 		for (auto ind_strength : touching_indices)
