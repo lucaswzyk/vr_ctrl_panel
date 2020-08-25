@@ -22,7 +22,6 @@ class space
 	vec3* positions;
 	float* radii;
 	rgb* colors;
-	int num_targets;
 
 	mt19937 gen;
 	uniform_real_distribution<float> dis_angles;
@@ -35,10 +34,12 @@ class space
 		max_angular_speed = .02f,
 		pi_half = acos(.0f),
 		star_rad_mean = .05f, star_rad_deviation = .01f,
-		target_radius = 1.0f;
+		target_radius = 100.0f;
 	const rgb star_color = rgb(1.0f, 1.0f, 1.0f),
 			  target_color = rgb(1.0f, .0f, .0f);
 
+	int num_targets;
+	bool is_firing;
 	const vec3 phaser_loc = vec3(2.5f, 1.0f, -5.0f);
 	vector<vec3> phaser_positions, phaser_directions;
 	const vector<GLuint> phaser_indices = { 1, 0, 2, 0 };
@@ -52,7 +53,7 @@ class space
 	sphere_render_style srs;
 	rounded_cone_render_style rcrs;
 
-	void update()
+	void update_positions()
 	{
 		// to ensure realistic movement independent of frame rate
 		chrono::steady_clock::time_point now = chrono::steady_clock::now();
@@ -75,6 +76,10 @@ class space
 		vec3 p;
 		for (size_t i = 0; i < num_stars + num_targets; i++)
 		{
+			if (i == num_stars)
+			{
+				distance_elapsed /= 3.0f;
+			}
 			// the following lines model dead ahead movement
 			p = positions[i];
 			float l = p.length();
@@ -92,15 +97,15 @@ class space
 				float alpha = dis_angles(gen), beta = dis_angles(gen);
 				// init new position on spawn sphere
 				p = r_out / 10 * vec3(
-						sin(alpha) * cos(beta),
-						sin(beta),
-						cos(alpha) * cos(beta)
-					) + origin;
+					sin(alpha) * cos(beta),
+					sin(beta),
+					cos(alpha) * cos(beta)
+				) + origin;
 				positions[i] = inv_rotation * p - origin;
 			}
 			else if (p.length() < r_in)
 			{
-				positions[i] = -p;
+				positions[i] = -p - origin;
 			}
 			else
 			{
@@ -108,15 +113,45 @@ class space
 			}
 		}
 
+		for (size_t i = 0; i < num_targets; i++)
+		{
+			float dist_frac = 1.0f - (positions[num_stars + i] + origin).length() / r_out;
+			dist_frac = sqrt(dist_frac);
+			radii[num_stars + i] = dist_frac * target_radius;
+		}
+
 		last_update = now;
 	}
 
-	void init_stars()
+	void fire() {
+		is_firing = true;
+
+		for (size_t i = num_stars; i < num_stars + num_targets; i++)
+		{
+			vec3 t_pos = positions[i];
+			float a = cgv::math::dot(t_pos, phaser_directions[0]);
+			vec3 t_center_ray0 = t_pos - cgv::math::dot(t_pos, phaser_directions[0]) * phaser_directions[0],
+				 t_center_ray1 = t_pos - cgv::math::dot(t_pos, phaser_directions[1]) * phaser_directions[1];
+			if (t_center_ray0.length() < radii[i] || t_center_ray1.length() < radii[i])
+			{
+				for (size_t j = i + 1; j < num_stars + num_targets; j++)
+				{
+					positions[j - 1] = positions[j];
+				}
+				num_targets--;
+			}
+		}
+	}
+
+	void init()
 	{
+		model_view_mat.identity();
+		model_view_mat *= cgv::math::translate4(origin);
+
 		uniform_real_distribution<float> dis_distances = uniform_real_distribution<float>(r_in, r_out);
 		for (size_t i = 0; i < num_stars + max_num_targets; i++)
 		{
-			float alpha = 2*dis_angles(gen), beta = dis_angles(gen);
+			float alpha = 2 * dis_angles(gen), beta = dis_angles(gen);
 			positions[i] = vec3(
 				sin(alpha) * cos(beta),
 				sin(beta),
@@ -124,40 +159,19 @@ class space
 			);
 			positions[i] *= dis_distances(gen);
 			positions[i] -= origin;
-			radii[i] = get_new_radius();
+			if (i < num_stars)
+			{
+				radii[i] = get_new_radius();
+				colors[i] = rgb(1);
+			}
+			else
+			{
+				radii[i] = target_radius;
+				colors[i] = target_color;
+			}
 		}
-		last_update = chrono::steady_clock::now();
-	}
 
-public:
-	space(float a_r_in, float a_r_out)
-	{
-		r_out = a_r_out;
-		r_in = a_r_in;
-
-		positions = new vec3[num_stars + max_num_targets];
-		radii = new float[num_stars + max_num_targets];
-		colors = new rgb[num_stars + max_num_targets]{ rgb(1, 1, 1) };
-		for (size_t i = num_stars; i < num_stars + max_num_targets; i++)
-		{
-			radii[i] = target_radius;
-			colors[i] = target_color;
-		}
 		num_targets = 0;
-
-		gen = mt19937(random_device()());
-		dis_angles = uniform_real_distribution<float>(-pi_half, pi_half);
-		dis_radii = normal_distribution<float>(star_rad_mean, star_rad_deviation);
-
-		speed_ahead = 0;
-		speed_pitch = 0;
-		speed_yaw = 0;
-		speed_roll = 0;
-
-		origin = vec3(0, 0, -r_out);
-		model_view_mat.identity();
-		model_view_mat *= cgv::math::translate4(origin);
-
 		phaser_positions = {
 			vec3(0),
 			vec3(-phaser_loc.x(), phaser_loc.y(), phaser_loc.z()) - origin,
@@ -169,7 +183,34 @@ public:
 
 		rcrs.surface_color = rgb(1.0f, .0f, .0f);
 
-		init_stars();
+		last_update = chrono::steady_clock::now();
+	}
+
+public:
+	space(float a_r_in, float a_r_out)
+	{
+		r_out = a_r_out;
+		r_in = a_r_in;
+
+		positions = new vec3[num_stars + max_num_targets];
+		radii = new float[num_stars + max_num_targets];
+		colors = new rgb[num_stars + max_num_targets];
+
+		gen = mt19937(random_device()());
+		dis_angles = uniform_real_distribution<float>(-pi_half, pi_half);
+		dis_radii = normal_distribution<float>(star_rad_mean, star_rad_deviation);
+
+		speed_ahead = 0;
+		speed_pitch = 0;
+		speed_yaw = 0;
+		speed_roll = 0;
+
+		origin = vec3(0, 0, -r_out);
+
+		num_targets = 0;
+		is_firing = false;
+
+		init();
 	}
 
 	void set_speed_ahead(float new_speed) { speed_ahead = new_speed; }
@@ -177,7 +218,7 @@ public:
 
 	void draw(context& ctx)
 	{
-		update();
+		update_positions();
 
 		ctx.push_modelview_matrix();
 		ctx.mul_modelview_matrix(model_view_mat);
@@ -189,12 +230,16 @@ public:
 		sr.set_render_style(srs);
 		sr.render(ctx, 0, num_stars + num_targets);
 
-		rounded_cone_renderer& rcr = ref_rounded_cone_renderer(ctx);
-		rcr.set_position_array(ctx, phaser_positions);
-		rcr.set_indices(ctx, phaser_indices);
-		rcr.set_radius_array(ctx, phaser_radii);
-		rcr.set_render_style(rcrs);
-		rcr.render(ctx, 0, phaser_indices.size());
+		if (is_firing)
+		{
+			rounded_cone_renderer& rcr = ref_rounded_cone_renderer(ctx);
+			rcr.set_position_array(ctx, phaser_positions);
+			rcr.set_indices(ctx, phaser_indices);
+			rcr.set_radius_array(ctx, phaser_radii);
+			rcr.set_render_style(rcrs);
+			rcr.render(ctx, 0, phaser_indices.size());
+			is_firing = false;
+		}
 
 		ctx.pop_modelview_matrix();
 	}
@@ -214,6 +259,12 @@ public:
 	static void set_speed_yaw(space* s, float val) { s->speed_yaw = val * s->max_angular_speed; }
 	static void set_speed_roll(space* s, float val) { s->speed_roll = val * s->max_angular_speed; }
 
-	static void add_target(space* s) { s->num_targets++; }
+	static void add_target(space* s) {
+		if (s->num_targets < s->max_num_targets)
+		{
+			s->num_targets++;
+		}
+	}
+	static void static_fire(space* s) { s->fire(); }
 };
 

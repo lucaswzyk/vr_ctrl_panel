@@ -53,6 +53,7 @@ public:
 			controlled_sky, space::set_speed_yaw,
 			left_panel
 		);
+
 		vec3 right_ext(-left_ext.x(), left_ext.y(), left_ext.z());
 		vec3 right_rot(left_rot.x(), -left_rot.y(), -left_rot.z());
 		panel_node* right_panel = new panel_node(
@@ -65,6 +66,18 @@ public:
 			vec3(60.0f, .0f, .0f), rgb(0, 1, 1),
 			controlled_sky, space::set_speed_ahead, 
 			right_panel);
+		button* add_target_button = new button(
+			vec3(.2f, .0f, .0f), vec3(.05f, .0f, .05f), vec3(0),
+			vec3(0), rgb(1.0f, 1.0f, 1.0f), rgb(0),
+			controlled_sky, space::add_target,
+			right_panel
+		);
+		button* fire_button = new hold_button(
+			vec3(-.2f, .0f, .0f), vec3(.05f, .0f, .05f), vec3(0),
+			vec3(0), rgb(1.0f, 1.0f, 1.0f), rgb(0),
+			controlled_sky, space::static_fire,
+			right_panel
+		);
 	}
 
 	string get_type_name(void) const

@@ -150,7 +150,7 @@ public:
 		geo.has_changed = true;
 	}
 
-	group_geometry get_geometry_rec()
+	virtual group_geometry get_geometry_rec()
 	{
 		if (geometry_changed())
 		{
@@ -180,31 +180,35 @@ public:
 
 	map<int, float> check_containments(containment_info ci, int hand_loc)
 	{
-		map<int, float> ind_map_cp = ci.ind_map;
-		ci.ind_map = map<int, float>();
+		cis[hand_loc] = ci;
+		map<int, float> ind_map;
 		for (size_t i = 0; i < ci.positions.size(); i++)
 		{
 			if (contains(ci.positions[i], ci.tolerance))
 			{
-				ci.ind_map[i] = get_vibration_strength();
-				ind_map_cp[i] = ci.ind_map.count(i)
-					? max(ci.ind_map[i], get_vibration_strength())
-					: get_vibration_strength();
+				ind_map[i] = get_vibration_strength();
 			}
 		}
 
 		for (auto child : children)
 		{
-			ci.ind_map = child->check_containments(ci, hand_loc);
+			map<int, float> child_map = child->check_containments(ci, hand_loc);
+			for (auto p : child_map)
+			{
+				ind_map[p.first] = ind_map.count(p.first)
+					? max(ind_map[p.first], get_vibration_strength())
+					: get_vibration_strength();
+			}
 		}
 
-		cis[hand_loc] = ci;
-		calc_responsiveness(ci);
-		if (is_responsive && ci.ind_map.size())
+		cis[hand_loc].ind_map = ind_map;
+		calc_responsiveness(cis[hand_loc]);
+		if (is_responsive && ind_map.size())
 		{
 			on_touch(hand_loc);
 		}
-		return ind_map_cp;
+
+		return ind_map;
 	}
 
 	virtual bool contains(vec3 v, float tolerance)
@@ -227,8 +231,8 @@ public:
 
 	virtual void calc_responsiveness(containment_info ci) 
 	{
-		is_responsive = is_responsive && cis[0].ind_map.size() + cis[0].ind_map.size() == 1
-			|| cis[0].ind_map.size() + cis[0].ind_map.size() == 0;
+		is_responsive = is_responsive && cis[0].ind_map.size() + cis[1].ind_map.size() == 1
+			|| cis[0].ind_map.size() + cis[1].ind_map.size() == 0;
 	}
 
 	vec3 to_local(vec3 v)
@@ -245,11 +249,60 @@ public:
 	}
 };
 
+class button : public panel_node
+{
+protected:
+	rgb base_color, active_color;
+	space* s;
+	void (*callback)(space*);
+
+public:
+	button(vec3 a_position, vec3 a_extent, vec3 a_translation,
+		vec3 angles, rgb base_color, rgb a_active_color,
+		space* a_space, void (*a_callback)(space*),
+		panel_node* parent_ptr)
+	{
+		add_to_tree(parent_ptr);
+		set_geometry(a_position, a_extent, a_translation, angles, base_color);
+		
+		s = a_space;
+		callback = a_callback;
+		active_color = a_active_color;
+	}
+
+	void on_touch(int hand_loc) override
+	{
+		callback(s);
+		set_color(active_color);
+		is_responsive = false;
+	}
+
+	void calc_responsiveness(containment_info ci) override
+	{
+		panel_node::calc_responsiveness(ci);
+		if (is_responsive)
+		{
+			set_color(base_color);
+		}
+	}
+};
+
+class hold_button : public button
+{
+	using button::button;
+
+	void calc_responsiveness(containment_info ci) override
+	{
+		is_responsive = true;
+		set_color(base_color);
+	}
+};
+
 class slider : public panel_node
 {
 protected:
 	float value, value_tolerance;
-	space* sphere;
+	space* s;
 	void (*callback)(space*, float);
 	rgb active_color;
 
@@ -259,14 +312,14 @@ protected:
 public:
 	slider(vec3 a_position, vec3 a_extent, vec3 a_translation,
 		   vec3 angles, rgb base_color, rgb val_color,
-		   space* a_sphere, void (*a_callback)(space*, float),
+		   space* a_space, void (*a_callback)(space*, float),
 		   panel_node* parent_ptr)
 	{
 		add_to_tree(parent_ptr);
 		set_geometry(a_position, a_extent, a_translation, angles, base_color);
 
 		value = 0;
-		sphere = a_sphere;
+		s = a_space;
 		callback = a_callback;
 		value_tolerance = abs(TOLERANCE_NUMERATOR / (a_extent.z() - a_position.z()));
 		active_color = val_color;
@@ -293,7 +346,7 @@ public:
 		if (abs(new_value - value) < value_tolerance)
 		{
 			value = new_value;
-			callback(sphere, value);
+			callback(s, value);
 			set_indicator_colors();
 		}
 	}
