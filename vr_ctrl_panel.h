@@ -47,6 +47,7 @@ class vr_ctrl_panel
 	{
 		// settings that can be calibrated
 		mat4 model_view_mat, world_to_model, bridge_view_mat;
+		vector<mat3> tracker_refs;
 		map<int, int> tr_assign;
 		vec3 user_position, z_dir;
 
@@ -61,6 +62,7 @@ class vr_ctrl_panel
 		hand* cal_hand;
 		bool is_signal_invalid;
 		chrono::steady_clock::time_point last_tp;
+		vector<mat3> last_tracker_refs;
 
 		// constants
 		int request_dur = 1000,
@@ -72,6 +74,9 @@ class vr_ctrl_panel
 			model_view_mat.identity();
 			world_to_model.identity();
 			bridge_view_mat = rotate4(vec3(0, 180, 0));
+			tracker_refs = vector<mat3>(2);
+			tracker_refs[0].identity();
+			tracker_refs[1].identity();
 			user_position = vec3(0);
 			z_dir = vec3(0);
 			z_dir.z() = 1.0f;
@@ -91,7 +96,8 @@ protected:
 	// hands
 	vector<hand*> hands;
 	vector<NDAPISpace::Location> existing_hand_locs;
-	vector<mat4> hand_poses;
+	vector<vec3> hand_positions;
+	vector<mat3> hand_orientations;
 
 	// panel
 	conn_panel panel;
@@ -99,7 +105,10 @@ protected:
 	// bridge mesh
 	mesh bridge;
 
+	// head up display
 	head_up_display hd;
+	vec3 hd_position;
+	mat3 hd_orientation;
 
 	// calibration
 	calibration c, last_cal;

@@ -58,7 +58,7 @@ public:
 		vector<quat> rotations = get_raw_cgv_rotations();
 		for (size_t i = 0; i < num_imus; i++)
 		{
-			rotations[i] = rotations[i] * ref_quats[i];
+			rotations[i] = ref_quats[i] * rotations[i];
 		}
 
 		return rotations;
@@ -105,6 +105,7 @@ public:
 		for (size_t i = 0; i < num_imus; i++)
 		{
 			ref_quats[i] = ref_quats[i].inverse();
+			ref_quats[i].normalize();
 		}
 	}
 

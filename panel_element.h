@@ -393,7 +393,7 @@ protected:
 
 	float z_frac;
 	int NUM_INDICATOR_FIELDS = 7;
-	float BORDER_FRAC = .1f, TOLERANCE_NUMERATOR = .1f;
+	float BORDER_FRAC = .05f, TOLERANCE_NUMERATOR = .1f;
 	
 public:
 	pos_neg_slider(vec3 a_position, vec3 a_extent, vec3 a_translation,
@@ -411,12 +411,12 @@ public:
 		active_color = val_color;
 
 		float border = BORDER_FRAC * a_extent.x();
-		z_frac = a_extent.z() / (2 * NUM_INDICATOR_FIELDS + 1);
+		z_frac = a_extent.z() / (2 * NUM_INDICATOR_FIELDS + 3);
 		vec3 indicator_extent(a_extent.x() - border, 0, z_frac - border);
 
 		for (size_t i = 0; i < NUM_INDICATOR_FIELDS; i++)
 		{
-			vec3 new_pos(0, 0, -(1.0f + i) * z_frac);
+			vec3 new_pos(0, 0, -(2.0f + i) * z_frac);
 			new panel_node(
 				new_pos,
 				indicator_extent,
@@ -426,23 +426,32 @@ public:
 		for (size_t i = 0; i < NUM_INDICATOR_FIELDS; i++)
 		{
 			new panel_node(
-				vec3(0, 0, (1 + i) * z_frac),
+				vec3(0, 0, (2.0f + i) * z_frac),
 				indicator_extent,
 				vec3(0), vec3(0), base_color, this
 			);
 		}
+		vec3 zero_button_extent(a_extent.x() - border, 0, 2 * z_frac - border);
+		new panel_node(
+			vec3(0),
+			zero_button_extent,
+			vec3(0), vec3(0), active_color, this
+		);
 	}
 
 	void on_touch(int hand_loc) override
 	{
 		int touch_ind = cis[hand_loc].ind_map.begin()->first;
-		float new_value = vec_to_val(cis[hand_loc].positions[touch_ind]);
+		/*float new_value = vec_to_val(cis[hand_loc].positions[touch_ind]);
 		if (abs(new_value - value) < value_tolerance)
 		{
 			value = new_value;
 			callback(sphere, value);
 			set_indicator_colors();
-		}
+		}*/
+		value = vec_to_val(cis[hand_loc].positions[touch_ind]);
+		callback(sphere, value);
+		set_indicator_colors();
 	}
 	
 	float vec_to_val(vec3 v)
@@ -466,7 +475,7 @@ public:
 	{
 		float val = value;
 		float indicator_fields_frac = 1.0f / NUM_INDICATOR_FIELDS;
-		for (size_t i = 0; i < children.size(); i++)
+		for (size_t i = 0; i < 2 * NUM_INDICATOR_FIELDS; i++)
 		{
 			children[i]->set_color(geo.color);
 		}

@@ -142,11 +142,11 @@ protected:
 	vector<vec3> bone_lengths, palm_resting;
 	vector<vector<quat>> recursive_rotations;
 	vec3 origin;
+	quat last_palm_ref, palm_ref;
 	joint_positions pose;
 	const float scale = .007f;
 	map<pair<int, int>, NDAPISpace::Actuator> anat_to_actuators;
 	sphere_render_style srs;
-	bool man_ack;
 	vector<GLuint> cone_inds;
 	rounded_cone_render_style rcrs;
 
@@ -154,13 +154,14 @@ protected:
 	pulse_kind current_pulse;
 	int num_delivered_pulses;
 	const int num_part_pulses_abort = 3, duration_done_pulse_ms = 1000, duration_abort_pulse = 600;
+	const vec3 rot_split = vec3(.5f, .5f, .25f);
 
 public:
 	hand() 
 	{}
 
-	hand(NDAPISpace::Location location)
-		: man_ack(false), current_pulse(NONE)
+	hand(NDAPISpace::Location location, quat a_palm_ref)
+		: current_pulse(NONE)
 	{
 		device = nd_device(location);
 		init();
@@ -247,17 +248,17 @@ public:
 		rcrs.surface_color = rgb(1, 1, 1);
 	}
 
-	void update_and_draw(cgv::render::context& ctx, const conn_panel& cp, mat4 pose)
+	void update_and_draw(cgv::render::context& ctx, const conn_panel& cp, vec3 position, mat3 orientation)
 	{
 		deliver_interactive_pulse();
-		set_pose_and_actuators(cp, pose);
+		set_pose_and_actuators(cp, position, orientation);
 		draw(ctx);
 	}
 
-	void set_pose_and_actuators(const conn_panel& cp, mat4 tracker_pose)
+	void set_pose_and_actuators(const conn_panel& cp, vec3 position, mat3 orientation)
 	{
-		origin = math_conversion::inhom_pos(tracker_pose.col(3));
-		set_rotations(cp);
+		origin = position;
+		set_rotations(orientation);
 
 		pose = joint_positions();
 		pose.positions[PALM] = palm_resting;
@@ -321,13 +322,13 @@ public:
 		rcr.render(ctx, 0, cone_inds.size());
 	}
 
-	void set_rotations(const conn_panel& cp)
+	void set_rotations(mat3 orientation)
 	{
 		vector<quat> imu_rotations = device.get_rel_cgv_rotations();
 		quat thumb0_quat = imu_rotations[NDAPISpace::IMULOC_THUMB0];
 
-		const quat palm_rot = imu_rotations[NDAPISpace::IMULOC_PALM],
-			palm_inv = palm_rot.inverse();
+		const quat palm_rot = quat(orientation),
+				   palm_inv = palm_rot.inverse();
 		recursive_rotations[PALM][0] = palm_rot;
 		recursive_rotations[THUMB][INTERMED] = thumb0_quat;
 		recursive_rotations[THUMB][DISTAL] = imu_rotations[NDAPISpace::IMULOC_THUMB1] * thumb0_quat.inverse();
@@ -338,7 +339,6 @@ public:
 
 		quat rot;
 		float roll, pitch, yaw;
-		const vec3 rot_split = cp.get_rot_split(pose.positions[PALM][0]);
 		for (size_t finger = INDEX; finger < NUM_HAND_PARTS; finger++)
 		{
 			rot = palm_inv * recursive_rotations[finger][PROXIMAL];
@@ -374,11 +374,19 @@ public:
 	}
 
 	int get_location() { return device.get_location(); }
-	bool* get_man_ack() { return &man_ack; }
-	void calibrate_to_quat(quat q) { device.calibrate_to_quat(q); }
-	void restore_last_calibration() { device.restore_last_calibration(); }
 
-	bool is_in_ack_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_INDEX) || man_ack; }
+	void calibrate_to_quat(quat q) {
+		last_palm_ref = palm_ref;
+		palm_ref = q;
+		device.calibrate_to_quat(q);
+	}
+
+	void restore_last_calibration() {
+		palm_ref = last_palm_ref;
+		device.restore_last_calibration();
+	}
+
+	bool is_in_ack_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_INDEX); }
 	void set_ack_pulse() {
 		for (auto p : anat_to_actuators)
 		{

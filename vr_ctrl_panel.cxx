@@ -13,32 +13,30 @@ bool vr_ctrl_panel::init(context& ctx)
 	cgv::render::ref_box_renderer(ctx, 1);
 	cgv::render::ref_sphere_renderer(ctx, 1);
 	cgv::render::ref_rectangle_renderer(ctx, 1);
-
+	
 	switch (ndh.get_app_mode())
 	{
 	case nd_handler::BOTH_HANDS:
-		hands.push_back(new hand(NDAPISpace::LOC_RIGHT_HAND));
+		hands.push_back(new hand(NDAPISpace::LOC_RIGHT_HAND, c.tracker_refs[0]));
 		existing_hand_locs.push_back(NDAPISpace::LOC_RIGHT_HAND);
-		hands.push_back(new hand(NDAPISpace::LOC_LEFT_HAND));
+		hands.push_back(new hand(NDAPISpace::LOC_LEFT_HAND, c.tracker_refs[1]));
 		existing_hand_locs.push_back(NDAPISpace::LOC_LEFT_HAND);
 		break;
 	case nd_handler::LEFT_ONLY:
 		hands.push_back(nullptr);
-		hands.push_back(new hand(NDAPISpace::LOC_LEFT_HAND));
+		hands.push_back(new hand(NDAPISpace::LOC_LEFT_HAND, c.tracker_refs[1]));
 		existing_hand_locs.push_back(NDAPISpace::LOC_LEFT_HAND);
 		break;
 	case nd_handler::RIGHT_ONLY:
-		hands.push_back(new hand(NDAPISpace::LOC_RIGHT_HAND));
+		hands.push_back(new hand(NDAPISpace::LOC_RIGHT_HAND, c.tracker_refs[0]));
 		existing_hand_locs.push_back(NDAPISpace::LOC_RIGHT_HAND);
 		hands.push_back(nullptr);
 		break;
 	default:
 		break;
 	}
-	hand_poses = vector<mat4>(hands.size());
-
-	hd.set_text("Hello World");
-	hd.set_visible();
+	hand_positions = vector<vec3>(hands.size(), vec3(0));
+	hand_orientations = vector<mat3>(hands.size());
 
 	return res;
 }
@@ -51,7 +49,7 @@ inline void vr_ctrl_panel::draw(cgv::render::context& ctx)
 	//auto t0 = std::chrono::steady_clock::now();
 	for (auto loc : existing_hand_locs)
 	{
-		hands[loc]->update_and_draw(ctx, panel, hand_poses[loc]);
+		hands[loc]->update_and_draw(ctx, panel, hand_positions[loc], hand_orientations[loc]);
 	}
 	//auto t1 = std::chrono::steady_clock::now();
 
@@ -69,7 +67,8 @@ inline void vr_ctrl_panel::draw(cgv::render::context& ctx)
 	cout << "hand: " << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() << endl;
 	cout << "mesh: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << endl << endl;*/
 	ctx.pop_modelview_matrix();
-	//hd.draw(ctx);
+	
+	hd.draw(ctx, hd_position, hd_orientation);
 }
 
 inline void vr_ctrl_panel::destruct(context& ctx)
@@ -92,11 +91,13 @@ inline bool vr_ctrl_panel::handle(cgv::gui::event& e)
 	{
 		cgv::gui::vr_pose_event& vrpe = static_cast<cgv::gui::vr_pose_event&>(e);
 		int t_id = vrpe.get_trackable_index();
-		mat4 pose_mat = pose4(vrpe.get_pose_matrix());
+		mat3 ori_mat = vrpe.get_orientation();
+		vec3 position = vrpe.get_position();
 		
 		if (t_id == -1)
 		{
-			hd.set_pose(pose_mat);
+			hd_position = position;
+			hd_orientation = ori_mat;
 			return true;
 		}
 		else
@@ -104,13 +105,8 @@ inline bool vr_ctrl_panel::handle(cgv::gui::event& e)
 			if (c.tr_assign.count(t_id))
 			{
 				int tracker_loc = c.tr_assign[t_id];
-				vec4 p = math_conversion::hom_pos(math_conversion::position_from_pose(vrpe.get_state().controller[t_id].pose));
-				//hand_poses[tracker_loc] = c.world_to_model * pose_mat;
-				hand_poses[tracker_loc].identity();
-				hand_poses[tracker_loc](0, 3) = p.x();
-				hand_poses[tracker_loc](1, 3) = p.y();
-				hand_poses[tracker_loc](2, 3) = p.z();
-				hand_poses[tracker_loc] = c.world_to_model * hand_poses[tracker_loc];
+				hand_positions[tracker_loc] = math_conversion::inhom_pos(c.world_to_model * math_conversion::hom_pos(position));
+				hand_orientations[tracker_loc] = ori_mat;
 				update_calibration(vrpe.get_state(), t_id);
 				return true;
 			}
@@ -134,12 +130,6 @@ inline void vr_ctrl_panel::create_gui()
 	add_member_control(this, "load bridge mesh", c.load_bridge, "toggle");
 	cgv::signal::connect_copy(add_button("reassign trackers")->click, rebind(this, &vr_ctrl_panel::reset_tracker_assigns));
 	cgv::signal::connect_copy(add_button("export calibration")->click, rebind(this, &vr_ctrl_panel::export_calibration));
-
-	for (auto loc : existing_hand_locs)
-	{
-		string loc_string = loc == NDAPISpace::LOC_RIGHT_HAND ? "right" : "left";
-		add_member_control(this, loc_string, *(hands[loc]->get_man_ack()));
-	}
 }
 
 void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
@@ -187,7 +177,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		{
 			time_to_calibration = c.request_dur -
 				chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - c.last_tp).count();
-			hd.set_text("Calibration in " + to_string(time_to_calibration / 1000) + "s...");
+			hd.set_text("Calibration in " + to_string((int)time_to_calibration / 1000) + "s...");
 			if (time_to_calibration <= 0)
 			{
 				last_cal = c;
@@ -220,7 +210,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		calibrate_new_z(state);
 		for (auto loc : existing_hand_locs)
 		{
-			hands[loc]->calibrate_to_quat(quat(c.z_dir.z(), 0, -c.z_dir.x(), 0));
+			hands[loc]->calibrate_to_quat(quat(hand_orientations[loc]).inverse());
 		}
 		if (time_to_calibration <= 0)
 		{
@@ -283,6 +273,7 @@ void vr_ctrl_panel::reset_calibration_stage()
 {
 	c.is_signal_invalid = true;
 	c.stage = NOT_CALIBRATING;
+	hd.set_visible(false);
 }
 
 void vr_ctrl_panel::abort_calibration(bool restore)
