@@ -84,7 +84,7 @@ public:
 		}
 		else
 		{
-			return quat(1, 0, 0, 0);
+			return quat(0, cgv::render::render_types::vec3(0, 1, 0));
 		}
 	}
 

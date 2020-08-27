@@ -327,11 +327,11 @@ public:
 		vector<quat> imu_rotations = device.get_rel_cgv_rotations();
 		quat thumb0_quat = imu_rotations[NDAPISpace::IMULOC_THUMB0];
 
-		const quat palm_rot = quat(orientation),
+		const quat palm_rot = palm_ref * quat(orientation),
 				   palm_inv = palm_rot.inverse();
 		recursive_rotations[PALM][0] = palm_rot;
 		recursive_rotations[THUMB][INTERMED] = thumb0_quat;
-		recursive_rotations[THUMB][DISTAL] = imu_rotations[NDAPISpace::IMULOC_THUMB1] * thumb0_quat.inverse();
+		recursive_rotations[THUMB][DISTAL] = thumb0_quat.inverse() * imu_rotations[NDAPISpace::IMULOC_THUMB1];
 		recursive_rotations[INDEX][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_INDEX];
 		recursive_rotations[MIDDLE][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_MIDDLE];
 		recursive_rotations[RING][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_RING];
@@ -342,7 +342,7 @@ public:
 		for (size_t finger = INDEX; finger < NUM_HAND_PARTS; finger++)
 		{
 			rot = palm_inv * recursive_rotations[finger][PROXIMAL];
-			float roll = atan2(
+			roll = atan2(
 				2 * (rot.w() * rot.x() + rot.y() * rot.z()),
 				1 - 2 * (rot.x() * rot.x() + rot.y() * rot.y())
 			);
