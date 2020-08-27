@@ -98,7 +98,7 @@ public:
 		return ndh.are_contacts_joined(c1, c2, id);
 	}
 
-	void calibrate_to_quat(quat q) 
+	void calibrate() 
 	{
 		prev_ref_quats = ref_quats;
 		ref_quats = get_raw_cgv_rotations();

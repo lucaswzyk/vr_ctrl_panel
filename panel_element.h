@@ -207,6 +207,10 @@ public:
 		{
 			on_touch(hand_loc);
 		}
+		else
+		{
+			on_no_touch();
+		}
 
 		return ind_map;
 	}
@@ -226,6 +230,7 @@ public:
 	}
 
 	virtual void on_touch(int hand_loc) {};
+	virtual void on_no_touch() {};
 	
 	virtual float get_vibration_strength() { return .1f; }
 
@@ -258,7 +263,7 @@ protected:
 
 public:
 	button(vec3 a_position, vec3 a_extent, vec3 a_translation,
-		vec3 angles, rgb base_color, rgb a_active_color,
+		vec3 angles, rgb a_base_color, rgb a_active_color,
 		space* a_space, void (*a_callback)(space*),
 		panel_node* parent_ptr)
 	{
@@ -267,6 +272,7 @@ public:
 		
 		s = a_space;
 		callback = a_callback;
+		base_color = a_base_color;
 		active_color = a_active_color;
 	}
 
@@ -277,13 +283,14 @@ public:
 		is_responsive = false;
 	}
 
+	void on_no_touch() override
+	{
+		set_color(base_color);
+	}
+
 	void calc_responsiveness(containment_info ci) override
 	{
 		panel_node::calc_responsiveness(ci);
-		if (is_responsive)
-		{
-			set_color(base_color);
-		}
 	}
 };
 
@@ -294,7 +301,6 @@ class hold_button : public button
 	void calc_responsiveness(containment_info ci) override
 	{
 		is_responsive = true;
-		set_color(base_color);
 	}
 };
 

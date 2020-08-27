@@ -88,6 +88,7 @@ public:
 	void set_visible(bool a_visible = true) { is_visible = a_visible; }
 	void set_text(string s) 
 	{
+		cout << "Headup display: " << s << endl;
 		lm.update_label_text(0, s);
 		update_geometry();
 	}

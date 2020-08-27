@@ -160,10 +160,12 @@ public:
 	hand() 
 	{}
 
-	hand(NDAPISpace::Location location, quat a_palm_ref)
+	hand(NDAPISpace::Location location, mat3 a_palm_ref)
 		: current_pulse(NONE)
 	{
 		device = nd_device(location);
+		palm_ref = quat(a_palm_ref);
+		last_palm_ref = quat(a_palm_ref);
 		init();
 	}
 
@@ -327,8 +329,8 @@ public:
 		vector<quat> imu_rotations = device.get_rel_cgv_rotations();
 		quat thumb0_quat = imu_rotations[NDAPISpace::IMULOC_THUMB0];
 
-		const quat palm_rot = palm_ref * quat(orientation),
-				   palm_inv = palm_rot.inverse();
+		quat palm_rot = palm_ref * quat(orientation),
+			 palm_inv = palm_rot.inverse();
 		recursive_rotations[PALM][0] = palm_rot;
 		recursive_rotations[THUMB][INTERMED] = thumb0_quat;
 		recursive_rotations[THUMB][DISTAL] = thumb0_quat.inverse() * imu_rotations[NDAPISpace::IMULOC_THUMB1];
@@ -365,10 +367,13 @@ public:
 
 				vec3 x(1, 0, 0), y(0, 1, 0), z(0, 0, 1);
 				// TODO should palm_rot stay here?
-				recursive_rotations[finger][PROXIMAL] = palm_rot 
+				recursive_rotations[finger][PROXIMAL] = palm_rot
 					* quat(z, yaw) * quat(y, pitch) * quat(x, rot_split.x() * roll);
+				recursive_rotations[finger][PROXIMAL].normalize();
 				recursive_rotations[finger][INTERMED] = quat(x, rot_split.y() * roll);
+				recursive_rotations[finger][INTERMED].normalize();
 				recursive_rotations[finger][DISTAL] = quat(x, min(1.4f, rot_split.z() * roll));
+				recursive_rotations[finger][DISTAL].normalize();
 			}
 		}
 	}
@@ -378,7 +383,7 @@ public:
 	void calibrate_to_quat(quat q) {
 		last_palm_ref = palm_ref;
 		palm_ref = q;
-		device.calibrate_to_quat(q);
+		device.calibrate();
 	}
 
 	void restore_last_calibration() {
@@ -394,6 +399,8 @@ public:
 		}
 	}
 	bool is_in_decl_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_MIDDLE); }
+	bool is_in_choice1_pose() { return device.are_contacts_joined(NDAPISpace::CONT_PALM, NDAPISpace::CONT_INDEX); }
+	bool is_in_choice2_pose() { return device.are_contacts_joined(NDAPISpace::CONT_PALM, NDAPISpace::CONT_MIDDLE); }
 
 	void init_interactive_pulse(pulse_kind kind)
 	{

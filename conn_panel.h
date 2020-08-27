@@ -32,24 +32,24 @@ public:
 		vec3 left_rot(24.8, 6.3f, .15f);
 		panel_node* left_panel = new panel_node(
 			panel_pos_on_bridge, left_ext, .5f * left_ext,
-			left_rot, rgb(1, 0, 0), 
+			left_rot, rgb(0), 
 			panel_tree
 		);
 		pos_neg_slider* pitch_slider = new pos_neg_slider(
 			vec3(-.1f, .0f, -.05f), vec3(.05f, 0, .15f), vec3(0),
-			vec3(.0f, -90.0f, .0f), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
+			vec3(.0f, -90.0f, .0f), rgb(.0f, .06f, .93f), rgb(1.0f, .6f, .0f),
 			controlled_sky, space::set_speed_pitch,
 			left_panel
 		);
 		pos_neg_slider* roll_slider = new pos_neg_slider(
 			vec3(.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
-			vec3(.0f, 180.0f, .0f), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
+			vec3(.0f, 180.0f, .0f), rgb(.0f, .06f, .93f), rgb(1.0f, .6f, .0f),
 			controlled_sky, space::set_speed_roll,
 			left_panel
 		);
 		pos_neg_slider* yaw_slider = new pos_neg_slider(
 			vec3(-.1f, .0f, .05f), vec3(.05f, 0, .15f), vec3(0),
-			vec3(.0f, -90.0f, .0f), rgb(0, 0, 1), rgb(1.0f, .65f, .0f),
+			vec3(.0f, -90.0f, .0f), rgb(.0f, .06f, .93f), rgb(1.0f, .6f, .0f),
 			controlled_sky, space::set_speed_yaw,
 			left_panel
 		);
@@ -58,23 +58,23 @@ public:
 		vec3 right_rot(left_rot.x(), -left_rot.y(), -left_rot.z());
 		panel_node* right_panel = new panel_node(
 			panel_pos_on_bridge, right_ext, .5f * right_ext,
-			right_rot, rgb(0, 1, 0),
+			right_rot, rgb(0),
 			panel_tree
 		);
 		lever* right_lever = new lever(
 			vec3(0), vec3(.1f, .1f, .01f), vec3(0),
-			vec3(60.0f, .0f, .0f), rgb(0, 1, 1),
+			vec3(60.0f, .0f, .0f), rgb(.8f, .87f, 1.0f),
 			controlled_sky, space::set_speed_ahead, 
 			right_panel);
 		button* add_target_button = new button(
-			vec3(.2f, .0f, .0f), vec3(.05f, .0f, .05f), vec3(0),
-			vec3(0), rgb(1.0f, 1.0f, 1.0f), rgb(0),
+			vec3(.1f, .0f, .0f), vec3(.05f, .0f, .05f), vec3(0),
+			vec3(0), rgb(.0f, .4f, .6f), rgb(.6f, .8f, 1.0f),
 			controlled_sky, space::add_target,
 			right_panel
 		);
 		button* fire_button = new hold_button(
-			vec3(-.2f, .0f, .0f), vec3(.05f, .0f, .05f), vec3(0),
-			vec3(0), rgb(1.0f, 1.0f, 1.0f), rgb(0),
+			vec3(-.1f, .0f, .0f), vec3(.05f, .0f, .05f), vec3(0),
+			vec3(0), rgb(.73f, .27f, .07f), rgb(.53f, .13f, .07f),
 			controlled_sky, space::static_fire,
 			right_panel
 		);

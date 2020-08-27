@@ -73,9 +73,10 @@ inline void vr_ctrl_panel::draw(cgv::render::context& ctx)
 
 inline void vr_ctrl_panel::destruct(context& ctx)
 {
-	cgv::render::ref_rounded_cone_renderer(ctx, -1);
-	cgv::render::ref_sphere_renderer(ctx, -1);
-	cgv::render::ref_box_renderer(ctx, -1);
+	ref_rounded_cone_renderer(ctx, -1);
+	ref_sphere_renderer(ctx, -1);
+	ref_box_renderer(ctx, -1);
+	ref_rectangle_renderer(ctx, -1);
 	bridge.destruct(ctx);
 }
 
@@ -188,29 +189,35 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		}
 		break;
 	case USER_POS:
-		if (state.hmd.status == vr::VRS_TRACKED)
+		hd.set_text("Use HMD position (index + palm) \nor manual position (middle + palm)?");
+		if (c.cal_hand->is_in_choice1_pose())
 		{
 			c.user_position = math_conversion::position_from_pose(state.hmd.pose);
+			next_calibration_stage();
 			next_calibration_stage(false, true);
 		}
-		else
+		else if (c.cal_hand->is_in_choice2_pose())
 		{
-			hd.set_text("Tap index and thumb above your head");
-			if (!c.is_signal_invalid && is_calibrating_hand_ack)
-			{
-				c.user_position = math_conversion::position_from_pose(state.controller[t_id].pose);
-				next_calibration_stage();
-			}
+			next_calibration_stage();
+		}
+		break;
+	case USER_POS_MAN:
+		hd.set_text("Tap index and thumb above your head.");
+		if (!c.is_signal_invalid && is_calibrating_hand_ack)
+		{
+			c.user_position = math_conversion::position_from_pose(state.controller[t_id].pose);
+			next_calibration_stage();
 		}
 		break;
 	case GLOVES:
 		time_to_calibration = c.hand_calibration_prep -
 			chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - c.last_tp).count();
-		hd.set_text("Move your hands as shown, fingers together, tap thumb and index when ready\nCalibration in " + to_string(time_to_calibration / 1000) + "s...");
+		hd.set_text("Move your hands as shown, fingers together.\nCalibration in " + to_string((int)time_to_calibration / 1000) + "s...");
 		calibrate_new_z(state);
 		for (auto loc : existing_hand_locs)
 		{
 			hands[loc]->calibrate_to_quat(quat(hand_orientations[loc]).inverse());
+			c.tracker_refs[loc] = cgv::math::inv(hand_orientations[loc]);
 		}
 		if (time_to_calibration <= 0)
 		{
@@ -220,20 +227,32 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		}
 		break;
 	case PANEL:
-		hd.set_text("Acknowledge when done");
-		calibrate_model_view(math_conversion::ave_pos(state.controller));
+		hd.set_text("Adjust panel position and acknowledge when done (index + thumb).");
+		calibrate_model_view(math_conversion::ave_pos(state.controller) + c.hand_vs_panel_for_calibration);
 		if (!c.is_signal_invalid && is_calibrating_hand_ack)
 		{
 			next_calibration_stage();
 		}
 		break;
+	case EXPORT:
+		hd.set_text("Save this calibration? \nYes: index + palm          No: middle + palm");
+		if (!c.is_signal_invalid && c.cal_hand->is_in_choice1_pose())
+		{
+			export_calibration();
+			next_calibration_stage();
+		}
+		else if (!c.is_signal_invalid && c.cal_hand->is_in_choice2_pose())
+		{
+			next_calibration_stage();
+		}
+		break;
 	case ABORT:
-		hd.set_text("Restore last calibration (index) or go with this one (middle)?");
-		if (!c.is_signal_invalid && is_calibrating_hand_ack)
+		hd.set_text("Restore last calibration (index + palm) or go with this one (middle + palm)?");
+		if (!c.is_signal_invalid && c.cal_hand->is_in_choice1_pose())
 		{
 			abort_calibration(true);
 		}
-		else if (!c.is_signal_invalid && is_calibrating_hand_decl)
+		else if (!c.is_signal_invalid && c.cal_hand->is_in_choice2_pose())
 		{
 			abort_calibration(false);
 		}
@@ -412,6 +431,14 @@ void vr_ctrl_panel::export_calibration()
 	cal_file << to_string(c.user_position(0)) + " " + to_string(c.user_position(1)) + " " + to_string(c.user_position(2)) << endl;
 	cal_file << to_string(c.z_dir(0)) + " " + to_string(c.z_dir(1)) + " " + to_string(c.z_dir(2)) << endl;
 
+	cal_file << to_string(c.tracker_refs[0](0, 0)) + " " + to_string(c.tracker_refs[0](0, 1)) + " " + to_string(c.tracker_refs[0](0, 2)) + " ";
+	cal_file << to_string(c.tracker_refs[0](1, 0)) + " " + to_string(c.tracker_refs[0](1, 1)) + " " + to_string(c.tracker_refs[0](1, 2)) + " ";
+	cal_file << to_string(c.tracker_refs[0](2, 0)) + " " + to_string(c.tracker_refs[0](2, 1)) + " " + to_string(c.tracker_refs[0](2, 2)) << endl;
+	
+	cal_file << to_string(c.tracker_refs[1](0, 0)) + " " + to_string(c.tracker_refs[1](0, 1)) + " " + to_string(c.tracker_refs[1](0, 2)) + " ";
+	cal_file << to_string(c.tracker_refs[1](1, 0)) + " " + to_string(c.tracker_refs[1](1, 1)) + " " + to_string(c.tracker_refs[1](1, 2)) + " ";
+	cal_file << to_string(c.tracker_refs[1](2, 0)) + " " + to_string(c.tracker_refs[1](2, 1)) + " " + to_string(c.tracker_refs[1](2, 2)) << endl;
+	
 	cal_file.close();
 }
 
@@ -420,6 +447,10 @@ void vr_ctrl_panel::load_calibration()
 	try
 	{
 		ifstream cal_file("calibration.txt");
+		if (!cal_file.good())
+		{
+			throw exception();
+		}
 		for (size_t i = 0; i < 4; i++)
 		{
 			for (size_t j = 0; j < 4; j++)
@@ -442,10 +473,27 @@ void vr_ctrl_panel::load_calibration()
 		{
 			cal_file >> c.z_dir(i);
 		}
+		for (size_t i = 0; i < 3; i++)
+		{
+			for (size_t j = 0; j < 3; j++)
+			{
+				cal_file >> c.tracker_refs[0](i, j);
+			}
+		}
+		for (size_t i = 0; i < 3; i++)
+		{
+			float foo;
+			for (size_t j = 0; j < 3; j++)
+			{
+				cal_file >> foo;
+				cal_file >> c.tracker_refs[1](i, j);
+			}
+		}
 	}
 	catch (const std::exception&)
 	{
-		cout << "Could not find or read calibration file..." << endl;
+		cout << "Could not find or read calibration file. Writing trivial values." << endl;
+		export_calibration();
 	}
 }
 
