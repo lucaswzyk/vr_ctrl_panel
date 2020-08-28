@@ -67,7 +67,7 @@ class vr_ctrl_panel
 		// constants
 		int request_dur = 1000,
 			hand_calibration_prep = 5000;
-		vec3 hand_vs_panel_for_calibration = vec3(.0f, .05f, -.15f);
+		vec3 hand_vs_panel_for_calibration = vec3(.0f, .0f, -.2f);
 
 		calibration()
 		{

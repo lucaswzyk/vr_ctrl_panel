@@ -34,7 +34,7 @@ protected:
 		lm.set_font_face(f->get_font_face(cgv::media::font::FFA_REGULAR));
 		lm.set_font_size(36);
 		lm.set_text_color(rgba(0, 0, 0, 1));
-		lm.add_label("init", rgba(1, 1, 1, .1f), 4, 4, 500, 80);
+		lm.add_label("init", rgba(1, 1, 1, .1f), 4, 4, 800, 80);
 
 		position.push_back(vec3(0));
 		orientation.push_back(quat(vec3(0, 1, 0), 0));
@@ -52,6 +52,8 @@ protected:
 		extents[0] = scale * vec2(l.get_width(), l.get_height());
 		texture_ranges[0] = lm.get_texcoord_range(0);
 	}
+
+	void set_visible(bool a_visible = true) { is_visible = a_visible; }
 
 public:
 	head_up_display()
@@ -85,17 +87,24 @@ public:
 		}
 	}
 
-	void set_visible(bool a_visible = true) { is_visible = a_visible; }
 	void set_text(string s) 
 	{
-		cout << "Headup display: " << s << endl;
-		lm.update_label_text(0, s);
-		update_geometry();
+		if (s.compare(""))
+		{
+			cout << "Headup display: " << s << endl;
+			lm.update_label_text(0, s);
+			update_geometry();
+			set_visible();
+		}
+		else
+		{
+			set_visible(false);
+		}
 	}
 
 	void set_pose(vec3 pos, mat3 ori)
 	{
-		vec3 vs_hmd = ori * vec3(.0f, .3f, .5f);
+		vec3 vs_hmd = ori * vec3(.0f, .0f, .7f);
 		position[0] = pos - vs_hmd;
 		orientation[0] = ori;
 	}

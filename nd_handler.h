@@ -56,9 +56,9 @@ public:
 	// hand-over methods from NDAPI
 	int get_number_of_imus(int device_id) { return nd.getNumberOfImus(device_id); }
 	int get_rotations(NDAPISpace::imu_sensor_t* imus, int num_imus, int device_id) { return nd.getRotations(imus, num_imus, device_id); }
-	void set_actuator_pulse(NDAPISpace::Actuator act, float level=.1, float duration_ms=100)
+	void set_actuator_pulse(int device_id, NDAPISpace::Actuator act, float level=.1, float duration_ms=100)
 	{
-		nd.setActuatorPulse(act, level, duration_ms, device_ids[0]);
+		nd.setActuatorPulse(act, level, duration_ms, device_id);
 	}
 
 	int get_location(int id) { return nd.getDeviceLocation(id); }

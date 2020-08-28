@@ -203,7 +203,7 @@ public:
 
 		cis[hand_loc].ind_map = ind_map;
 		calc_responsiveness(cis[hand_loc]);
-		if (is_responsive && ind_map.size())
+		if (ind_map.size())
 		{
 			on_touch(hand_loc);
 		}
@@ -278,14 +278,20 @@ public:
 
 	void on_touch(int hand_loc) override
 	{
-		callback(s);
+		if (is_responsive)
+		{
+			callback(s);
+		}
 		set_color(active_color);
 		is_responsive = false;
 	}
 
 	void on_no_touch() override
 	{
-		set_color(base_color);
+		if (!cis[0].ind_map.size() && !cis[1].ind_map.size())
+		{
+			set_color(base_color);
+		}
 	}
 
 	void calc_responsiveness(containment_info ci) override

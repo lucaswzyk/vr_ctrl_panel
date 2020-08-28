@@ -73,7 +73,7 @@ public:
 	void set_actuator_pulse(NDAPISpace::Actuator act, float level=.1, float duration_ms=100)
 	{
 		nd_handler& ndh = nd_handler::instance();
-		ndh.set_actuator_pulse(act, level, duration_ms);
+		ndh.set_actuator_pulse(id, act, level, duration_ms);
 	}
 
 	static quat nd_to_cgv_quat(NDAPISpace::quaternion_t nd_q)

@@ -34,16 +34,16 @@ class space
 		max_angular_speed = .02f,
 		pi_half = acos(.0f),
 		star_rad_mean = .05f, star_rad_deviation = .01f,
-		target_radius = 100.0f;
+		target_radius = 50.0f;
 	const rgb star_color = rgb(1.0f, 1.0f, 1.0f),
 			  target_color = rgb(1.0f, .0f, .0f);
 
 	int num_targets;
 	bool is_firing;
-	const vec3 phaser_loc = vec3(2.5f, 1.0f, -5.0f);
+	const vec3 phaser_loc = vec3(2.5f, .0f, -6.0f);
 	vector<vec3> phaser_positions, phaser_directions;
-	const vector<GLuint> phaser_indices = { 1, 0, 2, 0 };
-	const vector<float> phaser_radii = { .0f, .1f, .1f };
+	const vector<GLuint> phaser_indices = { 0, 1, 2, 3 };
+	const vector<float> phaser_radii = { .01f, .0f, .01f, .0f };
 
 	chrono::steady_clock::time_point last_update;
 
@@ -103,7 +103,7 @@ class space
 				) + origin;
 				positions[i] = inv_rotation * p - origin;
 			}
-			else if (p.length() < r_in)
+			else if (p.length() - radii[i] < r_in)
 			{
 				positions[i] = -p - origin;
 			}
@@ -173,15 +173,18 @@ class space
 
 		num_targets = 0;
 		phaser_positions = {
-			vec3(0),
 			vec3(-phaser_loc.x(), phaser_loc.y(), phaser_loc.z()) - origin,
-			vec3(phaser_loc.x(), phaser_loc.y(), phaser_loc.z()) - origin
+			vec3(0),
+			//vec3(-10.0f, 10.0f, .0f),
+			vec3(phaser_loc.x(), phaser_loc.y(), phaser_loc.z()) - origin,
+			//vec3(10.0f, 10.0f, .0f)
+			vec3(0)
 		};
 		phaser_directions = { phaser_positions[1], phaser_positions[2] };
 		phaser_directions[0].normalize();
 		phaser_directions[1].normalize();
 
-		rcrs.surface_color = rgb(1.0f, .0f, .0f);
+		rcrs.surface_color = rgb(.73f, .27f, .07f);
 
 		last_update = chrono::steady_clock::now();
 	}
