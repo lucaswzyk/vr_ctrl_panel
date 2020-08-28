@@ -66,10 +66,10 @@ public:
 			vec3(60.0f, .0f, .0f), rgb(.8f, .87f, 1.0f),
 			controlled_sky, space::set_speed_ahead, 
 			right_panel);
-		button* add_target_button = new button(
+		button* toggle_targets_button = new button(
 			vec3(.1f, .0f, .0f), vec3(.05f, .0f, .05f), vec3(0),
-			vec3(0), rgb(.0f, .4f, .6f), rgb(.6f, .8f, 1.0f),
-			controlled_sky, space::add_target,
+			vec3(0), rgb(.0f, .06f, .93f), rgb(.0f, 1.0f, .0f),
+			controlled_sky, space::toggle_targets,
 			right_panel
 		);
 		button* fire_button = new hold_button(

@@ -81,10 +81,10 @@ class vr_ctrl_panel
 			z_dir = vec3(0);
 			z_dir.z() = 1.0f;
 
-			load_bridge = false;
-			render_hands = false;
-			render_panel = false;
-			render_bridge = false;
+			load_bridge = true;
+			render_hands = true;
+			render_panel = true;
+			render_bridge = true;
 
 			stage = NOT_CALIBRATING;
 			cal_hand = nullptr;

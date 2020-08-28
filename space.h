@@ -29,14 +29,14 @@ class space
 
 	float speed_ahead, speed_pitch, speed_yaw, speed_roll;
 
-	const size_t num_stars = 100, max_num_targets = 3;
+	const size_t num_stars = 100, max_num_targets = 5;
 	const float max_speed_ahead = .1f,
-		max_angular_speed = .02f,
+		max_angular_speed = .01f,
 		pi_half = acos(.0f),
 		star_rad_mean = .05f, star_rad_deviation = .01f,
 		target_radius = 50.0f;
 	const rgb star_color = rgb(1.0f, 1.0f, 1.0f),
-			  target_color = rgb(1.0f, .0f, .0f);
+			  target_color = rgb(.0f, 1.0f, .0f);
 
 	int num_targets;
 	bool is_firing;
@@ -62,7 +62,7 @@ class space
 		float distance_elapsed = speed_ahead * ms_elapsed;
 		vec3 angles = vec3(speed_roll, speed_pitch, speed_yaw);
 		mat3 rotation = cgv::math::rotate3(ms_elapsed * angles),
-			 inv_rotation = cgv::math::rotate3(-r_out / 2 * angles);
+			 inv_rotation = cgv::math::rotate3(-r_out * angles);
 
 		if (distance_elapsed > 100.0f)
 		{
@@ -129,16 +129,17 @@ class space
 		for (size_t i = num_stars; i < num_stars + num_targets; i++)
 		{
 			vec3 t_pos = positions[i];
-			float a = cgv::math::dot(t_pos, phaser_directions[0]);
-			vec3 t_center_ray0 = t_pos - cgv::math::dot(t_pos, phaser_directions[0]) * phaser_directions[0],
-				 t_center_ray1 = t_pos - cgv::math::dot(t_pos, phaser_directions[1]) * phaser_directions[1];
-			if (t_center_ray0.length() < radii[i] || t_center_ray1.length() < radii[i])
+			if (t_pos.length() < r_out)
 			{
-				for (size_t j = i + 1; j < num_stars + num_targets; j++)
+				float a = cgv::math::dot(t_pos, phaser_directions[0]);
+				vec3 t_center_ray0 = t_pos - phaser_positions[1]
+					- cgv::math::dot(t_pos, phaser_directions[0]) * phaser_directions[0],
+					t_center_ray1 = t_pos - phaser_positions[3]
+					- cgv::math::dot(t_pos, phaser_directions[1]) * phaser_directions[1];
+				if (t_center_ray0.length() < radii[i] || t_center_ray1.length() < radii[i])
 				{
-					positions[j - 1] = positions[j];
+					positions[i] = -positions[i] - 2.0f * origin;
 				}
-				num_targets--;
 			}
 		}
 	}
@@ -174,13 +175,13 @@ class space
 		num_targets = 0;
 		phaser_positions = {
 			vec3(-phaser_loc.x(), phaser_loc.y(), phaser_loc.z()) - origin,
-			vec3(0),
-			//vec3(-10.0f, 10.0f, .0f),
+			vec3(-5.0f, 10.0f, .0f),
 			vec3(phaser_loc.x(), phaser_loc.y(), phaser_loc.z()) - origin,
-			//vec3(10.0f, 10.0f, .0f)
-			vec3(0)
+			vec3(5.0f, 10.0f, .0f)
 		};
-		phaser_directions = { phaser_positions[1], phaser_positions[2] };
+		phaser_directions = { 
+			phaser_positions[0] - phaser_positions[1], 
+			phaser_positions[2] - phaser_positions[3] };
 		phaser_directions[0].normalize();
 		phaser_directions[1].normalize();
 
@@ -262,10 +263,14 @@ public:
 	static void set_speed_yaw(space* s, float val) { s->speed_yaw = val * s->max_angular_speed; }
 	static void set_speed_roll(space* s, float val) { s->speed_roll = val * s->max_angular_speed; }
 
-	static void add_target(space* s) {
-		if (s->num_targets < s->max_num_targets)
+	static void toggle_targets(space* s) {
+		if (s->num_targets == 0)
 		{
-			s->num_targets++;
+			s->num_targets = s->max_num_targets;
+		}
+		else
+		{
+			s->num_targets = 0;
 		}
 	}
 	static void static_fire(space* s) { s->fire(); }

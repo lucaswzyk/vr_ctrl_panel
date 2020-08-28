@@ -232,7 +232,7 @@ public:
 	virtual void on_touch(int hand_loc) {};
 	virtual void on_no_touch() {};
 	
-	virtual float get_vibration_strength() { return .1f; }
+	virtual float get_vibration_strength() { return .05f; }
 
 	virtual void calc_responsiveness(containment_info ci) 
 	{
@@ -248,6 +248,7 @@ public:
 	}
 
 	quat get_rotation() { return geo.rotation; }
+
 	void set_color(rgb a_color) { 
 		geo.color = a_color; 
 		geo.has_changed = true;
@@ -257,6 +258,7 @@ public:
 class button : public panel_node
 {
 protected:
+	bool is_active;
 	rgb base_color, active_color;
 	space* s;
 	void (*callback)(space*);
@@ -268,30 +270,24 @@ public:
 		panel_node* parent_ptr)
 	{
 		add_to_tree(parent_ptr);
-		set_geometry(a_position, a_extent, a_translation, angles, base_color);
+		set_geometry(a_position, a_extent, a_translation, angles, a_base_color);
 		
 		s = a_space;
 		callback = a_callback;
 		base_color = a_base_color;
 		active_color = a_active_color;
+		is_active = false;
 	}
 
-	void on_touch(int hand_loc) override
+	virtual void on_touch(int hand_loc) override
 	{
 		if (is_responsive)
 		{
 			callback(s);
+			is_active = !is_active;
+			set_color(is_active ? active_color : base_color);
 		}
-		set_color(active_color);
 		is_responsive = false;
-	}
-
-	void on_no_touch() override
-	{
-		if (!cis[0].ind_map.size() && !cis[1].ind_map.size())
-		{
-			set_color(base_color);
-		}
 	}
 
 	void calc_responsiveness(containment_info ci) override
@@ -307,6 +303,23 @@ class hold_button : public button
 	void calc_responsiveness(containment_info ci) override
 	{
 		is_responsive = true;
+	}
+
+	void on_touch(int hand_loc) override
+	{
+		if (is_responsive)
+		{
+			callback(s);
+		}
+		set_color(active_color);
+	}
+
+	void on_no_touch() override
+	{
+		if (!cis[0].ind_map.size() && !cis[1].ind_map.size())
+		{
+			set_color(base_color);
+		}
 	}
 };
 
@@ -353,13 +366,16 @@ public:
 
 	void on_touch(int hand_loc) override
 	{
-		int touch_ind = cis[hand_loc].ind_map.begin()->first;
-		float new_value = vec_to_val(cis[hand_loc].positions[touch_ind]);
-		if (abs(new_value - value) < value_tolerance)
+		if (is_responsive)
 		{
-			value = new_value;
-			callback(s, value);
-			set_indicator_colors();
+			int touch_ind = cis[hand_loc].ind_map.begin()->first;
+			float new_value = vec_to_val(cis[hand_loc].positions[touch_ind]);
+			if (abs(new_value - value) < value_tolerance)
+			{
+				value = new_value;
+				callback(s, value);
+				set_indicator_colors();
+			}
 		}
 	}
 	
@@ -453,17 +469,13 @@ public:
 
 	void on_touch(int hand_loc) override
 	{
-		int touch_ind = cis[hand_loc].ind_map.begin()->first;
-		/*float new_value = vec_to_val(cis[hand_loc].positions[touch_ind]);
-		if (abs(new_value - value) < value_tolerance)
+		if (is_responsive)
 		{
-			value = new_value;
+			int touch_ind = cis[hand_loc].ind_map.begin()->first;
+			value = vec_to_val(cis[hand_loc].positions[touch_ind]);
 			callback(sphere, value);
 			set_indicator_colors();
-		}*/
-		value = vec_to_val(cis[hand_loc].positions[touch_ind]);
-		callback(sphere, value);
-		set_indicator_colors();
+		}
 	}
 	
 	float vec_to_val(vec3 v)
@@ -578,6 +590,10 @@ public:
 
 	void on_touch(int hand_loc) override
 	{
+		if (!is_responsive)
+		{
+			return;
+		}
 		geo.rotation = parent->get_rotation() * quat_yz;
 
 		vec3 touch_loc = to_local(cis[hand_loc].positions[0]);
