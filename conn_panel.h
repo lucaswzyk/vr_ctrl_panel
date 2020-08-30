@@ -25,7 +25,7 @@ public:
 
 	conn_panel()
 	{
-		controlled_sky = new space(10.0f, 500.0f);
+		controlled_sky = new space(50.0f, 500.0f);
 		panel_tree = new panel_node();
 
 		vec3 left_ext(-.48, .0f, .3);

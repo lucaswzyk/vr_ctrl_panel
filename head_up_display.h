@@ -104,7 +104,7 @@ public:
 
 	void set_pose(vec3 pos, mat3 ori)
 	{
-		vec3 vs_hmd = ori * vec3(.0f, .0f, .7f);
+		vec3 vs_hmd = ori * vec3(.0f, .1f, .6f);
 		position[0] = pos - vs_hmd;
 		orientation[0] = ori;
 	}
