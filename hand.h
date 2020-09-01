@@ -138,23 +138,32 @@ public:
 	};
 
 protected:
+	// glove
 	nd_device device;
-	vector<vec3> bone_lengths, palm_resting;
-	vector<vector<quat>> recursive_rotations;
-	vec3 origin;
-	quat last_palm_ref, palm_ref;
-	joint_positions pose;
-	const float scale = .007f;
-	map<pair<int, int>, NDAPISpace::Actuator> anat_to_actuators;
-	sphere_render_style srs;
-	vector<GLuint> cone_inds;
-	rounded_cone_render_style rcrs;
 
+	// geometry
+	joint_positions pose;
+	vector<vector<quat>> recursive_rotations;
+	vector<vec3> bone_lengths, palm_resting;
+	vector<GLuint> cone_inds;
+	const vec3 rot_split = vec3(.5f, .5f, .25f);
+
+	// calibration
+	quat last_palm_ref, palm_ref;
+	const float scale = .007f;
+	
+	// actuators and pulses
+	map<pair<int, int>, NDAPISpace::Actuator> anat_to_actuators;
 	chrono::steady_clock::time_point pulse_start;
 	pulse_kind current_pulse;
 	int num_delivered_pulses;
-	const int num_part_pulses_abort = 3, duration_done_pulse_ms = 1000, duration_abort_pulse = 600;
-	const vec3 rot_split = vec3(.5f, .5f, .25f);
+	const int num_part_pulses_abort = 3, 
+		duration_done_pulse_ms = 1000, 
+		duration_abort_pulse = 600;
+
+	// rendering
+	sphere_render_style srs;
+	rounded_cone_render_style rcrs;
 
 public:
 	hand() 
@@ -250,22 +259,22 @@ public:
 		rcrs.surface_color = rgb(1, 1, 1);
 	}
 
-	void update_and_draw(cgv::render::context& ctx, const conn_panel& cp, vec3 position, mat3 orientation)
+	void update_and_draw(cgv::render::context& ctx, const conn_panel& cp, vec3 pos, mat3 ori)
 	{
 		deliver_interactive_pulse();
-		set_pose_and_actuators(cp, position, orientation);
+		set_pose_and_actuators(cp, pos, ori);
 		draw(ctx);
 	}
 
 	void set_pose_and_actuators(const conn_panel& cp, vec3 position, mat3 orientation)
 	{
-		origin = position;
 		set_rotations(orientation);
 
 		pose = joint_positions();
 		pose.positions[PALM] = palm_resting;
 		pose.rotate(PALM, recursive_rotations[PALM][0]);
 
+		// construct finger from distal to proximal
 		for (size_t finger = THUMB; finger < NUM_HAND_PARTS; finger++)
 		{
 			pose.positions[finger][DISTAL] = vec3(0);
@@ -284,8 +293,9 @@ public:
 		}
 
 		pose.scale(scale);
-		pose.translate(origin);
+		pose.translate(position);
 
+		// hand pose to conn_panel
 		containment_info ci;
 		ci.tolerance = scale;
 		ci.positions = pose.make_array();
@@ -339,6 +349,7 @@ public:
 		recursive_rotations[RING][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_RING];
 		recursive_rotations[PINKY][PROXIMAL] = imu_rotations[NDAPISpace::IMULOC_PINKY];
 
+		// split intermediate rotation to all phalanges
 		quat rot;
 		float roll, pitch, yaw;
 		for (size_t finger = INDEX; finger < NUM_HAND_PARTS; finger++)
@@ -371,7 +382,6 @@ public:
 				);
 
 				vec3 x(1, 0, 0), y(0, 1, 0), z(0, 0, 1);
-				// TODO should palm_rot stay here?
 				recursive_rotations[finger][PROXIMAL] = palm_rot
 					* quat(z, yaw) * quat(y, pitch) * quat(x, rot_split.x() * roll);
 				recursive_rotations[finger][PROXIMAL].normalize();
@@ -397,15 +407,16 @@ public:
 	}
 
 	bool is_in_ack_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_INDEX); }
+	bool is_in_decl_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_MIDDLE); }
+	bool is_in_choice1_pose() { return device.are_contacts_joined(NDAPISpace::CONT_PALM, NDAPISpace::CONT_INDEX); }
+	bool is_in_choice2_pose() { return device.are_contacts_joined(NDAPISpace::CONT_PALM, NDAPISpace::CONT_MIDDLE); }
+
 	void set_ack_pulse() {
 		for (auto p : anat_to_actuators)
 		{
 			device.set_actuator_pulse(p.second);
 		}
 	}
-	bool is_in_decl_pose() { return device.are_contacts_joined(NDAPISpace::CONT_THUMB, NDAPISpace::CONT_MIDDLE); }
-	bool is_in_choice1_pose() { return device.are_contacts_joined(NDAPISpace::CONT_PALM, NDAPISpace::CONT_INDEX); }
-	bool is_in_choice2_pose() { return device.are_contacts_joined(NDAPISpace::CONT_PALM, NDAPISpace::CONT_MIDDLE); }
 
 	void init_interactive_pulse(pulse_kind kind)
 	{
