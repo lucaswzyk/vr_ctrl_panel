@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  26 AUG 2020 11:38
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  1 SEP 2020 12:59
 entering extended mode
 **./bachelor.tex
 (bachelor.tex
@@ -1469,7 +1469,7 @@ Package pdftex.def Info: ../pics/joint_positions.png  used on input line 363.
 
 [16] [17 <../pics/av_imus.jpg> <../pics/av_contacts.jpg> <../pics/av_actu.png>]
 [18 <../pics/joint_positions.png>]
-<../pics/stars_sphere_schema.png, id=380, 1551.7975pt x 1513.655pt>
+<../pics/stars_sphere_schema.png, id=379, 1551.7975pt x 1513.655pt>
 File: ../pics/stars_sphere_schema.png Graphic file (type png)
 <use ../pics/stars_sphere_schema.png>
 Package pdftex.def Info: ../pics/stars_sphere_schema.png  used on input line 39
@@ -1511,10 +1511,10 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 435.
 ### semi simple group (level 1) entered at line 56 (\begingroup)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 19040 strings out of 480790
- 305490 string characters out of 2907056
+ 19038 strings out of 480790
+ 305474 string characters out of 2907056
  766781 words of memory out of 3000000
- 34554 multiletter control sequences out of 15000+200000
+ 34552 multiletter control sequences out of 15000+200000
  593955 words of font info for 93 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  60i,12n,77p,10113b,3455s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1536,9 +1536,9 @@ b8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Program
  Files/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Program Files/MiKTeX/font
 s/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utm
 r8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on bachelor.pdf (31 pages, 2840104 bytes).
+Output written on bachelor.pdf (31 pages, 2840001 bytes).
 PDF statistics:
- 642 PDF objects out of 1000 (max. 8388607)
+ 641 PDF objects out of 1000 (max. 8388607)
  104 named destinations out of 1000 (max. 500000)
  250 words of extra memory for PDF output out of 10000 (max. 10000000)
 

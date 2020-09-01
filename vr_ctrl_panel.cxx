@@ -160,6 +160,10 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 	{
 		c.is_signal_invalid = true;
 		c.stage = ABORT;
+		for (auto loc : existing_hand_locs)
+		{
+			hands[loc]->init_interactive_pulse(hand::DONE);
+		}
 	}
 
 	stringstream s;
@@ -169,6 +173,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		if (!c.is_signal_invalid && is_calibrating_hand_ack)
 		{
 			c.cal_hand = hands[c.tr_assign[t_id]];
+			last_cal = c;
 			next_calibration_stage(false, false);
 		}
 		break;
@@ -186,7 +191,6 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 			hd.set_text("Calibration in " + s.str() + "s...");
 			if (time_to_calibration <= 0)
 			{
-				last_cal = c;
 				set_boolean(c.render_panel, false);
 				set_boolean(c.render_bridge, false);
 				next_calibration_stage();

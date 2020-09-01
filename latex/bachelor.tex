@@ -261,9 +261,9 @@ For the purpose of thesis, I used a pair of haptic gloves called Avatar VR which
 
 To use the Avatar VR on a computer, one needs to download, install and run the \acrshort{nd} Suite. This program provides a background service and GUI for managing and accessing the devices. A connection can be established via Bluetooth after which all sensor data is graphically displayed in the GUI.
 
-\acrshort{nd} also supplies a developer's API in the form of three files (\lstinline|NDAPI.h, NDAPI_x64.lib and NDAPI_x64.dll| or \lstinline|x86| respectively) which need to be included into the respective project in a suitable manner. An instance of the \lstinline|NDAPI.h| can be used to access the data of devices connected to \acrshort{nd} Suite.
+\acrshort{nd} also supplies a developer's API in the form of three files (\lstinline|NDAPI.h|, \lstinline|NDAPI_x64.lib| and \lstinline|NDAPI_x64.dll| or \lstinline|x86| respectively) which need to be included in the project in a suitable manner. An instance of the \lstinline|NDAPI.h| can be used to access the data of devices connected to \acrshort{nd} Suite.
 
-Additionally, a Vive tracker was used to determine the user's hand position and orientation. The Avatar VR can be mechanically connected to the tracker using a coupling, that needs to be acquired separately. The devices named so far and the way of coupling them can be seen in figure \ref{fig:devices}.
+Additionally, a Vive tracker was used to determine the user's hand position and orientation. The Avatar VR can be mechanically connected to the tracker using a coupling that needs to be acquired separately. The devices named so far and the way of coupling them can be seen in figure \ref{fig:devices}.
 
 The foundation for the graphics software I developed is implemented in the \gls{CGV} framework provided by the chair of computer graphics and visualization at TU Dresden.
 
@@ -278,9 +278,9 @@ A user can view the plugin on a computer screen with the \lstinline|cgv_viewer| 
 
 The following sections describe the development of a VR user interface utilizing these technologies in real-time. To give this some context rather than just moving boxes, I decided to design it as a conn panel on the USS Voyager (Star Trek). The term \emph{conn} is short for \emph{control and navigation}, meaning the panel is used to stear the ship. The classes used to implement this and their interaction are shown in figure \ref{fig:uml}.
 
-The main class and entry point carries the same name as the plugin itself. It is derived from the \gls{CGV} classes \lstinline|base|, \lstinline|drawable|, \lstinline|event_handler| and \lstinline|provider|, and used for management of all objects. Its capability to handle \lstinline|vr_pose_events| is used to forward tracker poses (position and orientation) to the \lstinline|hands| and \acrshort{hmd} poses to the \lstinline|head_up_display|. It distributes \lstinline|draw()| commands among the relevant members and manages the calibration routine described in section \ref{sec:cal}. This is the only class registered via object registration.
+The main class and entry point carries the same name as the plugin itself. It is derived from the \gls{CGV} classes \lstinline|base|, \lstinline|drawable|, \lstinline|event_handler| and \lstinline|provider|, and is used for scene management and interaction with the technology. Its capability to handle \lstinline|vr_pose_events| is used to forward tracker poses (position and orientation) to the \lstinline|hands| and \acrshort{hmd} poses to the \lstinline|head_up_display|. It distributes \lstinline|draw()| commands among the relevant members and manages the calibration routine described in section \ref{sec:cal}. This is the only class registered via object registration.
 
-Written information can be displayed to the user with the \lstinline|head_up_display| if an \acrshort{hmd} is connected and on the console alternatively. The \lstinline|head_up_display| is permanently adjusted to be displayed in the upper left corner of the user's visual field.
+Written information can be displayed to the user with the \lstinline|head_up_display| which is rendered in front of the \acrshort{hmd} position. The same text is also printed on the console for development purposes and for the use caes without \acrshort{hmd}.
 
 The \lstinline|mesh| class renders the Voyager bridge. It uses the basic functionality of \lstinline|mesh_render_info| provided in \gls{CGV} to load and draw.
 
