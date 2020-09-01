@@ -278,19 +278,17 @@ A user can view the plugin on a computer screen with the \lstinline|cgv_viewer| 
 
 The following sections describe the development of a VR user interface utilizing these technologies in real-time. To give this some context rather than just moving boxes, I decided to design it as a conn panel on the USS Voyager (Star Trek). The term \emph{conn} is short for \emph{control and navigation}, meaning the panel is used to stear the ship. The classes used to implement this and their interaction are shown in figure \ref{fig:uml}.
 
-The main class and entry point carries the same name as the plugin itself. It is derived from the \gls{CGV} classes \lstinline|base|, \lstinline|drawable|, \lstinline|event_handler| and \lstinline|provider|, and is used for scene management and interaction with the technology. Its capability to handle \lstinline|vr_pose_events| is used to forward tracker poses (position and orientation) to the \lstinline|hands| and \acrshort{hmd} poses to the \lstinline|head_up_display|. It distributes \lstinline|draw()| commands among the relevant members and manages the calibration routine described in section \ref{sec:cal}. This is the only class registered via object registration.
-
-Written information can be displayed to the user with the \lstinline|head_up_display| which is rendered in front of the \acrshort{hmd} position. The same text is also printed on the console for development purposes and for the use caes without \acrshort{hmd}.
+The main class and entry point carries the same name as the plugin itself. It is derived from the \gls{CGV} classes \lstinline|base|, \lstinline|drawable|, \lstinline|event_handler| and \lstinline|provider|, and is used for scene management and interaction with the technology. Its capability to handle \lstinline|vr_pose_events| is used to catch tracker poses (position and orientation) and \acrshort{hmd} poses which are forwarded to the \lstinline|hands| (see section \ref{sec:hand_model}) and \lstinline|head_up_display| (see section \ref{sec:hd}) during the \lstinline|draw()| call respectively. It distributes \lstinline|draw()| commands among all relevant members and manages the calibration routine (see section \ref{sec:cal}). This is the only class registered via object registration.
 
 The \lstinline|mesh| class renders the Voyager bridge. It uses the basic functionality of \lstinline|mesh_render_info| provided in \gls{CGV} to load and draw.
 
-Around the bridge, space is simulated by a spherical shell filled with stars. The user never actually changes position in model space. Instead, stars are moved in the opposite direction of the simulated motion, the speed of which can be set via static \lstinline|set_speed_*()| methods. The details of this are described in section \ref{sec:space}.
+Around the bridge, space is simulated by a spherical shell filled with stars implemented in \lstinline|space|. The user never actually changes position in model space. Instead, stars are moved in the opposite direction of the simulated motion, the speed of which can be set via static \lstinline|set_speed_*()| methods. This class also manages targets that can be eliminated with phasers (laser canons) via the \lstinline|fire()| method. The details of this are described in section \ref{sec:space}.
 
-All interactive elements are implemented as \lstinline|panel_node| or its derived classes. A \lstinline|conn_panel| constructs and manages a tree of such nodes. Elements are represented as boxes and combinations of boxes placed relative to their parent element. The \lstinline|slider| and \lstinline|lever| classes require a callback function and pointer to a \lstinline|stars_sphere| as arguments in their constructor that are used to set some speed in the \lstinline|stars_sphere|. The \lstinline|conn_panel| is positioned right on top of the mesh's conn.
+All interactive elements are implemented as \lstinline|panel_node| or its derived classes. A \lstinline|conn_panel| constructs and manages a tree of such nodes. Elements are represented as boxes and combinations of boxes placed relative to their parent element. The non-trivial derived classes (\lstinline|button|, \lstinline|hold_button|, \lstinline|slider| and \lstinline|lever|) require a callback function and pointer to a \lstinline|space| as arguments in their constructor. This is used to manipulate the \lstinline|space|. The \lstinline|conn_panel| is positioned right on top of the mesh's conn.
 
 Interaction with the \Gls{AVR} is managed by the singleton \lstinline|nd_handler| which can be used to pass function calls through to an instance of \lstinline|NDAPI|. This is frequently done in \lstinline|nd_device|, a class for querying sensor data from the gloves and converting it for better compatibility with \lstinline|cgv| and \gls{VCP}.
 
-Finally, a representation of the user's hands is implemented in \lstinline|hand|. It keeps track of several points and joints the details of which are described in section \ref{sec:hand_model}. During a \lstinline|draw()| call, \lstinline|vr_ctrl_panel| passes a pointer to its \lstinline|conn_panel| to each \lstinline|hand| which then passes on information about the current hand geometry wrapped as \lstinline|containment_info| to the \lstinline|conn_panel| for containment check. During this check, each \lstinline|panel_node| containing some hand part can react with its \lstinline|on_touch()| method. A \lstinline|map<int, float>| describing the contained positions is returned to the hand, enabling it to react as well.
+Finally, a representation of the user's hands is implemented in \lstinline|hand|. It keeps track of several points and joints the details of which are described in section \ref{sec:hand_model}. During a \lstinline|draw()| call, \lstinline|vr_ctrl_panel| passes a pointer to its \lstinline|conn_panel| to each \lstinline|hand| which then passes on information about the current hand geometry wrapped as \lstinline|containment_info| to the \lstinline|conn_panel| for containment check. Each \lstinline|panel_node| containing some hand part can then react with its \lstinline|on_touch()| method. A \lstinline|map<int, float>| describing the contained positions is returned to the hand, enabling it to react as well.
 
 \section{Skeletal Hand Model for the Avatar VR Haptic Glove} \label{sec:hand_model}
 \subsection{Abstraction of the Human Hand Skeleton}
@@ -384,6 +382,16 @@ Since the interphalangeal jionts act as revolute joints, only a roll component c
 		* quat(z, yaw) * quat(y, pitch) * quat(x, rot_split.x() * roll);
 	recursive_rotations[finger][INTERMED] = quat(x, rot_split.y() * roll);
 	recursive_rotations[finger][DISTAL] = quat(x, min(1.4f, rot_split.z() * roll));
+\end{lstlisting}
+
+\section{The Headup Display} \label{sec:hd}
+To convey written information to the user, a rectangular white region showing black text can be displayed in front of the user. This is implemented in \lstinline|headup_display| which uses \lstinline|label_manager| provided by \lstinline|cgv|. Its visibility can be controlled by setting an empty text (invisible) or a non-empty text (visible).
+
+Whenever the display is invisible, its \lstinline|draw(context& ctx, vec3 p, mat3 ori)| call simply returns. Otherwise, its position and orientation are updated so it is rendered $ .6 $ units in front of and $ .1 $ units above the user's eye position:
+\begin{lstlisting}
+	vec3 vs_hmd = ori * vec3(.0f, .1f, -.6f);
+	position = pos + vs_hmd;
+	orientation = ori;
 \end{lstlisting}
 
 \section{Simulation of Space} \label{sec:space}

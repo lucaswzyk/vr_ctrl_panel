@@ -13,7 +13,7 @@
 
 using namespace std;
 
-class head_up_display
+class headup_display
 	: public cgv::render::drawable
 {
 protected:
@@ -48,7 +48,7 @@ protected:
 	void set_visible(bool a_visible = true) { is_visible = a_visible; }
 
 public:
-	head_up_display()
+	headup_display()
 		: scale(.001f), is_visible(false)
 	{
 		prs.illumination_mode = cgv::render::IM_OFF;

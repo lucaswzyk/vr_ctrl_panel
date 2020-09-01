@@ -13,6 +13,7 @@
 \contentsline {subsection}{\numberline {2.3.1}Abstraction of the Human Hand Skeleton}{15}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Technology and Function of the Avatar VR}{16}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Using Data From the Avatar VR to Visualize the User's Hand}{16}{subsection.2.3.3}%
-\contentsline {section}{\numberline {2.4}Simulation of Space}{19}{section.2.4}%
-\contentsline {section}{\numberline {2.5}Calibration}{21}{section.2.5}%
-\contentsline {chapter}{\nonumberline Bibliography}{24}{chapter*.21}%
+\contentsline {section}{\numberline {2.4}The Headup Display}{19}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Simulation of Space}{19}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Calibration}{21}{section.2.6}%
+\contentsline {chapter}{\nonumberline Bibliography}{25}{chapter*.21}%

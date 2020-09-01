@@ -25,7 +25,7 @@
 #include "hand.h"
 #include "mesh.h"
 #include "math_conversion.h"
-#include "head_up_display.h"
+#include "headup_display.h"
 
 using namespace std;
 
@@ -106,7 +106,7 @@ protected:
 	mesh bridge;
 
 	// head up display
-	head_up_display hd;
+	headup_display hd;
 	vec3 hd_position;
 	mat3 hd_orientation;
 
