@@ -162,6 +162,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		c.stage = ABORT;
 	}
 
+	stringstream s;
 	switch (c.stage)
 	{
 	case NOT_CALIBRATING:
@@ -180,7 +181,9 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		{
 			time_to_calibration = c.request_dur -
 				chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - c.last_tp).count();
-			hd.set_text("Calibration in " + to_string((int)time_to_calibration / 1000) + "s...");
+			
+			s << fixed << setprecision(2) << time_to_calibration / 1000;
+			hd.set_text("Calibration in " + s.str() + "s...");
 			if (time_to_calibration <= 0)
 			{
 				last_cal = c;
@@ -214,7 +217,8 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 	case GLOVES:
 		time_to_calibration = c.hand_calibration_prep -
 			chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - c.last_tp).count();
-		hd.set_text("Move your as shown, fingers together.\nCalibration in " + to_string((int)time_to_calibration / 1000) + "s...");
+		s << fixed << setprecision(2) << time_to_calibration / 1000;
+		hd.set_text("Move your hands as shown, fingers together.\nCalibration in " + s.str() + "s...");
 		calibrate_new_z(state);
 		calibrate_model_view(math_conversion::ave_pos(state.controller));
 		for (auto loc : existing_hand_locs)

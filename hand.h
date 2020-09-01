@@ -349,7 +349,12 @@ public:
 				1 - 2 * (rot.x() * rot.x() + rot.y() * rot.y())
 			);
 
-			if (roll < 0 || roll > M_PI / 2)
+			if (roll > M_PI / 2)
+			{
+				roll -= 2 * M_PI;
+			}
+
+			if (roll < 0)
 			{
 				float sinp = 2 * (rot.w() * rot.y() - rot.z() * rot.x()), pitch;
 				if (abs(sinp) >= 1)

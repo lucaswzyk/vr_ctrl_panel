@@ -25,7 +25,7 @@ public:
 
 	conn_panel()
 	{
-		controlled_sky = new space(50.0f, 500.0f);
+		controlled_sky = new space(10.0f, 1000.0f);
 		panel_tree = new panel_node();
 
 		vec3 left_ext(-.48, .0f, .3);
@@ -74,7 +74,7 @@ public:
 		);
 		button* fire_button = new hold_button(
 			vec3(-.1f, .0f, .0f), vec3(.05f, .0f, .05f), vec3(0),
-			vec3(0), rgb(.73f, .27f, .07f), rgb(.53f, .13f, .07f),
+			vec3(0), rgb(1.0f, .6f, .0f), rgb(.53f, .13f, .07f),
 			controlled_sky, space::static_fire,
 			right_panel
 		);

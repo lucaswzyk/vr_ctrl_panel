@@ -34,7 +34,8 @@ class space
 		max_angular_speed = .01f,
 		pi_half = acos(.0f),
 		star_rad_mean = .05f, star_rad_deviation = .01f,
-		target_radius = 50.0f;
+		target_radius = 50.0f, target_speed_ratio = .4f,
+		spawn_ratio_stars = .2f, spawn_ratio_targets = .001f;
 	const rgb star_color = rgb(1.0f, 1.0f, 1.0f),
 			  target_color = rgb(.0f, 1.0f, .0f);
 
@@ -62,7 +63,7 @@ class space
 		float distance_elapsed = speed_ahead * ms_elapsed;
 		vec3 angles = vec3(speed_roll, speed_pitch, speed_yaw);
 		mat3 rotation = cgv::math::rotate3(ms_elapsed * angles),
-			 inv_rotation = cgv::math::rotate3(-r_out * angles);
+			 inv_rotation = cgv::math::rotate3(-2 * r_out * angles);
 
 		if (distance_elapsed > 100.0f)
 		{
@@ -78,7 +79,7 @@ class space
 		{
 			if (i == num_stars)
 			{
-				distance_elapsed /= 3.0f;
+				distance_elapsed *= target_speed_ratio;
 			}
 			// the following lines model dead ahead movement
 			p = positions[i];
@@ -96,7 +97,8 @@ class space
 				// get random angles from uniform distribution
 				float alpha = dis_angles(gen), beta = dis_angles(gen);
 				// init new position on spawn sphere
-				p = r_out / 10 * vec3(
+				float spawn_ratio = i < num_stars ? spawn_ratio_stars : spawn_ratio_targets;
+				p = spawn_ratio * r_out * vec3(
 					sin(alpha) * cos(beta),
 					sin(beta),
 					cos(alpha) * cos(beta)
