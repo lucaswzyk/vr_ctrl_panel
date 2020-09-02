@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  2 SEP 2020 15:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  3 SEP 2020 00:33
 entering extended mode
 **./bachelor.tex
 (bachelor.tex
@@ -1422,11 +1422,11 @@ LaTeX Font Info:    Trying to load font information for T1+pcr on input line 26
 ("C:\Program Files\MiKTeX\tex/latex/psnfss\t1pcr.fd"
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
-<../pics/uml.png, id=255, 979.66pt x 1047.915pt>
+<../pics/uml.png, id=255, 939.51pt x 1258.7025pt>
 File: ../pics/uml.png Graphic file (type png)
 <use ../pics/uml.png>
 Package pdftex.def Info: ../pics/uml.png  used on input line 274.
-(pdftex.def)             Requested size: 455.24408pt x 486.95564pt.
+(pdftex.def)             Requested size: 455.24408pt x 609.91301pt.
  [12
 
 ] [13 <../pics/devices_uncoupled.jpg> <../pics/devices_coupled.jpg>] [14 <../pi
@@ -1531,7 +1531,7 @@ b8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Program
  Files/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Program Files/MiKTeX/font
 s/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utm
 r8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on bachelor.pdf (32 pages, 2843766 bytes).
+Output written on bachelor.pdf (32 pages, 2861067 bytes).
 PDF statistics:
  658 PDF objects out of 1000 (max. 8388607)
  110 named destinations out of 1000 (max. 500000)

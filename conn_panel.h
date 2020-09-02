@@ -14,18 +14,17 @@ using namespace std;
 vec3 const panel_pos_on_bridge = vec3(-.005f, .885f, -3.627f);
 
 class conn_panel
-	: public cgv::base::base,
-	  public cgv::render::drawable
+	: public cgv::render::drawable
 {
 protected:
 	panel_node* panel_tree;
-	space* controlled_sky;
+	space* controlled_space;
 
 public:
 
 	conn_panel()
 	{
-		controlled_sky = new space(10.0f, 1000.0f);
+		controlled_space = new space(10.0f, 1000.0f);
 		panel_tree = new panel_node();
 
 		vec3 left_ext(-.48, .0f, .3);
@@ -38,19 +37,19 @@ public:
 		pos_neg_slider* pitch_slider = new pos_neg_slider(
 			vec3(-.1f, .0f, -.05f), vec3(.05f, 0, .15f), vec3(0),
 			vec3(.0f, -90.0f, .0f), rgb(.0f, .06f, .93f), rgb(1.0f, .6f, .0f),
-			controlled_sky, space::set_speed_pitch,
+			controlled_space, space::set_speed_pitch,
 			left_panel
 		);
 		pos_neg_slider* roll_slider = new pos_neg_slider(
 			vec3(.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
 			vec3(.0f, 180.0f, .0f), rgb(.0f, .06f, .93f), rgb(1.0f, .6f, .0f),
-			controlled_sky, space::set_speed_roll,
+			controlled_space, space::set_speed_roll,
 			left_panel
 		);
 		pos_neg_slider* yaw_slider = new pos_neg_slider(
 			vec3(-.1f, .0f, .05f), vec3(.05f, 0, .15f), vec3(0),
 			vec3(.0f, -90.0f, .0f), rgb(.0f, .06f, .93f), rgb(1.0f, .6f, .0f),
-			controlled_sky, space::set_speed_yaw,
+			controlled_space, space::set_speed_yaw,
 			left_panel
 		);
 
@@ -64,27 +63,22 @@ public:
 		lever* right_lever = new lever(
 			vec3(0), vec3(.1f, .1f, .01f), vec3(0),
 			vec3(60.0f, .0f, .0f), rgb(.8f, .87f, 1.0f),
-			controlled_sky, space::set_speed_ahead, 
+			controlled_space, space::set_speed_ahead, 
 			right_panel);
 		button* toggle_targets_button = new button(
 			vec3(.1f, .0f, .0f), vec3(.05f, .0f, .05f), vec3(0),
 			vec3(0), rgb(.0f, .06f, .93f), rgb(.0f, 1.0f, .0f),
-			controlled_sky, space::toggle_targets,
+			controlled_space, space::toggle_targets,
 			right_panel
 		);
 		button* fire_button = new hold_button(
 			vec3(-.1f, .0f, .0f), vec3(.05f, .0f, .05f), vec3(0),
 			vec3(0), rgb(1.0f, .6f, .0f), rgb(.53f, .13f, .07f),
-			controlled_sky, space::static_fire,
+			controlled_space, space::static_fire,
 			right_panel
 		);
 	}
-
-	string get_type_name(void) const
-	{
-		return "conn_panel";
-	}
-
+	
 	void draw(cgv::render::context& ctx)
 	{
 		group_geometry gg = panel_tree->get_geometry_rec();
@@ -99,7 +93,7 @@ public:
 		glDrawArrays(GL_POINTS, 0, gg.positions.size());
 		br.disable(ctx);
 
-		controlled_sky->draw(ctx);
+		controlled_space->draw(ctx);
 	}
 
 	std::map<int, float> check_containments(containment_info ci, int hand_loc) const
