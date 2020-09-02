@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  1 SEP 2020 14:25
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  2 SEP 2020 15:29
 entering extended mode
 **./bachelor.tex
 (bachelor.tex
@@ -1422,19 +1422,15 @@ LaTeX Font Info:    Trying to load font information for T1+pcr on input line 26
 ("C:\Program Files\MiKTeX\tex/latex/psnfss\t1pcr.fd"
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
-<../pics/uml.png, id=255, 1205.50375pt x 1958.31625pt>
+<../pics/uml.png, id=255, 979.66pt x 1047.915pt>
 File: ../pics/uml.png Graphic file (type png)
 <use ../pics/uml.png>
 Package pdftex.def Info: ../pics/uml.png  used on input line 274.
-(pdftex.def)             Requested size: 455.24408pt x 739.50641pt.
+(pdftex.def)             Requested size: 455.24408pt x 486.95564pt.
+ [12
 
-
-LaTeX Warning: Float too large for page by 72.81389pt on input line 277.
-
-[12
-
-] [13 <../pics/devices_uncoupled.jpg> <../pics/devices_coupled.jpg>]
-[14 <../pics/uml.png>]
+] [13 <../pics/devices_uncoupled.jpg> <../pics/devices_coupled.jpg>] [14 <../pi
+cs/uml.png>]
 <../pics/leap_anat.png, id=291, 434.37282pt x 307.1475pt>
 File: ../pics/leap_anat.png Graphic file (type png)
 <use ../pics/leap_anat.png>
@@ -1466,17 +1462,16 @@ File: ../pics/joint_positions.png Graphic file (type png)
 <use ../pics/joint_positions.png>
 Package pdftex.def Info: ../pics/joint_positions.png  used on input line 361.
 (pdftex.def)             Requested size: 182.09485pt x 277.5265pt.
-
-[16] [17 <../pics/av_imus.jpg> <../pics/av_contacts.jpg> <../pics/av_actu.png>]
-[18 <../pics/joint_positions.png>]
+ [16] [17 <../pics/av_imus.jpg> <../pics/av_contacts.jpg> <../pics/av_actu.png>
+] [18 <../pics/joint_positions.png>]
 <../pics/stars_sphere_schema.png, id=383, 1551.7975pt x 1513.655pt>
 File: ../pics/stars_sphere_schema.png Graphic file (type png)
 <use ../pics/stars_sphere_schema.png>
 Package pdftex.def Info: ../pics/stars_sphere_schema.png  used on input line 40
 0.
 (pdftex.def)             Requested size: 318.66946pt x 310.8325pt.
- [19] [20 <../pics/stars_sphere_schema.png>]
-(bachelor.tld [21] [22]) (bachelor.sot [23
+ [19] [20 <../pics/stars_sphere_schema.png>] (bachelor.tld [21] [22])
+(bachelor.sot [23
 
 
 ]) [24
@@ -1536,7 +1531,7 @@ b8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Program
  Files/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Program Files/MiKTeX/font
 s/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utm
 r8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on bachelor.pdf (32 pages, 2843900 bytes).
+Output written on bachelor.pdf (32 pages, 2843766 bytes).
 PDF statistics:
  658 PDF objects out of 1000 (max. 8388607)
  110 named destinations out of 1000 (max. 500000)

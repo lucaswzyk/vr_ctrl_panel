@@ -105,9 +105,9 @@ inline bool vr_ctrl_panel::handle(cgv::gui::event& e)
 		}
 		else
 		{
-			if (c.tr_assign.count(t_id))
+			if (c.tracker_assigns.count(t_id))
 			{
-				int tracker_loc = c.tr_assign[t_id];
+				int tracker_loc = c.tracker_assigns[t_id];
 				hand_positions[tracker_loc] = math_conversion::inhom_pos(c.world_to_model * math_conversion::hom_pos(position));
 				hand_orientations[tracker_loc] = ori_mat;
 				update_calibration(vrpe.get_state(), t_id);
@@ -137,7 +137,7 @@ inline void vr_ctrl_panel::create_gui()
 
 void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 {
-	if (c.stage > NOT_CALIBRATING && hands[c.tr_assign[t_id]] != c.cal_hand)
+	if (c.stage > NOT_CALIBRATING && hands[c.tracker_assigns[t_id]] != c.cal_hand)
 	{
 		return;
 	}
@@ -152,8 +152,8 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		}
 	}
 
-	bool is_calibrating_hand_ack = hands[c.tr_assign[t_id]]->is_in_ack_pose(),
-		is_calibrating_hand_decl = hands[c.tr_assign[t_id]]->is_in_decl_pose();
+	bool is_calibrating_hand_ack = hands[c.tracker_assigns[t_id]]->is_in_ack_pose(),
+		is_calibrating_hand_decl = hands[c.tracker_assigns[t_id]]->is_in_decl_pose();
 	float time_to_calibration;
 
 	if (c.stage > NOT_CALIBRATING && is_calibrating_hand_decl)
@@ -172,7 +172,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 	case NOT_CALIBRATING:
 		if (!c.is_signal_invalid && is_calibrating_hand_ack)
 		{
-			c.cal_hand = hands[c.tr_assign[t_id]];
+			c.cal_hand = hands[c.tracker_assigns[t_id]];
 			last_cal = c;
 			next_calibration_stage(false, false);
 		}
@@ -362,12 +362,12 @@ void vr_ctrl_panel::assign_trackers(cgv::gui::vr_pose_event& vrpe)
 		return;
 	}
 
-	if (c.tr_assign.size() == existing_hand_locs.size())
+	if (c.tracker_assigns.size() == existing_hand_locs.size())
 	{
 		reset_tracker_assigns();
 	}
 	
-	if (c.tr_assign.size())
+	if (c.tracker_assigns.size())
 	{
 		auto controllers = vrpe.get_state().controller;
 		int other_id = -1;
@@ -405,13 +405,13 @@ void vr_ctrl_panel::assign_trackers(cgv::gui::vr_pose_event& vrpe)
 			 other_pos = math_conversion::position_from_pose(controllers[other_id].pose) - user_pos;
 		if (cross(t_pos, z_dir).y() > 0 && cross(other_pos, z_dir).y() < 0)
 		{
-			c.tr_assign[t_id] = NDAPISpace::LOC_LEFT_HAND;
-			c.tr_assign[other_id] = NDAPISpace::LOC_RIGHT_HAND;
+			c.tracker_assigns[t_id] = NDAPISpace::LOC_LEFT_HAND;
+			c.tracker_assigns[other_id] = NDAPISpace::LOC_RIGHT_HAND;
 		} 
 		else if (cross(t_pos, z_dir).y() < 0 && cross(other_pos, z_dir).y() > 0)
 		{
-			c.tr_assign[t_id] = NDAPISpace::LOC_RIGHT_HAND;
-			c.tr_assign[other_id] = NDAPISpace::LOC_LEFT_HAND;
+			c.tracker_assigns[t_id] = NDAPISpace::LOC_RIGHT_HAND;
+			c.tracker_assigns[other_id] = NDAPISpace::LOC_LEFT_HAND;
 		}
 		else
 		{
@@ -420,13 +420,13 @@ void vr_ctrl_panel::assign_trackers(cgv::gui::vr_pose_event& vrpe)
 	} 
 	else
 	{
-		c.tr_assign[t_id] = existing_hand_locs[0];
+		c.tracker_assigns[t_id] = existing_hand_locs[0];
 	}
 }
 
 void vr_ctrl_panel::reset_tracker_assigns() {
 	cout << "Resetting tracker assignments" << endl;
-	c.tr_assign = map<int, int>();
+	c.tracker_assigns = map<int, int>();
 }
 
 void vr_ctrl_panel::export_calibration()
@@ -523,4 +523,26 @@ inline void vr_ctrl_panel::init_frame(context& ctx)
 	{
 		set_boolean(c.load_bridge, !bridge.init(ctx));
 	}
+}
+
+inline vr_ctrl_panel::calibration::calibration()
+{
+	model_view_mat.identity();
+	world_to_model.identity();
+	bridge_view_mat = rotate4(vec3(0, 180, 0));
+	tracker_refs = vector<mat3>(2);
+	tracker_refs[0].identity();
+	tracker_refs[1].identity();
+	user_position = vec3(0);
+	z_dir = vec3(0);
+	z_dir.z() = 1.0f;
+
+	load_bridge = true;
+	render_hands = true;
+	render_panel = true;
+	render_bridge = true;
+
+	stage = NOT_CALIBRATING;
+	cal_hand = nullptr;
+	is_signal_invalid = false;
 }

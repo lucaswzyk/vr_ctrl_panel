@@ -48,7 +48,7 @@ class vr_ctrl_panel
 		// settings that can be calibrated
 		mat4 model_view_mat, world_to_model, bridge_view_mat;
 		vector<mat3> tracker_refs;
-		map<int, int> tr_assign;
+		map<int, int> tracker_assigns;
 		vec3 user_position, z_dir;
 
 		// bools determining rendered objects
@@ -69,27 +69,7 @@ class vr_ctrl_panel
 			hand_calibration_prep = 5000;
 		vec3 hand_vs_panel_for_calibration = vec3(.0f, .0f, -.2f);
 
-		calibration()
-		{
-			model_view_mat.identity();
-			world_to_model.identity();
-			bridge_view_mat = rotate4(vec3(0, 180, 0));
-			tracker_refs = vector<mat3>(2);
-			tracker_refs[0].identity();
-			tracker_refs[1].identity();
-			user_position = vec3(0);
-			z_dir = vec3(0);
-			z_dir.z() = 1.0f;
-
-			load_bridge = true;
-			render_hands = true;
-			render_panel = true;
-			render_bridge = true;
-
-			stage = NOT_CALIBRATING;
-			cal_hand = nullptr;
-			is_signal_invalid = false;
-		}
+		calibration();
 	};
 
 protected:
@@ -137,6 +117,8 @@ public:
 
 	bool init(context& ctx);
 
+	// check if hand is in position relevant for calibration (e.g. index+thumb)
+	// and change state if so
 	void update_calibration(vr::vr_kit_state state, int t_index);
 
 	void next_calibration_stage(bool set_interactive_pulse = true, bool invalidate_ack = true);
@@ -149,6 +131,7 @@ public:
 
 	void calibrate_model_view(vec3 panel_origin);
 
+	// set c.tracker_assigns
 	void assign_trackers(cgv::gui::vr_pose_event& vrpe);
 
 	void reset_tracker_assigns();

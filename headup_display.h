@@ -45,6 +45,13 @@ protected:
 		texture_ranges.push_back(lm.get_texcoord_range(0));
 	}
 
+	void set_pose(vec3 pos, mat3 ori)
+	{
+		vec3 vs_hmd = ori * vec3(.0f, .1f, -.6f);
+		position[0] = pos + vs_hmd;
+		orientation[0] = ori;
+	}
+
 	void set_visible(bool a_visible = true) { is_visible = a_visible; }
 
 public:
@@ -91,12 +98,5 @@ public:
 		{
 			set_visible(false);
 		}
-	}
-
-	void set_pose(vec3 pos, mat3 ori)
-	{
-		vec3 vs_hmd = ori * vec3(.0f, .1f, -.6f);
-		position[0] = pos + vs_hmd;
-		orientation[0] = ori;
 	}
 };

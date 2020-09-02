@@ -6,13 +6,19 @@
 
 using namespace std;
 typedef cgv::math::quaternion<float> quat;
+typedef cgv::render::render_types::vec3 vec3;
 
 class nd_device
 {
 protected:
+	// left or right hand
 	NDAPISpace::Location location;
+	// ND internal ID and number of inertial sensors
 	int id, num_imus;
+	
+	// needs to be array for get_rotations()
 	NDAPISpace::imu_sensor_t* imu_vals;
+	// quats saved for calibration ("new unit quat")
 	vector<quat> ref_quats, prev_ref_quats;
 
 public:
@@ -37,81 +43,25 @@ public:
 		prev_ref_quats = ref_quats;
 	}
 
-	vector<quat> get_raw_cgv_rotations()
-	{
-		nd_handler& ndh = nd_handler::instance();
-		ndh.get_rotations(imu_vals, num_imus, id);
+	vector<quat> get_raw_cgv_rotations();
 
-		vector<quat> cgv_rotations;
-		NDAPISpace::quaternion_t nd_quat;
-		for (size_t i = 0; i < num_imus; i++)
-		{
-			nd_quat = imu_vals[i].rawRotation;
-			cgv_rotations.push_back(nd_to_cgv_quat(nd_quat));
-		}
+	// rotations relative to ref_quats
+	vector<quat> get_rel_cgv_rotations();
 
-		return cgv_rotations;
-	}
+	bool is_left() { return location == NDAPISpace::LOC_LEFT_HAND; }
 
-	vector<quat> get_rel_cgv_rotations()
-	{
-		vector<quat> rotations = get_raw_cgv_rotations();
-		for (size_t i = 0; i < num_imus; i++)
-		{
-			rotations[i] = ref_quats[i] * rotations[i];
-		}
+	void set_actuator_pulse(NDAPISpace::Actuator act, float level = .1, float duration_ms = 100);
 
-		return rotations;
-	}
+	// converting quats from NDAPI to cgv space
+	static quat nd_to_cgv_quat(NDAPISpace::quaternion_t nd_q);
 
+	int get_location();
 
-	bool is_left() 
-	{
-		return location == NDAPISpace::LOC_LEFT_HAND;
-	}
+	bool are_contacts_joined(NDAPISpace::Contact c1, NDAPISpace::Contact c2);
 
-	void set_actuator_pulse(NDAPISpace::Actuator act, float level=.1, float duration_ms=100)
-	{
-		nd_handler& ndh = nd_handler::instance();
-		ndh.set_actuator_pulse(id, act, level, duration_ms);
-	}
+	// set "new unit"
+	void calibrate();
 
-	static quat nd_to_cgv_quat(NDAPISpace::quaternion_t nd_q)
-	{
-		if (nd_q.w || nd_q.x || nd_q.y || nd_q.z)
-		{
-			return quat(nd_q.w, -nd_q.x, -nd_q.y, nd_q.z);
-		}
-		else
-		{
-			return quat(0, cgv::render::render_types::vec3(0, 1, 0));
-		}
-	}
-
-	int get_location() {
-		nd_handler& ndh = nd_handler::instance();
-		return ndh.get_location(id); 
-	}
-
-	bool are_contacts_joined(NDAPISpace::Contact c1, NDAPISpace::Contact c2) {
-		nd_handler& ndh = nd_handler::instance();
-		return ndh.are_contacts_joined(c1, c2, id);
-	}
-
-	void calibrate() 
-	{
-		prev_ref_quats = ref_quats;
-		ref_quats = get_raw_cgv_rotations();
-		for (size_t i = 0; i < num_imus; i++)
-		{
-			ref_quats[i] = ref_quats[i].inverse();
-			ref_quats[i].normalize();
-		}
-	}
-
-	void restore_last_calibration()
-	{
-		ref_quats = prev_ref_quats;
-	}
+	void restore_last_calibration() { ref_quats = prev_ref_quats; }
 };
 

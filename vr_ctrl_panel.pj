@@ -75,7 +75,7 @@ sourceFiles = [];
 //
 //If a file is listed in sourceFiles AND excludeSourceFiles it is INCLUDED.
 
-excludeSourceFiles = [INPUT_PATH];
+excludeSourceFiles = [INPUT_PATH, INPUT_DIR."/bridge.obj", INPUT_DIR."/LICENSE", INPUT_DIR."/README.md"];
 
 
 //list of directories that are scanned recursively for source files, 
@@ -87,7 +87,7 @@ sourceDirs = [INPUT_DIR];
 
 //specify subdirs in the source directories that should be excluded
 
-excludeSourceDirs = [];
+excludeSourceDirs = ["latex", "papers", "pics"];
 
 
 // define additional directories, in which project files are located. 
