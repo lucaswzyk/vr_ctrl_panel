@@ -328,8 +328,12 @@ inline void hand::deliver_interactive_pulse()
 		if (pulse_stage == num_delivered_pulses)
 		{
 			auto it = anat_to_actuators.begin();
-			for (size_t i = 0; i < pulse_stage; i++, it++)
-				device.set_actuator_pulse(it->second);
+			for (size_t i = 0; i < pulse_stage; i++)
+			{
+				it++;
+			}
+			cout << it->second << endl;
+			device.set_actuator_pulse(it->second, .9f);
 			num_delivered_pulses++;
 		}
 		break;

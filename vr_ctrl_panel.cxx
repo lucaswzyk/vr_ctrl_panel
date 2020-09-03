@@ -162,7 +162,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		c.stage = ABORT;
 		for (auto loc : existing_hand_locs)
 		{
-			hands[loc]->init_interactive_pulse(hand::DONE);
+			hands[loc]->init_interactive_pulse(hand::ABORT);
 		}
 	}
 
@@ -191,6 +191,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 			hd.set_text("Calibration in " + s.str() + "s...");
 			if (time_to_calibration <= 0)
 			{
+				set_boolean(c.render_hands, false);
 				set_boolean(c.render_panel, false);
 				set_boolean(c.render_bridge, false);
 				next_calibration_stage();
@@ -202,6 +203,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		if (c.cal_hand->is_in_choice1_pose())
 		{
 			c.user_position = math_conversion::position_from_pose(state.hmd.pose);
+			set_boolean(c.render_hands, true);
 			next_calibration_stage();
 			next_calibration_stage(false, true);
 		}
@@ -215,6 +217,7 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		if (!c.is_signal_invalid && is_calibrating_hand_ack)
 		{
 			c.user_position = math_conversion::position_from_pose(state.controller[t_id].pose);
+			set_boolean(c.render_hands, true);
 			next_calibration_stage();
 		}
 		break;
@@ -280,10 +283,6 @@ void vr_ctrl_panel::next_calibration_stage(bool set_interactive_pulse, bool inva
 	{
 		reset_calibration_stage();
 		reset_tracker_assigns();
-		for (auto loc : existing_hand_locs)
-		{
-			hands[loc]->init_interactive_pulse(hand::DONE);
-		}
 	}
 	else
 	{
@@ -301,6 +300,13 @@ void vr_ctrl_panel::next_calibration_stage(bool set_interactive_pulse, bool inva
 
 void vr_ctrl_panel::reset_calibration_stage()
 {
+	if (c.stage > REQUESTED)
+	{
+		for (auto loc : existing_hand_locs)
+		{
+			hands[loc]->init_interactive_pulse(hand::DONE);
+		}
+	}
 	set_boolean(c.render_hands, last_cal.render_hands);
 	set_boolean(c.render_panel, last_cal.render_panel);
 	set_boolean(c.render_bridge, last_cal.render_bridge);
@@ -313,7 +319,6 @@ void vr_ctrl_panel::abort_calibration(bool restore)
 {
 	for (auto loc : existing_hand_locs)
 	{
-		hands[loc]->init_interactive_pulse(hand::ABORT);
 		if (restore)
 		{
 			hands[loc]->restore_last_calibration();
@@ -333,20 +338,17 @@ void vr_ctrl_panel::calibrate_new_z(const vr::vr_kit_state& state)
 
 inline void vr_ctrl_panel::calibrate_model_view(vec3 panel_origin)
 {
-	/*panel_origin += vec3(0, c.hand_vs_panel_for_calibration.y(), 0)
-		+ c.z_dir * c.hand_vs_panel_for_calibration.z();*/
 	mat4 new_model_view_mat;
 	new_model_view_mat.identity();
-	float rad_to_deg = 45.0f / atan(1.0f);
+	float rad_to_deg = 45.0f / M_PI_2;
 	float angle_y = acos(c.z_dir.z()) * rad_to_deg;
 	if (c.z_dir.x() < 0)
 	{
 		angle_y = -angle_y;
 	}
-	new_model_view_mat *= cgv::math::rotate4(vec3(0, angle_y, 0));
-	new_model_view_mat.set_col(3, math_conversion::hom_pos(panel_origin));
-	vec4 center_translation = math_conversion::hom_pos(c.hand_vs_panel_for_calibration - panel_pos_on_bridge);
-	new_model_view_mat *= cgv::math::translate4(math_conversion::inhom_pos(center_translation));
+	new_model_view_mat *= cgv::math::translate4(panel_origin)
+		* cgv::math::rotate4(vec3(0, angle_y, 0))
+		* cgv::math::translate4(c.hand_vs_panel_for_calibration - panel_pos_on_bridge);
 
 	c.model_view_mat = new_model_view_mat;
 	c.world_to_model = cgv::math::inv(new_model_view_mat);

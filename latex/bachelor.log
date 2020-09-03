@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  3 SEP 2020 00:33
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  4 SEP 2020 00:32
 entering extended mode
 **./bachelor.tex
 (bachelor.tex
@@ -1033,7 +1033,7 @@ Overfull \hbox (7.37953pt too wide) in paragraph at lines 62--63
 er-ac-tion with vir-tual en-vi-ron-ments possible$[]$.
  []
 
-<../pics/wang01.jpg, id=99, 340.2446pt x 156.05203pt>
+<../pics/wang01.jpg, id=111, 340.2446pt x 156.05203pt>
 File: ../pics/wang01.jpg Graphic file (type jpg)
 <use ../pics/wang01.jpg>
 Package pdftex.def Info: ../pics/wang01.jpg  used on input line 71.
@@ -1056,12 +1056,12 @@ File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
                    \relax 
 l.88 
       [4 <../pics/wang01.jpg>]
-<../pics/kakoty_glove.png, id=128, 320.69812pt x 516.42938pt>
+<../pics/kakoty_glove.png, id=140, 320.69812pt x 516.42938pt>
 File: ../pics/kakoty_glove.png Graphic file (type png)
 <use ../pics/kakoty_glove.png>
 Package pdftex.def Info: ../pics/kakoty_glove.png  used on input line 91.
 (pdftex.def)             Requested size: 182.09485pt x 293.24095pt.
-<../pics/kakoty_principle.png, id=130, 401.24907pt x 566.115pt>
+<../pics/kakoty_principle.png, id=142, 401.24907pt x 566.115pt>
 File: ../pics/kakoty_principle.png Graphic file (type png)
 <use ../pics/kakoty_principle.png>
 Package pdftex.def Info: ../pics/kakoty_principle.png  used on input line 97.
@@ -1072,29 +1072,29 @@ Underfull \hbox (badness 2334) in paragraph at lines 98--98
  []
 
 [5 <../pics/kakoty_glove.png> <../pics/kakoty_principle.png>]
-<../pics/maitre_sensors.png, id=146, 298.11375pt x 228.10219pt>
+<../pics/maitre_sensors.png, id=158, 298.11375pt x 228.10219pt>
 File: ../pics/maitre_sensors.png Graphic file (type png)
 <use ../pics/maitre_sensors.png>
 Package pdftex.def Info: ../pics/maitre_sensors.png  used on input line 116.
 (pdftex.def)             Requested size: 259.49245pt x 198.56213pt.
-<../pics/maitre_glove.png, id=147, 153.57375pt x 225.84375pt>
+<../pics/maitre_glove.png, id=159, 153.57375pt x 225.84375pt>
 File: ../pics/maitre_glove.png Graphic file (type png)
 <use ../pics/maitre_glove.png>
 Package pdftex.def Info: ../pics/maitre_glove.png  used on input line 122.
 (pdftex.def)             Requested size: 136.5746pt x 200.859pt.
-<../pics/maitre_results.png, id=148, 1238.37656pt x 424.58624pt>
+<../pics/maitre_results.png, id=160, 1238.37656pt x 424.58624pt>
 File: ../pics/maitre_results.png Graphic file (type png)
 <use ../pics/maitre_results.png>
 Package pdftex.def Info: ../pics/maitre_results.png  used on input line 129.
 (pdftex.def)             Requested size: 455.24408pt x 156.08377pt.
  [6 <../pics/maitre_sensors.png> <../pics/maitre_glove.png> <../pics/maitre_res
 ults.png>]
-<../pics/amputees_poses.png, id=163, 564.60938pt x 435.87843pt>
+<../pics/amputees_poses.png, id=175, 564.60938pt x 435.87843pt>
 File: ../pics/amputees_poses.png Graphic file (type png)
 <use ../pics/amputees_poses.png>
 Package pdftex.def Info: ../pics/amputees_poses.png  used on input line 154.
 (pdftex.def)             Requested size: 159.3382pt x 123.0095pt.
-<../pics/amputees_a.png, id=164, 487.06969pt x 325.215pt>
+<../pics/amputees_a.png, id=176, 487.06969pt x 325.215pt>
 File: ../pics/amputees_a.png Graphic file (type png)
 <use ../pics/amputees_a.png>
 Package pdftex.def Info: ../pics/amputees_a.png  used on input line 160.
@@ -1104,7 +1104,7 @@ Underfull \hbox (badness 1721) in paragraph at lines 161--161
 \T1/ptm/m/n/10 tom hand move-ments for a
  []
 
-<../pics/amputees_f.png, id=165, 484.81125pt x 322.95656pt>
+<../pics/amputees_f.png, id=177, 484.81125pt x 322.95656pt>
 File: ../pics/amputees_f.png Graphic file (type png)
 <use ../pics/amputees_f.png>
 Package pdftex.def Info: ../pics/amputees_f.png  used on input line 166.
@@ -1116,14 +1116,14 @@ Underfull \hbox (badness 1917) in paragraph at lines 167--167
 
 [7 <../pics/amputees_poses.png> <../pics/amputees_a.png> <../pics/amputees_f.pn
 g>]
-<../pics/force_feedback_proto.jpg, id=192, 341.5962pt x 84.315pt>
+<../pics/force_feedback_proto.jpg, id=204, 341.5962pt x 84.315pt>
 File: ../pics/force_feedback_proto.jpg Graphic file (type jpg)
 <use ../pics/force_feedback_proto.jpg>
 Package pdftex.def Info: ../pics/force_feedback_proto.jpg  used on input line 1
 87.
 (pdftex.def)             Requested size: 341.59535pt x 84.31477pt.
  [8 <../pics/force_feedback_proto.jpg>] [9]
-<../pics/commercial_gloves.jpg, id=220, 353.67531pt x 163.08717pt>
+<../pics/commercial_gloves.jpg, id=232, 353.67531pt x 163.08717pt>
 File: ../pics/commercial_gloves.jpg Graphic file (type jpg)
 <use ../pics/commercial_gloves.jpg>
 Package pdftex.def Info: ../pics/commercial_gloves.jpg  used on input line 213.
@@ -1406,113 +1406,140 @@ Underfull \hbox (badness 10000) in paragraph at lines 237--237
 
 [10 <../pics/commercial_gloves.jpg>] [11]
 chapter 2.
-<../pics/devices_uncoupled.jpg, id=239, 722.7pt x 722.7pt>
+<../pics/devices_uncoupled.jpg, id=252, 722.7pt x 722.7pt>
 File: ../pics/devices_uncoupled.jpg Graphic file (type jpg)
 <use ../pics/devices_uncoupled.jpg>
-Package pdftex.def Info: ../pics/devices_uncoupled.jpg  used on input line 246.
+Package pdftex.def Info: ../pics/devices_uncoupled.jpg  used on input line 248.
 
 (pdftex.def)             Requested size: 223.0721pt x 223.07529pt.
-<../pics/devices_coupled.jpg, id=240, 722.7pt x 722.7pt>
+<../pics/devices_coupled.jpg, id=253, 722.7pt x 722.7pt>
 File: ../pics/devices_coupled.jpg Graphic file (type jpg)
 <use ../pics/devices_coupled.jpg>
-Package pdftex.def Info: ../pics/devices_coupled.jpg  used on input line 252.
+Package pdftex.def Info: ../pics/devices_coupled.jpg  used on input line 254.
 (pdftex.def)             Requested size: 223.0721pt x 223.07529pt.
 LaTeX Font Info:    Trying to load font information for T1+pcr on input line 26
-4.
+6.
 ("C:\Program Files\MiKTeX\tex/latex/psnfss\t1pcr.fd"
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
-<../pics/uml.png, id=255, 939.51pt x 1258.7025pt>
-File: ../pics/uml.png Graphic file (type png)
-<use ../pics/uml.png>
-Package pdftex.def Info: ../pics/uml.png  used on input line 274.
-(pdftex.def)             Requested size: 455.24408pt x 609.91301pt.
- [12
-
-] [13 <../pics/devices_uncoupled.jpg> <../pics/devices_coupled.jpg>] [14 <../pi
-cs/uml.png>]
-<../pics/leap_anat.png, id=291, 434.37282pt x 307.1475pt>
+<../pics/leap_anat.png, id=268, 434.37282pt x 307.1475pt>
 File: ../pics/leap_anat.png Graphic file (type png)
 <use ../pics/leap_anat.png>
-Package pdftex.def Info: ../pics/leap_anat.png  used on input line 297.
+Package pdftex.def Info: ../pics/leap_anat.png  used on input line 278.
 (pdftex.def)             Requested size: 227.62204pt x 160.9549pt.
-<../pics/leap_example.png, id=292, 274.02374pt x 222.8325pt>
+<../pics/leap_example.png, id=269, 274.02374pt x 222.8325pt>
 File: ../pics/leap_example.png Graphic file (type png)
 <use ../pics/leap_example.png>
-Package pdftex.def Info: ../pics/leap_example.png  used on input line 303.
+Package pdftex.def Info: ../pics/leap_example.png  used on input line 284.
 (pdftex.def)             Requested size: 213.96527pt x 173.99565pt.
- [15 <../pics/leap_anat.png> <../pics/leap_example.png>]
-<../pics/av_imus.jpg, id=337, 1102.1175pt x 903.375pt>
+ [12
+
+] [13 <../pics/devices_uncoupled.jpg> <../pics/devices_coupled.jpg> <../pics/le
+ap_anat.png> <../pics/leap_example.png>]
+<../pics/av_imus.jpg, id=314, 1102.1175pt x 903.375pt>
 File: ../pics/av_imus.jpg Graphic file (type jpg)
 <use ../pics/av_imus.jpg>
-Package pdftex.def Info: ../pics/av_imus.jpg  used on input line 328.
+Package pdftex.def Info: ../pics/av_imus.jpg  used on input line 310.
 (pdftex.def)             Requested size: 455.24408pt x 373.15681pt.
-<../pics/av_contacts.jpg, id=338, 502.87875pt x 502.87875pt>
+<../pics/av_contacts.jpg, id=315, 502.87875pt x 502.87875pt>
 File: ../pics/av_contacts.jpg Graphic file (type jpg)
 <use ../pics/av_contacts.jpg>
-Package pdftex.def Info: ../pics/av_contacts.jpg  used on input line 335.
+Package pdftex.def Info: ../pics/av_contacts.jpg  used on input line 317.
 (pdftex.def)             Requested size: 204.85844pt x 204.85414pt.
-<../pics/av_actu.png, id=339, 217.81375pt x 217.81375pt>
+<../pics/av_actu.png, id=316, 217.81375pt x 217.81375pt>
 File: ../pics/av_actu.png Graphic file (type png)
 <use ../pics/av_actu.png>
-Package pdftex.def Info: ../pics/av_actu.png  used on input line 341.
+Package pdftex.def Info: ../pics/av_actu.png  used on input line 323.
 (pdftex.def)             Requested size: 204.85844pt x 204.85794pt.
-<../pics/joint_positions.png, id=353, 624.3325pt x 951.555pt>
+ [14] [15 <../pics/av_imus.jpg> <../pics/av_contacts.jpg> <../pics/av_actu.png>
+]
+<../pics/joint_positions.png, id=350, 312.16624pt x 465.74pt>
 File: ../pics/joint_positions.png Graphic file (type png)
 <use ../pics/joint_positions.png>
-Package pdftex.def Info: ../pics/joint_positions.png  used on input line 361.
-(pdftex.def)             Requested size: 182.09485pt x 277.5265pt.
- [16] [17 <../pics/av_imus.jpg> <../pics/av_contacts.jpg> <../pics/av_actu.png>
-] [18 <../pics/joint_positions.png>]
-<../pics/stars_sphere_schema.png, id=383, 1551.7975pt x 1513.655pt>
+Package pdftex.def Info: ../pics/joint_positions.png  used on input line 344.
+(pdftex.def)             Requested size: 182.09485pt x 271.68573pt.
+ [16 <../pics/joint_positions.png>]
+<../pics/uml.png, id=366, 939.51pt x 1317.92375pt>
+File: ../pics/uml.png Graphic file (type png)
+<use ../pics/uml.png>
+Package pdftex.def Info: ../pics/uml.png  used on input line 374.
+(pdftex.def)             Requested size: 455.24408pt x 638.60907pt.
+ [17] [18 <../pics/uml.png>]
+Overfull \hbox (1.73502pt too wide) in paragraph at lines 386--387
+[]\T1/ptm/m/n/10.95 It dis-tributes [][][][] com-mands among all rel-e-vant mem
+-bers ([][][], [][][], [][][], and [][][]).
+ []
+
+[19]
+Overfull \hbox (4.18672pt too wide) in paragraph at lines 409--410
+[]\T1/ptm/m/n/10.95 In its [][][][] method, [][][] queries the cur-rent panel g
+e-om-e-try with [][][][][][]
+ []
+
+[20]
+<../pics/calibration.png, id=416, 613.29124pt x 944.52875pt>
+File: ../pics/calibration.png Graphic file (type png)
+<use ../pics/calibration.png>
+Package pdftex.def Info: ../pics/calibration.png  used on input line 431.
+(pdftex.def)             Requested size: 432.48048pt x 666.06581pt.
+ [21] [22 <../pics/calibration.png>]
+<../pics/stars_sphere_schema.png, id=447, 1551.7975pt x 1513.655pt>
 File: ../pics/stars_sphere_schema.png Graphic file (type png)
 <use ../pics/stars_sphere_schema.png>
-Package pdftex.def Info: ../pics/stars_sphere_schema.png  used on input line 40
-0.
-(pdftex.def)             Requested size: 318.66946pt x 310.8325pt.
- [19] [20 <../pics/stars_sphere_schema.png>] (bachelor.tld [21] [22])
-(bachelor.sot [23
+Package pdftex.def Info: ../pics/stars_sphere_schema.png  used on input line 49
+5.
+(pdftex.def)             Requested size: 273.14922pt x 266.41795pt.
+<../pics/phasers.png, id=448, 225.84375pt x 498.86375pt>
+File: ../pics/phasers.png Graphic file (type png)
+<use ../pics/phasers.png>
+Package pdftex.def Info: ../pics/phasers.png  used on input line 501.
+(pdftex.def)             Requested size: 119.95671pt x 264.97504pt.
+ [23] [24 <../pics/stars_sphere_schema.png> <../pics/phasers.png>] [25]
+chapter 3.
+(bachelor.tld [26
+
+]) (bachelor.sot [27
 
 
-]) [24
+]) [28
 
 
 ] (bachelor.bbl
 chapter without number
-[25
+[29
 
 
-]) [26] [27
+]) [30] [31
 
 
 
 
-] [28
+] [32
 
 
 
 ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 443.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 443.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 540.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 540.
  (bachelor.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 443.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 443.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 540.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 540.
 Package rerunfilecheck Info: File `bachelor.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 443.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 540.
  )
 (\end occurred inside a group at level 1)
 
 ### semi simple group (level 1) entered at line 56 (\begingroup)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 19076 strings out of 480790
- 305911 string characters out of 2907056
+ 19212 strings out of 480790
+ 307933 string characters out of 2907056
  766781 words of memory out of 3000000
- 34584 multiletter control sequences out of 15000+200000
+ 34678 multiletter control sequences out of 15000+200000
  593955 words of font info for 93 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,12n,77p,10113b,3455s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 60i,12n,77p,10113b,3713s stack positions out of 5000i,500n,10000p,200000b,50000s
 pdfTeX warning (dest): name{glo:CGV} has been referenced but do
 es not exist, replaced by a fixed one
 
@@ -1531,9 +1558,9 @@ b8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Program
  Files/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Program Files/MiKTeX/font
 s/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utm
 r8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on bachelor.pdf (32 pages, 2861067 bytes).
+Output written on bachelor.pdf (36 pages, 2874527 bytes).
 PDF statistics:
- 658 PDF objects out of 1000 (max. 8388607)
- 110 named destinations out of 1000 (max. 500000)
- 258 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 746 PDF objects out of 1000 (max. 8388607)
+ 150 named destinations out of 1000 (max. 500000)
+ 316 words of extra memory for PDF output out of 10000 (max. 10000000)
 
