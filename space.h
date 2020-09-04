@@ -53,7 +53,7 @@ class space
 	sphere_render_style srs;
 	rounded_cone_render_style rcrs;
 
-	void update_positions();
+	void update();
 
 	// if a target has been hit, it is mirrored at the midpoint of the shell
 	void fire();

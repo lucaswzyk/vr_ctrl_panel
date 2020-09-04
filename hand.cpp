@@ -333,7 +333,7 @@ inline void hand::deliver_interactive_pulse()
 				it++;
 			}
 			cout << it->second << endl;
-			device.set_actuator_pulse(it->second, .9f);
+			device.set_actuator_pulse(it->second, .5f);
 			num_delivered_pulses++;
 		}
 		break;

@@ -79,25 +79,23 @@ bool panel_node::geometry_changed()
 
 map<int, float> panel_node::check_containments(containment_info ci, int hand_loc)
 {
+	float max_vibration_strength = get_vibration_strength();
 	cis[hand_loc] = ci;
 	map<int, float> ind_map;
+	float dist;
 	for (size_t i = 0; i < ci.positions.size(); i++)
 	{
-		if (contains(ci.positions[i], ci.tolerance))
+		dist = distance(ci.positions[i]);
+		if (dist < ci.tolerance)
 		{
-			ind_map[i] = get_vibration_strength();
+			ind_map[i] = (1.0f - dist / ci.tolerance) * max_vibration_strength;
 		}
 	}
 
 	for (auto child : children)
 	{
 		map<int, float> child_map = child->check_containments(ci, hand_loc);
-		for (auto p : child_map)
-		{
-			ind_map[p.first] = ind_map.count(p.first)
-				? max(ind_map[p.first], get_vibration_strength())
-				: get_vibration_strength();
-		}
+		ind_map.insert(child_map.begin(), child_map.end());
 	}
 
 	cis[hand_loc].ind_map = ind_map;
@@ -114,18 +112,14 @@ map<int, float> panel_node::check_containments(containment_info ci, int hand_loc
 	return ind_map;
 }
 
-bool panel_node::contains(vec3 v, float tolerance)
+float panel_node::distance(vec3 v)
 {
 	v = to_local(v);
+	float dist_x = max(.0f, abs(v.x()) - .5f * geo.extent.x());
+	float dist_y = max(.0f, abs(v.y()) - .5f * geo.extent.y());
+	float dist_z = max(.0f, abs(v.z()) - .5f * geo.extent.z());
 
-	bool is_contained = -.5 * geo.extent.x() - tolerance <= v.x()
-		&& -.5 * geo.extent.y() - tolerance <= v.y()
-		&& -.5 * geo.extent.z() - tolerance <= v.z()
-		&& v.x() <= .5 * geo.extent.x() + tolerance
-		&& v.y() <= .5 * geo.extent.y() + tolerance
-		&& v.z() <= .5 * geo.extent.z() + tolerance;
-
-	return is_contained;
+	return sqrt(dist_x * dist_x + dist_y * dist_y + dist_z * dist_z);
 }
 
 // sets is_responsive = true if this element should be responsive to touch

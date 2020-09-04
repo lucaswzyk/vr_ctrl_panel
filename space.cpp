@@ -1,6 +1,6 @@
 #include "space.h"
 
-void space::update_positions()
+void space::update()
 {
 	// to ensure realistic movement independent of frame rate
 	chrono::steady_clock::time_point now = chrono::steady_clock::now();
@@ -168,7 +168,7 @@ space::space(float a_r_in, float a_r_out)
 
 void space::draw(context& ctx)
 {
-	update_positions();
+	update();
 
 	ctx.push_modelview_matrix();
 	ctx.mul_modelview_matrix(model_view_mat);

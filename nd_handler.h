@@ -58,7 +58,7 @@ public:
 	int get_rotations(NDAPISpace::imu_sensor_t* imus, int num_imus, int device_id) { return nd.getRotations(imus, num_imus, device_id); }
 	int get_location(int id) { return nd.getDeviceLocation(id); }
 	bool are_contacts_joined(NDAPISpace::Contact c1, NDAPISpace::Contact c2, int id) { return nd.areContactsJoined(c1, c2, id); }
-	void set_actuator_pulse(int device_id, NDAPISpace::Actuator act, float level = .1, float duration_ms = 100)
+	void set_actuator_pulse(int device_id, NDAPISpace::Actuator act, float level = .1f, float duration_ms = 100)
 	{
 		nd.setActuatorPulse(act, level, duration_ms, device_id);
 	}

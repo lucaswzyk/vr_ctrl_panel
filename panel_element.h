@@ -127,11 +127,11 @@ public:
 	// saves ci as one of cis
 	map<int, float> check_containments(containment_info ci, int hand_loc);
 
-	virtual bool contains(vec3 v, float tolerance);
+	virtual float distance(vec3 v);
 
 	virtual void on_touch(int hand_loc) {};
 	virtual void on_no_touch() {};
-	virtual float get_vibration_strength() { return .05f; }
+	virtual float get_vibration_strength() { return .2f; }
 
 	// sets is_responsive = true if this element should be responsive to touch
 	virtual void calc_responsiveness(containment_info ci);

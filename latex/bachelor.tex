@@ -57,7 +57,7 @@ Star Trek and Enterprise are copyright Paramount Pictures.}
 \glsaddall
 	
 \chapter{Introduction}
-What makes a good \acrfull{vr} application? What qualities should it have and how well developed is the necessary technology? In their review \emph{Haptic display for virtual reality: progress and challenges}\newcite{wang19}, Wang et al. state that \gls{vr} was born in 1965 with Ivan Sutherlands proposal of a concept named "The Ultimate Display"\newcite{sutherland65}. In that report of the IFIP Congress, Sutherland names immersion, interaction and imagination as three important features of \acrshort{vr}. 
+In their review \emph{Haptic display for virtual reality: progress and challenges}\newcite{wang19}, Wang et al. state that \gls{vr} was born in 1965 with Ivan Sutherlands proposal of a concept named "The Ultimate Display"\newcite{sutherland65}. In that report of the IFIP Congress, Sutherland names immersion, interaction and imagination as three important features of \acrshort{vr}. 
 
 There has been a multitude of approaches to making interaction with virtual environments possible\newcite{li19}. Touch screens and stylus pens have become quite common in everyday life. Devices capable of capturing scene depth like Microsoft Kinect and Leap Motion make touchless interaction possible, e.g. during games. This thesis focuses especially on wearable devices called \emph{data gloves}.
 
@@ -399,7 +399,7 @@ Around the bridge, space is simulated by a spherical shell filled with stars imp
 	}
 \end{lstlisting}
 
-The method needs to be static so it is possible to set it as callback method in objects outside this class. Analogous methods exist for all three rotational speeds. This class also manages targets that can be eliminated with phasers (laser canons) via the \lstinline|static_fire()| method. 
+The method needs to be static so it is possible to set it as callback method in objects outside this class. Analogous methods exist for all three rotational speeds. This class also manages targets whose visibility can be toggled with \lstinline|toggle_targets()| and that can be eliminated with phasers (laser canons) via the \lstinline|static_fire()| method. 
 
 More details and the geometry behind this class are described in section \ref{sec:space}.
 
@@ -488,7 +488,7 @@ At any time, the calibration can also be aborted by joining thumb and middle fin
 
 The whole process is communicated to the user on the headup display. It appears with the initial countdown and disappears when returning to the "not calibrating" stage.
 
-\section{Simulation of Space} \label{sec:space}
+\section{Space, Targets and Phasers} \label{sec:space}
 \begin{figure}
 	\centering
 	\begin{subfigure}{.6\linewidth}
@@ -500,6 +500,7 @@ The whole process is communicated to the user on the headup display. It appears 
 	\begin{subfigure}{.31\linewidth}
 		\includegraphics[width=.85\linewidth]{../pics/phasers}
 		\caption{Target phaser interaction}
+		\label{fig:space:phaser}
 	\end{subfigure}
 	\caption{Schematics of the geometry behind the \lstinline|space| class, see text for explanations}
 	\label{fig:space}
@@ -524,13 +525,57 @@ To somewhat simplify the math behind this calculation, I used the point on the o
 
 When moving dead ahead (angular speeds are zero), stars are moved along the yellow "forward motion" arrows in figure \ref{fig:space:shell}. The bigger the angle between their position vector and the positive $ z $-axis, the slower they move. More precisely, the length of a star's position vector is increased by the product of the cosine of the angle between the position vector and the positive $ z $-axis, and the general distance it has covered, calculated from \lstinline|speed_ahead| and the time since the last update.
 
-If a star moves outside the outer hull of the shell, its position is re-initialized randomly somewhere on a sphere of the spawn radius around the origin. It cannot be simply set to the origin because it needs a direction and the spawn radius should not be too small in order to avoid the impression of stars spawning very densly.
+If a star moves outside the outer hull of the shell, its position is re-initialized randomly somewhere on a sphere of the spawn radius around the origin. It cannot be simply set to the origin because it needs a direction and the spawn radius should not be too small in order to avoid the impression of stars spawning very densly. Stars moving into the free sphere around the user are mirrored at the user. As this only happens when a forward motion is applied, the star then keeps moving away behind the user.
 
 An additional rotation is realized by simply rotating the stars around the user. After some experimenting, I realized the spawn sphere needs to be rotated inversely around the user as well to achieve a realistic experience and because otherwise, the newly spawned stars converge to a line at slow forward motion and fast rotations.
 
+Because they behave quite similar to the stars, the targets are managed in \lstinline|space| as well. Their positions are updated as described for the stars. Additionally, their radii are continously adjusted as in the following pseudo code:
 
+\begin{lstlisting}
+	// value between 0 (at user_pos) and 1 (at outer shell)
+	float dist_frac = target_pos_rel_to_user.length() / r_out;
+	// value between 0 (at outer shell) and 1 (at user_pos)
+	dist_frac = 1 - dist_frac;
+	// realistic size change
+	dist_frac = sqrt(dist_frac);
+	// scale to basic target radius
+	target_radius_loc = dist_frac * target_radius;
+\end{lstlisting}
+
+This results in a radius of $ 0 $ at the outer shell and in a radius of \lstinline|target_radius| at the user position which is never reached due to mirroring at the inner shell. The targets are not active at plugin start, meaning they are neither updated nor rendered. They can be activated using \lstinline|toggle_targets()| and deactivated with the same method.
+
+When the \lstinline|fire()| method is called, phasers are rendered as cones running from the left and right of the view screen to the left and and right of the origin (cross in figure \ref{fig:space}) where there radius becomes $ 0 $. This gives the impression of infinite rays. All targets are checked if they have been hit as shown in the schematic in figure \ref{fig:space:phaser} (viewed from above) and the following pseudo code:
+
+\begin{lstlisting}
+	vec3 target_rel_to_left = target_pos - left_phaser_end;
+	vec3 orth_proj = dot(target_rel_to_left, left_phaser_dir) * left_phaser_dir;
+	float dist = (target_rel_to_left - orth_proj).length();
+	bool hit = dist < target_radius_loc;
+\end{lstlisting}
+
+In figure \ref{fig:space:phaser}, the dotted line corresponds to \lstinline|target_pos|, the long arrow to \lstinline|target_rel_to_left| and the short arrow to the normalized vector \lstinline|left_phaser_dir|. 
+
+If a target has been hit, it is mirrored at the user position removing it from the view screen. 
 
 \chapter{Evaluation}
+\section{Participating Subjects and Preparation}
+For the purpose of a user study, I chose two Star Trek Fans (female, 21 and male, 48; called \emph{Trekkies}) and two people not familiar with the franchise (both female, 49 and 11; called \emph{Non-Trekkies}). All of them were instructed how to wear the \Gls{AVR} and the \acrshort{hmd}, and had approximately $ 15min $ to familiarize themselves with the environment, i.e. the conn panel, wearing the \acrshort{hmd}, moving through space and eliminating targets. 
+
+\section{Qualitative Evaluations and Suggestions}
+The subjects were then asked for their opinion and suggestions regarding the design and behavior of the plugin which are summarized below:
+\vspace{.3cm}
+\begin{itemize}
+	\item As an essential part of the whole project the haptic feedback strength was adjusted in discussion with the subjects. After that, all subjects regarded the feedback when touching a virtual surface as "strangely realistic" or similar. I then applied different vibration strengths for various panel components which was evaluated as "unrealistic" and "confusing", so I went back to the original approach of a single vibration strength throughout the whole panel. A good value for this strength set as \lstinline|level| in the \lstinline|NDAPI| method \lstinline|set_actuator_pulse()| seems to be $ .1 $.
+	
+	When asked to reach through the conn panel, they described a sense of intuitive hesitation because their brain had apparently somewhat accepted the physical barrier formed by the virtual panel.
+	
+	\item The target color was changed from red to green increasing the contrast to the orange phasers. The phaser color, position, and direction was adjusted to match the Trekkies impression of a phaser from the movies.
+	\item The "Toggle Targets" button was changed to stay green while the targets are active.
+	\item In the initial implementation, the sliders on the left side of the panel had been designed to react only to touches close to their current setting. This was meant to give the impression of a slider rather than buttons. However, the participants found it hard to match the current setting which resulted in problems with changing the slider value. This was adjusted so the user can tap anywhere on the slider to immediately change its value. A field was added in the middle of the slider that can be used to set its value exactly to $ 0 $. 
+	\item Instructions on the headup display during calibration lead to misunderstandings and miscalibrations. They were discussed with the users and adjusted until agreed upon.
+	\item Irritation was expressed when the panel reappeared during calibration because the user's hands ranged into the panel triggering continuous vibration feedback. I added a vector \lstinline|hand_vs_panel_for_calibration| in the \lstinline|calibration| struct which moves the panel below the hands during calibration to avoid this.
+	\item The size of the targets represented by \lstinline|target_radius| above was adjusted until the subjects found it challenging, but possible to eliminate them.
+\end{itemize}
 
 The calibration is necessary because the \Gls{AVR} does not give sufficiently accurate measurements for a period longer than a few minutes. Since the device apparently accumulates quaternions from instantaneous acceleration rates, the resulting rotations tend to diverge quickly from the actual hand pose. This effect is significant if the device was moved even slightly during its intrinsic calibration at startup time and becomes stronger when executing movements with high accelerations, e.g. shaking.
 

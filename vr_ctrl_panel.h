@@ -65,7 +65,7 @@ class vr_ctrl_panel
 		vector<mat3> last_tracker_refs;
 
 		// constants
-		int request_dur = 1000,
+		int request_dur = 3000,
 			hand_calibration_prep = 5000;
 		vec3 hand_vs_panel_for_calibration = vec3(.0f, .0f, -.2f);
 
