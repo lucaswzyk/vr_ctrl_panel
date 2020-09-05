@@ -79,7 +79,6 @@ bool panel_node::geometry_changed()
 
 map<int, float> panel_node::check_containments(containment_info ci, int hand_loc)
 {
-	float max_vibration_strength = get_vibration_strength();
 	cis[hand_loc] = ci;
 	map<int, float> ind_map;
 	float dist;
@@ -88,14 +87,17 @@ map<int, float> panel_node::check_containments(containment_info ci, int hand_loc
 		dist = distance(ci.positions[i]);
 		if (dist < ci.tolerance)
 		{
-			ind_map[i] = pow(1.0f - dist / ci.tolerance, 4) * max_vibration_strength;
+			ind_map[i] = min_vibration_strength 
+				+ sqrt(1.0f - dist / ci.tolerance) * (max_vibration_strength - min_vibration_strength);
 		}
 	}
 
 	for (auto child : children)
 	{
-		map<int, float> child_map = child->check_containments(ci, hand_loc);
-		ind_map.insert(child_map.begin(), child_map.end());
+		for each (auto p in child->check_containments(ci, hand_loc))
+		{
+			ind_map[p.first] = max(p.second, max_vibration_strength);
+		}
 	}
 
 	cis[hand_loc].ind_map = ind_map;
@@ -116,7 +118,7 @@ float panel_node::distance(vec3 v)
 {
 	v = to_local(v);
 	float dist_x = max(.0f, abs(v.x()) - .5f * geo.extent.x());
-	float dist_y = max(.0f, abs(v.y()) - .5f * geo.extent.y());
+	float dist_y = max(.0f, v.y() - .5f * geo.extent.y());
 	float dist_z = max(.0f, abs(v.z()) - .5f * geo.extent.z());
 
 	return sqrt(dist_x * dist_x + dist_y * dist_y + dist_z * dist_z);
@@ -143,6 +145,7 @@ button::button(vec3 a_position, vec3 a_extent, vec3 a_translation, vec3 angles, 
 {
 	add_to_tree(parent_ptr);
 	set_geometry(a_position, a_extent, a_translation, angles, a_base_color);
+	// set_max_vibration_strength(.4f);
 
 	s = a_space;
 	callback = a_callback;
@@ -197,11 +200,12 @@ void hold_button::on_no_touch()
 	float first_z = a_position.z() + .5f * (a_extent.z() - z_frac);
 	for (size_t i = 0; i < NUM_INDICATOR_FIELDS; i++)
 	{
-		new panel_node(
+		panel_node* child = new panel_node(
 			vec3(0, 0, first_z - i * z_frac),
 			indicator_extent,
 			vec3(0), vec3(0), base_color, this
 		);
+		// child->set_max_vibration_strength(.4f);
 	}
 }
 
@@ -289,6 +293,10 @@ void hold_button::on_no_touch()
 		 zero_button_extent,
 		 vec3(0), vec3(0), active_color, this
 	 );
+	 for (size_t i = 0; i < children.size(); i++)
+	 {
+		 // children[i]->set_max_vibration_strength(.4f);
+	 }
  }
 
  void pos_neg_slider::on_touch(int hand_loc)
@@ -391,6 +399,10 @@ void hold_button::on_no_touch()
 	 new panel_node(child_geos[0], this);
 	 new panel_node(child_geos[1], this);
 	 new panel_node(child_geos[2], this);
+	 for (size_t i = 0; i < children.size(); i++)
+	 {
+		 // children[i]->set_max_vibration_strength(.6f);
+	 }
  }
 
  void lever::on_touch(int hand_loc)

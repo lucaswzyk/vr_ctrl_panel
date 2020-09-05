@@ -281,9 +281,9 @@ inline void hand::set_rotations(mat3 orientation)
 	}
 }
 
-void hand::calibrate_to_quat(quat q) {
+void hand::calibrate_to_mat(mat3 ref_mat) {
 	last_palm_ref = palm_ref;
-	palm_ref = q;
+	palm_ref = quat(ref_mat).inverse();
 	device.calibrate();
 }
 

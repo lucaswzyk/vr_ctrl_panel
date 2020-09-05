@@ -129,8 +129,8 @@ public:
 		: current_pulse(NONE)
 	{
 		device = nd_device(location);
-		palm_ref = quat(a_palm_ref);
-		last_palm_ref = quat(a_palm_ref);
+		calibrate_to_mat(a_palm_ref);
+		last_palm_ref = palm_ref;
 		init();
 	}
 
@@ -151,7 +151,7 @@ public:
 
 	int get_location() { return device.get_location(); }
 
-	void calibrate_to_quat(quat q);
+	void calibrate_to_mat(mat3 ref_mat);
 
 	void restore_last_calibration();
 

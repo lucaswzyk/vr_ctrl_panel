@@ -24,7 +24,38 @@
 \matno{4686687}
 \betreuer{Prof. Stefan Gumhold}
 \bibfiles{lib.bib}
-\problem{Write down your task...}
+\problem{
+\textbf{Motivation:} Interaction within a VR environment -- be it with application controls or the environment itself -- is usually mapped to the manipulation of some controller in current consumer-grade VR systems and applications. This causes an additional level of abstraction from the virtual world that can be detrimental to immersion. However, an increasing number of alternative controllers, usually in the form of gloves, that more closely match the interaction modes of the user's own hands are becoming available. They enable more accurate tracking of hand poses than is possible with affordable optical tracking technology while also being capable of providing haptic feedback.
+The goal of this bachelor's thesis is the design, implementation and evaluation of a natural VR user interface that the user can manipulate directly using their hands. For matching the user's hand movements, the limited finger tracking provided by the AvatarVR\newcite{nd} gloves should be combined with a suitable hand pose generation strategy as well as Lighthouse-based position and orientation tracking\newcite{lighthouse}.
+
+\textbf{Individual Tasks:}
+\vspace{.3cm}
+\begin{itemize}
+	\item Literature review on VR glove technology and applications
+	\item Design of a hand data model that is suitable for use with both the AvatarVR API and the Leap SDK 2.0\newcite{leaphand}
+	\item Design and implementation of a strategy for context-sensitive generation of hand poses from AvatarVR finger orientation data
+	\item Design of a suitable test scenario for a direct manipulation-based natural user interface (buttons, sliders, levers, etc.)
+	\item Prototypical implementation of a CGV Framework plugin, with the following features: 
+	VR rendering of the designed test scenario
+	\item Real-time coupling of AvatarVR finger tracking with Lighthouse-based tracking of the glove position and orientation, and generation of haptic feedback from the tracking results
+	\item Stylized rendering of the user's hand(s) using suitable Framework facilities (e.g. \lstinline|box_renderer|)
+	\item Qualitative evaluation:
+	\subitem Tracking precision and quality of generated hand poses
+	\subitem User performance when interacting with the interface
+	\item Quantitative evaluation of tracking performance (e.g. latency)
+\end{itemize}
+
+\textbf{Optional Goals:}
+\vspace{.3cm}
+\begin{itemize}
+	\item Comparative Evaluation:
+	\subitem Controller-based interaction, e.g. via some controller-tailored abstract interface, or pointing and grabbing of the natural interface
+	\subitem Full hand tracking via Leap Motion sensor
+	\item Incorporation of real-world objects into the natural user interface (e.g. a real table on which the virtual controls are situated) and analysis of the effect on perception of the controls
+	\item Design and implementation of additional natural interaction modes not based on direct manipulation, e.g. gesture recognition
+	\item Rendering of the user's hand(s) as skinned mesh
+\end{itemize}	
+}
 \copyrighterklaerung{\textbf{Voyager Bridge Mesh}\\
 Acquired from \url{https://www.trekmeshes.ch/} on 20 June 2020.
 
@@ -82,7 +113,7 @@ A schematic of the general paradigm of haptic human computer interfaces is shown
 
 As the following examples will demonstrate, not all data gloves are designed with the capability of both sensing and actuation. Some are only used to evaluate the user's hand pose, and it is conceivable to deal only with the issue of actuation and utilize an external device for sensing, such as Leap Motion. However, actuation on its own does not seem useful for VR applications, as it needs to be variable based on the current hand pose for which tracking of the user's hand pose is required.
 
-\section{Examples and Applications of Data Gloves}
+\section{Examples and Applications of Data Gloves} \label{sec:ex}
 \subsection{Sign Language Recognition}
 In 2018, Kakoty et al. developed a data glove and processing system for the recognition of sign language alphabets (Indian, American and numbers) and their translation into speech\newcite{kakoty18}. In their paper, several earlier projects with similar purposes are reviewed, most of which are vision based. The authors point out that glove based systems are more useful because they "[$\dots$] allow one with the freedom for locomotion during the recognition process and [are] independent of the environmental lighting conditions."
 
@@ -255,7 +286,7 @@ This chapter names the technology used for this project, defines a skeletal hand
 		\caption{Coupled devices on user hand}
 		\label{fig:devices:cou}
 	\end{subfigure}
-	\caption[Devices used to track the user's hand]{Devices used to track the user's hand: Vive tracker, coupling, Avatar VR}
+	\caption[Devices used to track the user's hand]{Devices used to track the user's hand: \Gls{VIVE} tracker, coupling, Avatar VR}
 	\label{fig:devices}
 \end{figure}
 
@@ -265,11 +296,9 @@ To use the Avatar VR on a computer, one needs to download, install and run the \
 
 \acrshort{nd} also supplies a developer's API in the form of three files (\lstinline|NDAPI.h|, \lstinline|NDAPI_x64.lib| and \lstinline|NDAPI_x64.dll| or \lstinline|x86| respectively) which need to be included in the project in a suitable manner. An instance of the \lstinline|NDAPI.h| can be used to access the data of devices connected to \acrshort{nd} Suite.
 
-Additionally, a Vive tracker was used to determine the user's hand position and orientation. The Avatar VR can be mechanically connected to the tracker using a coupling that needs to be acquired separately. The devices named so far and the way of coupling them can be seen in figure \ref{fig:devices}.
+Additionally, a \Gls{VIVE} tracker was used to determine the user's hand position and orientation. The Avatar VR can be mechanically connected to the tracker using a coupling that needs to be acquired separately. The devices named so far and the way of coupling them can be seen in figure \ref{fig:devices}.
 
-The foundation for the graphics software I developed is implemented in the \gls{CGV} framework provided by the chair of computer graphics and visualization at TU Dresden.
-
-A user can view the plugin on a computer screen with the \lstinline|cgv_viewer| or on a \Gls{VIVE} \acrfull{hmd} simply by connecting one to the computer.
+The foundation for the graphics software I developed is implemented in the \gls{CGV} framework provided by the chair of computer graphics and visualization at TU Dresden. A user can view the plugin on a computer screen with the \lstinline|cgv_viewer| or on a \Gls{VIVE} \acrfull{hmd} simply by connecting one to the computer. The framework automatically interacts with the SteamVR and Lighthouse\newcite{lighthouse} technology required to determine position and orientation of the \Gls{VIVE} trackers and \acrshort{hmd}.
 
 \section{Skeletal Hand Model for the Avatar VR Haptic Glove} \label{sec:hand_model}
 \subsection{Abstraction of the Human Hand Skeleton}
@@ -337,8 +366,8 @@ The Avatar VR is equipped with three kinds of sensors:
 
 Furthermore, there are actuators at the locations marked in blue in figure \ref{fig:av_tech:actuators}. These can be used to generate vibrations of variable intensity as haptic feedback in a way that "[$\dots$] the brain perceives it as 'Real Touch' input", according to the producer.
 
-\subsection{Using Data From the Avatar VR to Visualize the User's Hand}
-The same model used by the Leap Motion API version 2.0 will also be used here. Leap captures absolute joint positions and optimizes them for visualization. In contrast, my approach for the Avatar VR is to use a fixed resting state geometry of the user's hand (bone lengths and resting state joint positions). At the time of a \lstinline|draw()| command, the geometry is adjusted according to the data given by the glove and the Vive tracker. This is done with the help of the struct shown in figure \ref{fig:joint_positions} (only most important parts included).
+\subsection{Using Data From the Avatar VR to Visualize the User's Hand} \label{subsec:avr_to_hand}
+The same model used by the Leap Motion API version 2.0 will also be used here. Leap captures absolute joint positions and optimizes them for visualization. In contrast, my approach for the Avatar VR is to use a fixed resting state geometry of the user's hand (bone lengths and resting state joint positions). At the time of a \lstinline|draw()| command, the geometry is adjusted according to the data given by the glove and the \Gls{VIVE} tracker. This is done with the help of the struct shown in figure \ref{fig:joint_positions} (only most important parts included).
 
 \begin{figure}
 	\includegraphics[width=.4\linewidth]{../pics/joint_positions}
@@ -346,7 +375,7 @@ The same model used by the Leap Motion API version 2.0 will also be used here. L
 	\label{fig:joint_positions}
 \end{figure}
 
-First, the palm joints' positions are rotated according to the orientation given by the Vive tracker and saved in \lstinline|positions|. The construction of each finger begins at the end joint of the \gls{DPh} which is initialized in \lstinline|positions| as $ (0, 0, 0) $, translated along the negative $ z $-axis by the hard-coded length of the \gls{DPh} and rotated by the respective quaternion (see below). The other phalanges are constructed in the same manner, before the whole finger is translated to its \gls{MPJ}. Finally, the whole hand is scaled to model view space and translated to the model view position of the Vive tracker.
+First, the palm joints' positions are rotated according to the orientation given by the \Gls{VIVE} tracker and saved in \lstinline|positions|. The construction of each finger begins at the end joint of the \gls{DPh} which is initialized in \lstinline|positions| as $ (0, 0, 0) $, translated along the negative $ z $-axis by the hard-coded length of the \gls{DPh} and rotated by the respective quaternion (see below). The other phalanges are constructed in the same manner, before the whole finger is translated to its \gls{MPJ}. Finally, the whole hand is scaled to model view space and translated to the model view position of the \Gls{VIVE} tracker.
 
 Because the Avatar VR only returns one quaternion per finger (except for the thumb), I had to think of a way to distribute the orientation along all three phalanges: First, the Euler angles are calculated from the quaternion\newcite{quat_to_euler}
 \begin{align*}
@@ -415,7 +444,13 @@ Interaction with the \Gls{AVR} is managed by the singleton \lstinline|nd_handler
 
 Finally, the representation of the user's hands is implemented in \lstinline|hand|. It keeps track of several points and joints the details of which are described in section \ref{sec:hand_model}. During a \lstinline|draw()| call, \lstinline|vr_ctrl_panel| passes a pointer to its \lstinline|conn_panel| to each \lstinline|hand| which then passes on information about the current hand geometry wrapped as \lstinline|containment_info| to the \lstinline|conn_panel| for containment check. Each \lstinline|panel_node| containing some hand part can then react with its \lstinline|on_touch()| method. A \lstinline|map<int, float>| describing the contained positions and suggested vibration strengths is returned to the hand, enabling it to react as well.
 
-The vibration strengths are calculated as fractions of a maximum value. When a joint gets closer to the panel than the size of the sphere representing it is represented by, the vibration strength linearly increases as the joint sphere moves into the panel until it reaches the maximum value with the joint position (sphere midpoint) entering the panel.
+The vibration strengths are calculated as an interpolation between a minimum and a maximum value:
+\vspace{.3cm}
+\begin{lstlisting}
+	float strength = min_strength + sqrt(1 - dist / rad) * (max_strength - min_strength);
+	strength = max(0, strength);
+\end{lstlisting}
+where \lstinline|dist| is the distance between the joint and the panel and \lstinline|rad| is the radius of the sphere representing the joint. This yields a \lstinline|strength| of \lstinline|min_strength| when the sphere is not touching the panel and increases to \lstinline|max_strength| like a square root with the sphere moving into the panel. This kind of interpolation is motivated by the perception of physical objects which also increases quickly when first touching an object and then less quickly when increasing the pressure. 
 
 \subsection{Headup Display} \label{sec:hd}
 To convey written information to the user, a rectangular white region showing black text can be displayed in front of their eyes. This is implemented in \lstinline|headup_display| which uses \lstinline|label_manager| provided by \lstinline|cgv|. Its visibility can be controlled by setting an empty text (invisible) or a non-empty text (visible).
@@ -566,7 +601,7 @@ For the purpose of a user study, I chose two Star Trek Fans (A: female, 21 years
 \section{Qualitative Evaluations and Suggestions}
 The subjects were then asked for their opinion and suggestions regarding the design and behavior of the plugin which are summarized below.
 
-\subsection{Usage of the \Gls{AVR}}
+\subsection{Usage of the \Gls{AVR}} \label{subsec:avr}
 \begin{figure}
 	\centering
 	\begin{subfigure}{.3\linewidth}
@@ -596,25 +631,27 @@ When activating the glove, an internal calibration sets the current pose of each
 
 Furthermore, after performing some movements with the glove, the measured orientations sometimes keep changing, even when resting the glove on a surface again. The stronger the accelerations during these movements are (e.g. during shaking), the stronger this drifting effect becomes. Figure \ref{fig:glove_cal:minute} shows the measured orientations after resting the hand for $ 60s $ which implies that even putting on the glove carefully involves sufficient motion for drifting to occur.
 
-In my experience, putting on the gloves first and activating them afterwards yields a more stable result, so the subjects were asked to do that. Then however, th gloves should not move during calibration time which most of the subjects found hard to achieve.
+In my experience, putting on the gloves first and activating them afterwards yields a more stable result, so the subjects were asked to do that. Then however, the gloves should not move during calibration time which most of the subjects found hard to achieve.
 
 The recalibration of the glove described in section \ref{sec:cal} can compensate for the absolute difference between the user's hand pose and the measured orientations, but not for the drifting effect. As it is the only way to trigger an intrinsic calibration, the gloves needed to be switched off and back on frequently. 
 
-Since the computer used during the study does not have Bluetooth capabilities, an additional USB Bluetooth connector was used to establish a connection with the gloves. However, this proved unstable for a single glove which disconnected in a matter of minutes or when moving further than $ 1m $ away from the connector, and it was almost impossible to connect both gloves at the same time. One possible explanation might be an insuffiency of the external connector, as the connection was stable for a longer time on a device with integrated Bluetooth capabilities. Also, the Bluetooth capable Vive trackers placed directly on the glove might have an interfering influence.
+Since the computer used during the study does not have Bluetooth capabilities, an additional USB Bluetooth connector was used to establish a connection with the gloves. However, this proved unstable for a single glove which disconnected in a matter of minutes or when moving further than $ 1m $ away from the connector, and it was almost impossible to connect both gloves at the same time. One possible explanation might be an insuffiency of the external connector, as the connection was stable for a longer time on a device with integrated Bluetooth capabilities. Also, the Bluetooth capable \Gls{VIVE} trackers placed directly on the glove might have an interfering influence.
 
 To avoid interruptions, the gloves were connected to the computer via Micro USB for the user study. The cables had to be fixed on the users' arms with a sweatband to relieve the physical strain on the gloves' Micro USB ports.
 
 The subjects described the gloves as "restrictive" when touching physical objects which can be attributed especially to the actuators that are situated on the most sensitive spots of the skin. However, usage in VR was regarded "unhindered". Subject A mentioned that a grabbing motion is slightly obstructed. The glove is light and, generally, the fabric moves easily. 
 
+A single \acrshort{imu} per finger makes a perfect reconstruction of the user's hand pose impossible. Nonetheless, all subjects regarded the approximation described in part \ref{subsec:avr_to_hand} as "natural", "well usable", or similar.
+
 \subsection{Haptip Feedback}
 As an essential part of the whole project, the haptic feedback strength (see part \ref{sec:devel:structure:hands}) was adjusted in discussion with the subjects. After that, all subjects regarded the feedback when touching a virtual surface as "strangely realistic" or similar. 
 
-I then applied different maximum vibration strengths for various panel components which was evaluated as "unrealistic" and "confusing", so I went back to the original approach of a single maximum vibration strength throughout the whole panel. A good value for this strength in terms of the \Gls{AVR} seems to be $ .2 $.
+I then applied different maximum vibration strengths for various panel components which none of the subjects found helpful for distinguishing between the components. Instead, all but subject B regarded it as "unrealistic" and "confusing", so I went back to the original approach of a single maximum vibration strength throughout the whole panel. A good value for this strength in terms of the \Gls{AVR} seems to be $ .2 $.
 
 When asked to reach through the conn panel, the subjects described a sense of intuitive hesitation that I could also see in their movements. Apparently, their brain had somewhat accepted the physical barrier formed by the virtual panel. 
 
 \subsection{Timing}
-During all sessions, the plugin ran smoothly. The calculation took around $ 2-5ms $ per frame which is significantly lower than the $ 11.1ms $ ensuring $ 90fps $. None of the subjects mentioned glitches or holds. 
+During all sessions, the plugin ran smoothly. None of the subjects mentioned glitches or holds. 
 
 To test the reaction time of the glove actuators, the conn panel was calibrated right onto a table edge. This was possible with the see-through function of the \acrshort{hmd} that is meant to keep users from running into physical objects, like a wall. All but one subject (D) found the time difference between touching the table edge and haptic feedback from the gloves negligible, i.e. not sensible. During simulation, all subjects regarded the reaction time when touching a virtual object as negligible.
 
@@ -643,17 +680,64 @@ To compensate, the condition of joined index and palm contacts was deleted. This
 Subjects A, C and D described the adjusted lever control as "much simpler" and "more natural". Subject B stated that he did not feel a difference, supporting the statements above.
 
 \subsection{Other Adjustments}
-\vspace{.3cm}
-\begin{itemize}
-	\item In the initial implementation, the sliders on the left side of the panel had been designed to react only to touches close to their current setting. This was meant to give the impression of a slider rather than buttons. However, the participants found it hard to match the current setting which resulted in problems with changing the slider value. This was adjusted so the user can tap anywhere on the slider to immediately change its value. A field was added in the middle of the slider that can be used to set its value exactly to $ 0 $. 
-	\item The target color was changed from red to green increasing the contrast to the orange phasers. The phaser color, position, and direction was adjusted to match the Trekkies impression of a phaser from the movies.
-	\item The size of the targets represented by \lstinline|target_radius| above was adjusted until the subjects found it challenging, but possible to eliminate them.
-	\item The "Toggle Targets" button was changed to stay green while the targets are active.
-	\item Instructions on the headup display during calibration lead to misunderstandings and miscalibrations. They were discussed with the users and adjusted until agreed upon.
-	\item Irritation was expressed when the panel reappeared during calibration because the user's hands ranged into the panel triggering continuous vibration feedback. I added a vector \lstinline|hand_vs_panel_for_calibration| in the \lstinline|calibration| struct which moves the panel below the hands during calibration to avoid this.
-\end{itemize}
+In the initial implementation, the sliders on the left side of the panel had been designed to react only to touches close to their current setting. This was meant to give the impression of a slider rather than buttons. However, the participants found it hard to match the current setting which resulted in problems with changing the slider value. This was adjusted so the user can tap anywhere on the slider to immediately change its value. A field was added in the middle of the slider that can be used to set its value exactly to $ 0 $. 
 
+The target color was changed from red to green increasing the contrast to the orange phasers. The phaser color, position, and direction was adjusted to match the Trekkies impression of a phaser from the movies.
 
+The size of the targets represented by \lstinline|target_radius| above was adjusted until the subjects found it challenging, but possible to eliminate them.
+
+The "Toggle Targets" button was changed to stay green while the targets are active.
+
+Instructions on the headup display during calibration lead to misunderstandings and miscalibrations. They were discussed with the users and adjusted until agreed upon.
+
+Irritation was expressed when the panel reappeared during calibration because the user's hands ranged into the panel triggering continuous vibration feedback. I added a vector \lstinline|hand_vs_panel_for_calibration| in the \lstinline|calibration| struct which moves the panel below the hands during calibration to avoid this.
+
+\section{Quanitative Evaluation}
+\begin{table}
+	\begin{minipage}{.5\linewidth}
+		\vspace{.47cm}
+		\centering
+		\begin{tabular}{|b{2cm}|c|c|c|c|}
+			\hline
+			Subject & A & B & C & D \\
+			\hline
+			Session 1 & 1:04 & 1:06 & 2:50 & 1:48 \\
+			\hline
+			Session 2 & 0:41 & 1:25 & 1:51 & 1:30 \\
+			\hline
+			Session 3 & 0:27 & 0:37 & 0:52 & 0:58 \\
+			\hline
+		\end{tabular}
+		\captionof{table}{Time required to eliminate $ 5 $ targets}
+		\label{tab:contest}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{.5\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{../pics/contest}
+		\captionof{figure}{Time required to eliminate $ 5 $ targets}
+		\label{fig:contest}
+	\end{minipage}
+\end{table}
+
+Also quantitatively, the computation time turned out to be sufficiently small. The calculation took around $ 2-5ms $ per frame which is significantly lower than the $ 11.1ms $ ensuring $ 90fps $. When the plugin is started, it loads the bridge mesh within less than $ 3s $. The gloves transfer data with a framerate of ca. $ 80fps $ when connected via Bluetooth and $ 200fps $ when using their Micro USB port. 
+
+To measure the user performance, I measured the time subjects needed to eliminate $ 5 $ targets. Before each session, the gloves were intrinsically recalibrated by turning them off and back on. The targets were deactivated and the speed ahead set to maximum without rotation. The timer was started when pushing the "Toggle Targets" button. Each subject ran three such sessions.
+
+Table \ref{tab:contest} and figure \ref{fig:contest} display the results of this experiment. All subjects increased their performance with each session, except subject B whose jumpy movements during session 2 caused his virtual hands to quickly diverge from the actual hand pose. This made it hard to use the controls with his fingers, and he had to finish the session using only the rigid parts of the palm to interact with the conn panel. The Trekkies performed noticeably better than the Non-Trekkies, who stated they had only little interest in and experience with VR in general. 
+
+The overall improvement of the session times despite an earlier familiarization with the plugin might be due to the change of situation and the associated time pressure. In any case, the results prove an acceptable usability of the plugin.
+
+\chapter{Conclusion}
+For this thesis, I extensively reviewed literature on the principles of data gloves, available technology and some applications. There have been numerous, quite diverse approaches to human computer interaction involving only the user's hands. Many already are or might yet become useful, not only for VR, but medical and other projects as well. A few of them are summarized in section \ref{sec:ex}.
+
+Furthermore, I familiarized myself with the \Gls{AVR} as well as tools to connect it to a computer, access its sensor data and control its actuators (\acrshort{nd} Suite and \lstinline|NDAPI|). A plugin coupling \Gls{AVR} finger tracking and Lighthouse position and orientation tracking was developed. It uses a hand model designed on the basis of human anatomy and the model used in Leap motion API version 2.0. 
+
+The plugin scenario sends the user to the bridge of the USS Voyager where they can fly through a simulated space. Targets can be activated, deactivated, and eliminated with phasers. The geometry used for the simulation of space and for the phaser target interaction was explained thoroughly. To make the use of the plugin in different settings possible, a calibration routine was established. A user study led to numerous improvements of the plugin and revealed insights into its usability.
+
+Some issues regarding the \Gls{AVR} can be found in part \ref{subsec:avr}. Especially the fact that it has only one \acrshort{imu} per finger made it challenging to recreate the user's hand pose realistically, which was possible by distributing the orientation of the \gls{IPh} onto the other phalanges in a physiologically plausible way. However, the device is most likely unfit for applications requiring more precision, e.g. the use with virtual musical instruments. In total, the glove was quite difficult to handle, already because of its instable connection to the computer and the drifting effect. 
+
+Nonetheless, I could personally gain a lot from this project. It deepened my understanding of programming in C++ and my knowledge about the \gls{CGV} framework which has even more features than I expected. The development of \gls{VCP} was an interesting challenge, the result of which works satisfyingly well and is even fun to use.
 
 \printglossary[type=gloss_terms]
 \printglossary[type=gloss_acr]

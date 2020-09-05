@@ -81,6 +81,8 @@ protected:
 
 	geometry geo;
 	group_geometry last_group_geo;
+	float min_vibration_strength = .05f, 
+	      max_vibration_strength = .2f;
 
 	vector<containment_info> cis;
 	bool is_responsive;
@@ -131,7 +133,6 @@ public:
 
 	virtual void on_touch(int hand_loc) {};
 	virtual void on_no_touch() {};
-	virtual float get_vibration_strength() { return .2f; }
 
 	// sets is_responsive = true if this element should be responsive to touch
 	virtual void calc_responsiveness(containment_info ci);
@@ -145,6 +146,8 @@ public:
 		geo.color = a_color; 
 		geo.has_changed = true;
 	}
+
+	void set_max_vibration_strength(float vib) { max_vibration_strength = vib; }
 };
 
 // button that reacts to each touch exactly once
@@ -248,7 +251,7 @@ public:
 		panel_node* parent_ptr);
 
 	// responsive on grab (closed hand)
-	void calc_responsiveness(containment_info ci) override { is_responsive = ci.contacts[2] && ci.contacts[3]; }
+	void calc_responsiveness(containment_info ci) override { is_responsive = ci.contacts[3]; }
 
 	void on_touch(int hand_loc) override;
 

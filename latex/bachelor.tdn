@@ -17,9 +17,12 @@
 \glossaryentry{intertial measurement unit?\glossentry{IMU}|setentrycounter[]{page}\glsnumberformat}{4}
 \glossaryentry{head mounted device?\glossentry{HMD}|setentrycounter[]{page}\glsnumberformat}{10}
 \glossaryentry{Avatar VR?\glossentry{AVR}|setentrycounter[]{page}\glsnumberformat}{13}
+\glossaryentry{Vive?\glossentry{VIVE}|setentrycounter[]{page}\glsnumberformat}{13}
 \glossaryentry{\lstinline "|cgv"|?\glossentry{CGV}|setentrycounter[]{page}\glsnumberformat}{13}
 \glossaryentry{Vive?\glossentry{VIVE}|setentrycounter[]{page}\glsnumberformat}{13}
 \glossaryentry{head mounted device?\glossentry{HMD}|setentrycounter[]{page}\glsnumberformat}{13}
+\glossaryentry{Vive?\glossentry{VIVE}|setentrycounter[]{page}\glsnumberformat}{13}
+\glossaryentry{Vive?\glossentry{VIVE}|setentrycounter[]{page}\glsnumberformat}{14}
 \glossaryentry{metacarpal?\glossentry{MC}|setentrycounter[]{page}\glsnumberformat}{15}
 \glossaryentry{proximal phalanx?\glossentry{PPh}|setentrycounter[]{page}\glsnumberformat}{15}
 \glossaryentry{intermedial phalanx?\glossentry{IPh}|setentrycounter[]{page}\glsnumberformat}{15}
@@ -39,9 +42,12 @@
 \glossaryentry{metacarpophalangeal joint?\glossentry{MPJ}|setentrycounter[]{page}\glsnumberformat}{15}
 \glossaryentry{intertial measurement unit?\glossentry{IMU}|setentrycounter[]{page}\glsnumberformat}{15}
 \glossaryentry{intermedial phalanx?\glossentry{IPh}|setentrycounter[]{page}\glsnumberformat}{15}
+\glossaryentry{Vive?\glossentry{VIVE}|setentrycounter[]{page}\glsnumberformat}{17}
+\glossaryentry{Vive?\glossentry{VIVE}|setentrycounter[]{page}\glsnumberformat}{17}
 \glossaryentry{distal phalanx?\glossentry{DPh}|setentrycounter[]{page}\glsnumberformat}{17}
 \glossaryentry{distal phalanx?\glossentry{DPh}|setentrycounter[]{page}\glsnumberformat}{17}
 \glossaryentry{metacarpophalangeal joint?\glossentry{MPJ}|setentrycounter[]{page}\glsnumberformat}{17}
+\glossaryentry{Vive?\glossentry{VIVE}|setentrycounter[]{page}\glsnumberformat}{17}
 \glossaryentry{\lstinline "|vr_ctrl_panel"|?\glossentry{VCP}|setentrycounter[]{page}\glsnumberformat}{18}
 \glossaryentry{metacarpophalangeal joint?\glossentry{MPJ}|setentrycounter[]{page}\glsnumberformat}{18}
 \glossaryentry{\lstinline "|vr_ctrl_panel"|?\glossentry{VCP}|setentrycounter[]{page}\glsnumberformat}{19}
@@ -54,15 +60,22 @@
 \glossaryentry{Avatar VR?\glossentry{AVR}|setentrycounter[]{page}\glsnumberformat}{28}
 \glossaryentry{Avatar VR?\glossentry{AVR}|setentrycounter[]{page}\glsnumberformat}{28}
 \glossaryentry{Avatar VR?\glossentry{AVR}|setentrycounter[]{page}\glsnumberformat}{29}
+\glossaryentry{Vive?\glossentry{VIVE}|setentrycounter[]{page}\glsnumberformat}{29}
 \glossaryentry{Avatar VR?\glossentry{AVR}|setentrycounter[]{page}\glsnumberformat}{30}
-\glossaryentry{intermedial phalanx?\glossentry{IPh}|setentrycounter[]{page}\glsnumberformat}{33}
-\glossaryentry{distal phalanx?\glossentry{DPh}|setentrycounter[]{page}\glsnumberformat}{33}
-\glossaryentry{proximal phalanx?\glossentry{PPh}|setentrycounter[]{page}\glsnumberformat}{33}
-\glossaryentry{distal phalanx?\glossentry{DPh}|setentrycounter[]{page}\glsnumberformat}{33}
-\glossaryentry{metacarpal?\glossentry{MC}|setentrycounter[]{page}\glsnumberformat}{33}
-\glossaryentry{proximal phalanx?\glossentry{PPh}|setentrycounter[]{page}\glsnumberformat}{33}
-\glossaryentry{proximal phalanx?\glossentry{PPh}|setentrycounter[]{page}\glsnumberformat}{33}
-\glossaryentry{intermedial phalanx?\glossentry{IPh}|setentrycounter[]{page}\glsnumberformat}{33}
-\glossaryentry{head mounted device?\glossentry{HMD}|setentrycounter[]{page}\glsnumberformat}{34}
-\glossaryentry{intertial measurement unit?\glossentry{IMU}|setentrycounter[]{page}\glsnumberformat}{34}
-\glossaryentry{NeuroDigital?\glossentry{ND}|setentrycounter[]{page}\glsnumberformat}{34}
+\glossaryentry{Avatar VR?\glossentry{AVR}|setentrycounter[]{page}\glsnumberformat}{34}
+\glossaryentry{Avatar VR?\glossentry{AVR}|setentrycounter[]{page}\glsnumberformat}{34}
+\glossaryentry{Avatar VR?\glossentry{AVR}|setentrycounter[]{page}\glsnumberformat}{34}
+\glossaryentry{intermedial phalanx?\glossentry{IPh}|setentrycounter[]{page}\glsnumberformat}{34}
+\glossaryentry{\lstinline "|cgv"|?\glossentry{CGV}|setentrycounter[]{page}\glsnumberformat}{34}
+\glossaryentry{\lstinline "|vr_ctrl_panel"|?\glossentry{VCP}|setentrycounter[]{page}\glsnumberformat}{34}
+\glossaryentry{intermedial phalanx?\glossentry{IPh}|setentrycounter[]{page}\glsnumberformat}{35}
+\glossaryentry{distal phalanx?\glossentry{DPh}|setentrycounter[]{page}\glsnumberformat}{35}
+\glossaryentry{proximal phalanx?\glossentry{PPh}|setentrycounter[]{page}\glsnumberformat}{35}
+\glossaryentry{distal phalanx?\glossentry{DPh}|setentrycounter[]{page}\glsnumberformat}{35}
+\glossaryentry{metacarpal?\glossentry{MC}|setentrycounter[]{page}\glsnumberformat}{35}
+\glossaryentry{proximal phalanx?\glossentry{PPh}|setentrycounter[]{page}\glsnumberformat}{35}
+\glossaryentry{proximal phalanx?\glossentry{PPh}|setentrycounter[]{page}\glsnumberformat}{35}
+\glossaryentry{intermedial phalanx?\glossentry{IPh}|setentrycounter[]{page}\glsnumberformat}{35}
+\glossaryentry{head mounted device?\glossentry{HMD}|setentrycounter[]{page}\glsnumberformat}{36}
+\glossaryentry{intertial measurement unit?\glossentry{IMU}|setentrycounter[]{page}\glsnumberformat}{36}
+\glossaryentry{NeuroDigital?\glossentry{ND}|setentrycounter[]{page}\glsnumberformat}{36}

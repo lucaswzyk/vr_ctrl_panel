@@ -230,8 +230,8 @@ void vr_ctrl_panel::update_calibration(vr::vr_kit_state state, int t_id)
 		calibrate_model_view(math_conversion::ave_pos(state.controller));
 		for (auto loc : existing_hand_locs)
 		{
-			hands[loc]->calibrate_to_quat(quat(hand_orientations[loc]).inverse());
-			c.tracker_refs[loc] = cgv::math::inv(hand_orientations[loc]);
+			hands[loc]->calibrate_to_mat(hand_orientations[loc]);
+			c.tracker_refs[loc] = hand_orientations[loc];
 		}
 		if (time_to_calibration <= 0)
 		{

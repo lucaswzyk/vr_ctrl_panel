@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  5 SEP 2020 14:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  5 SEP 2020 22:41
 entering extended mode
 **./bachelor.tex
 (bachelor.tex
@@ -856,15 +856,15 @@ Package: glossary-tree 2020/03/19 v4.46 (NLCT)
 \glo@main@file=\write5
 \openout5 = `bachelor.glo'.
 
-Package glossaries Info: Writing glossary file bachelor.glo on input line 50.
+Package glossaries Info: Writing glossary file bachelor.glo on input line 81.
 \glo@gloss_terms@file=\write6
 \openout6 = `bachelor.tdn'.
 
-Package glossaries Info: Writing glossary file bachelor.tdn on input line 50.
+Package glossaries Info: Writing glossary file bachelor.tdn on input line 81.
 \glo@gloss_acr@file=\write7
 \openout7 = `bachelor.stn'.
 
-Package glossaries Info: Writing glossary file bachelor.stn on input line 50.
+Package glossaries Info: Writing glossary file bachelor.stn on input line 81.
 
 (gloss_terms.tex) (gloss_acr.tex)
 ("C:\Program Files\MiKTeX\tex/latex/l3backend\l3backend-pdfmode.def"
@@ -875,22 +875,22 @@ File: l3backend-pdfmode.def 2020-06-23 L3 backend support: PDF mode
 (bachelor.aux)
 \openout1 = `bachelor.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 56.
-LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 87.
+LaTeX Font Info:    ... okay on input line 87.
  ("C:\Program Files\MiKTeX\tex/context/base/mkii\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count321
@@ -909,11 +909,11 @@ Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 85.
 )
-Package scrbase Info: activating english \contentsname on input line 56.
-Package scrbase Info: activating english \listfigurename on input line 56.
-Package scrbase Info: activating english \listtablename on input line 56.
+Package scrbase Info: activating english \contentsname on input line 87.
+Package scrbase Info: activating english \listfigurename on input line 87.
+Package scrbase Info: activating english \listtablename on input line 87.
 \AtBeginShipoutBox=\box61
-Package hyperref Info: Link coloring OFF on input line 56.
+Package hyperref Info: Link coloring OFF on input line 87.
 
 ("C:\Program Files\MiKTeX\tex/latex/hyperref\nameref.sty"
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
@@ -926,9 +926,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count327
 )
-LaTeX Info: Redefining \ref on input line 56.
-LaTeX Info: Redefining \pageref on input line 56.
-LaTeX Info: Redefining \nameref on input line 56.
+LaTeX Info: Redefining \ref on input line 87.
+LaTeX Info: Redefining \pageref on input line 87.
+LaTeX Info: Redefining \nameref on input line 87.
 
 (bachelor.out) (bachelor.out)
 \@outlinefile=\write8
@@ -941,7 +941,7 @@ Class scrreprt Info: loading recommended package `bookmark'.
 (scrreprt)           `bookmarkpackage=false' before \begin{document} and
 (scrreprt)           you can avoid this message adding:
 (scrreprt)             \usepackage{bookmark}
-(scrreprt)           before \begin{document} on input line 56.
+(scrreprt)           before \begin{document} on input line 87.
 
 ("C:\Program Files\MiKTeX\tex/latex/bookmark\bookmark.sty"
 Package: bookmark 2019/12/03 v1.28 PDF bookmarks (HO)
@@ -963,36 +963,53 @@ Package caption Info: End \AtBeginDocument code.
 
 
 {C:/Users/CC42D/AppData/Local/MiKTeX/pdftex/config/pdftex.map}]
-LaTeX Font Info:    Trying to load font information for T1+phv on input line 56
+LaTeX Font Info:    Trying to load font information for T1+phv on input line 87
 .
 
 ("C:\Program Files\MiKTeX\tex/latex/psnfss\t1phv.fd"
 File: t1phv.fd 2020/03/25 scalable font definitions for T1/phv.
+)
+LaTeX Font Info:    Trying to load font information for U+msa on input line 87.
+
+
+("C:\Program Files\MiKTeX\tex/latex/amsfonts\umsa.fd"
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 87.
+
+
+("C:\Program Files\MiKTeX\tex/latex/amsfonts\umsb.fd"
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+
+LaTeX Warning: Citation `lighthouse' on page 2 undefined on input line 87.
+
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 8
+7.
+("C:\Program Files\MiKTeX\tex/latex/psnfss\ts1ptm.fd"
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+)
+LaTeX Font Info:    Trying to load font information for T1+pcr on input line 87
+.
+
+("C:\Program Files\MiKTeX\tex/latex/psnfss\t1pcr.fd"
+File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 ) [2
 
 
 
-]
-Underfull \hbox (badness 10000) in paragraph at lines 56--56
+] [3]
+Underfull \hbox (badness 10000) in paragraph at lines 87--87
 
  []
 
-[3
+[4
 
 
-] [4
+] [5
 
-] (bachelor.toc
-LaTeX Font Info:    Trying to load font information for U+msa on input line 2.
- ("C:\Program Files\MiKTeX\tex/latex/amsfonts\umsa.fd"
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 2.
-
-("C:\Program Files\MiKTeX\tex/latex/amsfonts\umsb.fd"
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
- been already used, duplicate ignored
+] (bachelor.tocpdfTeX warning (ext4): destination with the same identifier (nam
+e{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.28 ...2.2}Haptip Feedback}{30}{subsection.3.2.2}
@@ -1007,12 +1024,12 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.56 \begin{document}
+l.87 \begin{document}
                       [2]pdfTeX warning (ext4): destination with the same ident
 ifier (name{page.3}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.59 \chapter
+l.90 \chapter
              {Introduction} [3
 
 ]
@@ -1033,550 +1050,567 @@ Class scrreprt Warning: \float@addtolists detected!
 (scrreprt)              deprecated \float@addtolist interface.
 
 
-Overfull \hbox (7.37953pt too wide) in paragraph at lines 62--63
+Overfull \hbox (7.37953pt too wide) in paragraph at lines 93--94
 []\T1/ptm/m/n/10.95 There has been a mul-ti-tude of ap-proaches to mak-ing in-t
 er-ac-tion with vir-tual en-vi-ron-ments possible$[]$.
  []
 
-<../pics/wang01.jpg, id=129, 340.2446pt x 156.05203pt>
+<../pics/wang01.jpg, id=149, 340.2446pt x 156.05203pt>
 File: ../pics/wang01.jpg Graphic file (type jpg)
 <use ../pics/wang01.jpg>
-Package pdftex.def Info: ../pics/wang01.jpg  used on input line 71.
+Package pdftex.def Info: ../pics/wang01.jpg  used on input line 102.
 (pdftex.def)             Requested size: 364.19664pt x 167.04782pt.
 pdfTeX warning (ext4): destination with the same identifier (name{page.4}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.77 \begin{itemize}
-                     [4
+l.108 \begin{itemize}
+                      [4
 
-]
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 7
-8.
- ("C:\Program Files\MiKTeX\tex/latex/psnfss\ts1ptm.fd"
-File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-) [5 <../pics/wang01.jpg>]
-<../pics/kakoty_glove.png, id=158, 320.69812pt x 516.42938pt>
+]pdfTeX warning (ext4): destination with the same identifier (name{page.5}) has
+ been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.119 
+       [5 <../pics/wang01.jpg>]
+<../pics/kakoty_glove.png, id=177, 320.69812pt x 516.42938pt>
 File: ../pics/kakoty_glove.png Graphic file (type png)
 <use ../pics/kakoty_glove.png>
-Package pdftex.def Info: ../pics/kakoty_glove.png  used on input line 91.
+Package pdftex.def Info: ../pics/kakoty_glove.png  used on input line 122.
 (pdftex.def)             Requested size: 182.09485pt x 293.24095pt.
-<../pics/kakoty_principle.png, id=160, 401.24907pt x 566.115pt>
+<../pics/kakoty_principle.png, id=179, 401.24907pt x 566.115pt>
 File: ../pics/kakoty_principle.png Graphic file (type png)
 <use ../pics/kakoty_principle.png>
-Package pdftex.def Info: ../pics/kakoty_principle.png  used on input line 97.
+Package pdftex.def Info: ../pics/kakoty_principle.png  used on input line 128.
 (pdftex.def)             Requested size: 195.75162pt x 276.18942pt.
 
-Underfull \hbox (badness 2334) in paragraph at lines 98--98
+Underfull \hbox (badness 2334) in paragraph at lines 129--129
 [][][]|\T1/ptm/m/n/10 Pro-posed method-ol-ogy for sign lan-guage
  []
 
 [6 <../pics/kakoty_glove.png> <../pics/kakoty_principle.png>]
-<../pics/maitre_sensors.png, id=176, 298.11375pt x 228.10219pt>
+<../pics/maitre_sensors.png, id=195, 298.11375pt x 228.10219pt>
 File: ../pics/maitre_sensors.png Graphic file (type png)
 <use ../pics/maitre_sensors.png>
-Package pdftex.def Info: ../pics/maitre_sensors.png  used on input line 116.
+Package pdftex.def Info: ../pics/maitre_sensors.png  used on input line 147.
 (pdftex.def)             Requested size: 259.49245pt x 198.56213pt.
-<../pics/maitre_glove.png, id=177, 153.57375pt x 225.84375pt>
+<../pics/maitre_glove.png, id=196, 153.57375pt x 225.84375pt>
 File: ../pics/maitre_glove.png Graphic file (type png)
 <use ../pics/maitre_glove.png>
-Package pdftex.def Info: ../pics/maitre_glove.png  used on input line 122.
+Package pdftex.def Info: ../pics/maitre_glove.png  used on input line 153.
 (pdftex.def)             Requested size: 136.5746pt x 200.859pt.
-<../pics/maitre_results.png, id=178, 1238.37656pt x 424.58624pt>
+<../pics/maitre_results.png, id=197, 1238.37656pt x 424.58624pt>
 File: ../pics/maitre_results.png Graphic file (type png)
 <use ../pics/maitre_results.png>
-Package pdftex.def Info: ../pics/maitre_results.png  used on input line 129.
+Package pdftex.def Info: ../pics/maitre_results.png  used on input line 160.
 (pdftex.def)             Requested size: 455.24408pt x 156.08377pt.
  [7 <../pics/maitre_sensors.png> <../pics/maitre_glove.png> <../pics/maitre_res
 ults.png>]
-<../pics/amputees_poses.png, id=193, 564.60938pt x 435.87843pt>
+<../pics/amputees_poses.png, id=212, 564.60938pt x 435.87843pt>
 File: ../pics/amputees_poses.png Graphic file (type png)
 <use ../pics/amputees_poses.png>
-Package pdftex.def Info: ../pics/amputees_poses.png  used on input line 154.
+Package pdftex.def Info: ../pics/amputees_poses.png  used on input line 185.
 (pdftex.def)             Requested size: 159.3382pt x 123.0095pt.
-<../pics/amputees_a.png, id=194, 487.06969pt x 325.215pt>
+<../pics/amputees_a.png, id=213, 487.06969pt x 325.215pt>
 File: ../pics/amputees_a.png Graphic file (type png)
 <use ../pics/amputees_a.png>
-Package pdftex.def Info: ../pics/amputees_a.png  used on input line 160.
+Package pdftex.def Info: ../pics/amputees_a.png  used on input line 191.
 (pdftex.def)             Requested size: 136.5746pt x 91.1886pt.
 
-Underfull \hbox (badness 1721) in paragraph at lines 161--161
+Underfull \hbox (badness 1721) in paragraph at lines 192--192
 \T1/ptm/m/n/10 tom hand move-ments for a
  []
 
-<../pics/amputees_f.png, id=195, 484.81125pt x 322.95656pt>
+<../pics/amputees_f.png, id=214, 484.81125pt x 322.95656pt>
 File: ../pics/amputees_f.png Graphic file (type png)
 <use ../pics/amputees_f.png>
-Package pdftex.def Info: ../pics/amputees_f.png  used on input line 166.
+Package pdftex.def Info: ../pics/amputees_f.png  used on input line 197.
 (pdftex.def)             Requested size: 136.5746pt x 90.97914pt.
 
-Underfull \hbox (badness 1917) in paragraph at lines 167--167
+Underfull \hbox (badness 1917) in paragraph at lines 198--198
 \T1/ptm/m/n/10 tom hand move-ments for a
  []
 
 [8 <../pics/amputees_poses.png> <../pics/amputees_a.png> <../pics/amputees_f.pn
 g>]
-<../pics/force_feedback_proto.jpg, id=222, 341.5962pt x 84.315pt>
+<../pics/force_feedback_proto.jpg, id=242, 341.5962pt x 84.315pt>
 File: ../pics/force_feedback_proto.jpg Graphic file (type jpg)
 <use ../pics/force_feedback_proto.jpg>
-Package pdftex.def Info: ../pics/force_feedback_proto.jpg  used on input line 1
-87.
+Package pdftex.def Info: ../pics/force_feedback_proto.jpg  used on input line 2
+18.
 (pdftex.def)             Requested size: 341.59535pt x 84.31477pt.
  [9 <../pics/force_feedback_proto.jpg>] [10]
-<../pics/commercial_gloves.jpg, id=250, 353.67531pt x 163.08717pt>
+<../pics/commercial_gloves.jpg, id=269, 353.67531pt x 163.08717pt>
 File: ../pics/commercial_gloves.jpg Graphic file (type jpg)
 <use ../pics/commercial_gloves.jpg>
-Package pdftex.def Info: ../pics/commercial_gloves.jpg  used on input line 213.
+Package pdftex.def Info: ../pics/commercial_gloves.jpg  used on input line 244.
 
 (pdftex.def)             Requested size: 455.24408pt x 209.93289pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Motion
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 track-ing
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Tactile
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Actuation
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Sensing
  []
 
 
-Underfull \hbox (badness 2435) in paragraph at lines 237--237
+Underfull \hbox (badness 2435) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 One ac-tu-a-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Electric
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 22-sensor
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 Cyber-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 Glove
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Feel the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 size and
  []
 
 
-Underfull \hbox (badness 6396) in paragraph at lines 237--237
+Underfull \hbox (badness 6396) in paragraph at lines 268--268
 \T1/ptm/m/n/9 posesses 3
  []
 
 
-Underfull \hbox (badness 2744) in paragraph at lines 237--237
+Underfull \hbox (badness 2744) in paragraph at lines 268--268
 \T1/ptm/m/n/9 back on 3
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Electric
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Can be
  []
 
 
-Underfull \hbox (badness 2418) in paragraph at lines 237--237
+Underfull \hbox (badness 2418) in paragraph at lines 268--268
 \T1/ptm/m/n/9 at-tached to
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 a Vir-tu-ose
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Tracking
  []
 
 
-Underfull \hbox (badness 2744) in paragraph at lines 237--237
+Underfull \hbox (badness 2744) in paragraph at lines 268--268
 \T1/ptm/m/n/9 back on 5
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Three
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 lin-ear
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 res-o-nant
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Electric
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Feel the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 shape,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 size and
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Tracking
  []
 
 
-Underfull \hbox (badness 1496) in paragraph at lines 237--237
+Underfull \hbox (badness 1496) in paragraph at lines 268--268
 \T1/ptm/m/n/9 6 DoF per
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Light-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 weight
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 ex-oskele-ton
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 ap-plies up
  []
 
 
-Overfull \hbox (1.85321pt too wide) in paragraph at lines 237--237
+Overfull \hbox (1.85321pt too wide) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Microfluidic
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Magnetic
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 tex-ture,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 mo-tion in
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 sub-mm
  []
 
 
-Underfull \hbox (badness 2418) in paragraph at lines 237--237
+Underfull \hbox (badness 2418) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 One tac-tile
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Using
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 trac-ing
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 adapters
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 for other
  []
 
 
-Underfull \hbox (badness 3049) in paragraph at lines 237--237
+Underfull \hbox (badness 3049) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Track with
  []
 
 
-Underfull \hbox (badness 6396) in paragraph at lines 237--237
+Underfull \hbox (badness 6396) in paragraph at lines 268--268
 \T1/ptm/m/n/9 the fin-gers
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 on each
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Apply up
  []
 
 
-Underfull \hbox (badness 2941) in paragraph at lines 237--237
+Underfull \hbox (badness 2941) in paragraph at lines 268--268
 \T1/ptm/m/n/9 to $\OT1/cmr/m/n/9 5\OML/cmm/m/it/9 lbs$ \T1/ptm/m/n/9 of
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 vary-ing
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 force per
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 5 sen-sors
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 []|\T1/ptm/m/n/9 Simulate
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 stiff-ness,
  []
 
 
-Underfull \hbox (badness 2846) in paragraph at lines 237--237
+Underfull \hbox (badness 2846) in paragraph at lines 268--268
 \T1/ptm/m/n/9 shape, and
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 237--237
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
 \T1/ptm/m/n/9 me-chan-i-cal
  []
 
 [11 <../pics/commercial_gloves.jpg>] [12]
 chapter 2.
-<../pics/devices_uncoupled.jpg, id=270, 722.7pt x 722.7pt>
+<../pics/devices_uncoupled.jpg, id=289, 722.7pt x 722.7pt>
 File: ../pics/devices_uncoupled.jpg Graphic file (type jpg)
 <use ../pics/devices_uncoupled.jpg>
-Package pdftex.def Info: ../pics/devices_uncoupled.jpg  used on input line 248.
+Package pdftex.def Info: ../pics/devices_uncoupled.jpg  used on input line 279.
 
 (pdftex.def)             Requested size: 223.0721pt x 223.07529pt.
-<../pics/devices_coupled.jpg, id=271, 722.7pt x 722.7pt>
+<../pics/devices_coupled.jpg, id=290, 722.7pt x 722.7pt>
 File: ../pics/devices_coupled.jpg Graphic file (type jpg)
 <use ../pics/devices_coupled.jpg>
-Package pdftex.def Info: ../pics/devices_coupled.jpg  used on input line 254.
+Package pdftex.def Info: ../pics/devices_coupled.jpg  used on input line 285.
 (pdftex.def)             Requested size: 223.0721pt x 223.07529pt.
-LaTeX Font Info:    Trying to load font information for T1+pcr on input line 26
-6.
-("C:\Program Files\MiKTeX\tex/latex/psnfss\t1pcr.fd"
-File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
-)
-<../pics/leap_anat.png, id=286, 434.37282pt x 307.1475pt>
+
+LaTeX Warning: Citation `lighthouse' on page 13 undefined on input line 301.
+
+<../pics/leap_anat.png, id=310, 434.37282pt x 307.1475pt>
 File: ../pics/leap_anat.png Graphic file (type png)
 <use ../pics/leap_anat.png>
-Package pdftex.def Info: ../pics/leap_anat.png  used on input line 278.
+Package pdftex.def Info: ../pics/leap_anat.png  used on input line 307.
 (pdftex.def)             Requested size: 227.62204pt x 160.9549pt.
-<../pics/leap_example.png, id=287, 274.02374pt x 222.8325pt>
+<../pics/leap_example.png, id=311, 274.02374pt x 222.8325pt>
 File: ../pics/leap_example.png Graphic file (type png)
 <use ../pics/leap_example.png>
-Package pdftex.def Info: ../pics/leap_example.png  used on input line 284.
+Package pdftex.def Info: ../pics/leap_example.png  used on input line 313.
 (pdftex.def)             Requested size: 213.96527pt x 173.99565pt.
- [13
+[13
 
 ] [14 <../pics/devices_uncoupled.jpg> <../pics/devices_coupled.jpg> <../pics/le
 ap_anat.png> <../pics/leap_example.png>]
-<../pics/av_imus.jpg, id=331, 1102.1175pt x 903.375pt>
+<../pics/av_imus.jpg, id=353, 1102.1175pt x 903.375pt>
 File: ../pics/av_imus.jpg Graphic file (type jpg)
 <use ../pics/av_imus.jpg>
-Package pdftex.def Info: ../pics/av_imus.jpg  used on input line 310.
+Package pdftex.def Info: ../pics/av_imus.jpg  used on input line 339.
 (pdftex.def)             Requested size: 455.24408pt x 373.15681pt.
-<../pics/av_contacts.jpg, id=332, 502.87875pt x 502.87875pt>
+<../pics/av_contacts.jpg, id=354, 502.87875pt x 502.87875pt>
 File: ../pics/av_contacts.jpg Graphic file (type jpg)
 <use ../pics/av_contacts.jpg>
-Package pdftex.def Info: ../pics/av_contacts.jpg  used on input line 317.
+Package pdftex.def Info: ../pics/av_contacts.jpg  used on input line 346.
 (pdftex.def)             Requested size: 204.85844pt x 204.85414pt.
-<../pics/av_actu.png, id=333, 217.81375pt x 217.81375pt>
+<../pics/av_actu.png, id=355, 217.81375pt x 217.81375pt>
 File: ../pics/av_actu.png Graphic file (type png)
 <use ../pics/av_actu.png>
-Package pdftex.def Info: ../pics/av_actu.png  used on input line 323.
+Package pdftex.def Info: ../pics/av_actu.png  used on input line 352.
 (pdftex.def)             Requested size: 204.85844pt x 204.85794pt.
  [15] [16 <../pics/av_imus.jpg> <../pics/av_contacts.jpg> <../pics/av_actu.png>
 ]
-<../pics/joint_positions.png, id=367, 312.16624pt x 465.74pt>
+<../pics/joint_positions.png, id=389, 312.16624pt x 465.74pt>
 File: ../pics/joint_positions.png Graphic file (type png)
 <use ../pics/joint_positions.png>
-Package pdftex.def Info: ../pics/joint_positions.png  used on input line 344.
+Package pdftex.def Info: ../pics/joint_positions.png  used on input line 373.
 (pdftex.def)             Requested size: 182.09485pt x 271.68573pt.
  [17 <../pics/joint_positions.png>]
-<../pics/uml.png, id=383, 939.51pt x 1317.92375pt>
+<../pics/uml.png, id=407, 939.51pt x 1317.92375pt>
 File: ../pics/uml.png Graphic file (type png)
 <use ../pics/uml.png>
-Package pdftex.def Info: ../pics/uml.png  used on input line 374.
+Package pdftex.def Info: ../pics/uml.png  used on input line 403.
 (pdftex.def)             Requested size: 455.24408pt x 638.60907pt.
- [18] [19 <../pics/uml.png>]
-Overfull \hbox (1.73502pt too wide) in paragraph at lines 386--387
+[18] [19 <../pics/uml.png>]
+Overfull \hbox (1.73502pt too wide) in paragraph at lines 415--416
 []\T1/ptm/m/n/10.95 It dis-tributes [][][][] com-mands among all rel-e-vant mem
 -bers ([][][], [][][], [][][], and [][][]).
  []
 
 [20]
-Overfull \hbox (4.18672pt too wide) in paragraph at lines 409--410
+Overfull \hbox (4.18672pt too wide) in paragraph at lines 438--439
 []\T1/ptm/m/n/10.95 In its [][][][] method, [][][] queries the cur-rent panel g
 e-om-e-try with [][][][][][]
  []
 
 [21]
-<../pics/calibration.png, id=432, 613.29124pt x 944.52875pt>
+<../pics/calibration.png, id=459, 613.29124pt x 944.52875pt>
 File: ../pics/calibration.png Graphic file (type png)
 <use ../pics/calibration.png>
-Package pdftex.def Info: ../pics/calibration.png  used on input line 433.
+Package pdftex.def Info: ../pics/calibration.png  used on input line 468.
 (pdftex.def)             Requested size: 432.48048pt x 666.06581pt.
  [22] [23 <../pics/calibration.png>]
-<../pics/stars_sphere_schema.png, id=459, 1551.7975pt x 1513.655pt>
+<../pics/stars_sphere_schema.png, id=479, 1551.7975pt x 1513.655pt>
 File: ../pics/stars_sphere_schema.png Graphic file (type png)
 <use ../pics/stars_sphere_schema.png>
-Package pdftex.def Info: ../pics/stars_sphere_schema.png  used on input line 49
-7.
+Package pdftex.def Info: ../pics/stars_sphere_schema.png  used on input line 53
+2.
 (pdftex.def)             Requested size: 273.14922pt x 266.41795pt.
-<../pics/phasers.png, id=460, 226.8475pt x 509.905pt>
+<../pics/phasers.png, id=480, 226.8475pt x 509.905pt>
 File: ../pics/phasers.png Graphic file (type png)
 <use ../pics/phasers.png>
-Package pdftex.def Info: ../pics/phasers.png  used on input line 503.
+Package pdftex.def Info: ../pics/phasers.png  used on input line 538.
 (pdftex.def)             Requested size: 119.95671pt x 269.6337pt.
  [24] [25 <../pics/stars_sphere_schema.png> <../pics/phasers.png>] [26] [27]
 chapter 3.
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\Gls' on input line 569.
+(hyperref)                removing `\Gls' on input line 604.
 
-<../pics/glove_cal1.png, id=521, 463.7325pt x 463.7325pt>
+<../pics/glove_cal1.png, id=547, 463.7325pt x 463.7325pt>
 File: ../pics/glove_cal1.png Graphic file (type png)
 <use ../pics/glove_cal1.png>
-Package pdftex.def Info: ../pics/glove_cal1.png  used on input line 573.
+Package pdftex.def Info: ../pics/glove_cal1.png  used on input line 608.
 (pdftex.def)             Requested size: 136.5746pt x 136.57346pt.
-<../pics/glove_cal2.png, id=522, 460.72125pt x 460.72125pt>
+<../pics/glove_cal2.png, id=548, 460.72125pt x 460.72125pt>
 File: ../pics/glove_cal2.png Graphic file (type png)
 <use ../pics/glove_cal2.png>
-Package pdftex.def Info: ../pics/glove_cal2.png  used on input line 579.
+Package pdftex.def Info: ../pics/glove_cal2.png  used on input line 614.
 (pdftex.def)             Requested size: 136.5746pt x 136.5724pt.
-<../pics/glove_cal3.png, id=523, 462.22687pt x 461.47406pt>
+<../pics/glove_cal3.png, id=549, 462.22687pt x 461.47406pt>
 File: ../pics/glove_cal3.png Graphic file (type png)
 <use ../pics/glove_cal3.png>
-Package pdftex.def Info: ../pics/glove_cal3.png  used on input line 585.
+Package pdftex.def Info: ../pics/glove_cal3.png  used on input line 620.
 (pdftex.def)             Requested size: 136.5746pt x 136.35194pt.
 [28
 
 ] [29 <../pics/glove_cal1.png> <../pics/glove_cal2.png> <../pics/glove_cal3.png
 >]
-<../pics/grab1.jpg, id=553, 432.11438pt x 432.11438pt>
+<../pics/grab1.jpg, id=582, 432.11438pt x 432.11438pt>
 File: ../pics/grab1.jpg Graphic file (type jpg)
 <use ../pics/grab1.jpg>
-Package pdftex.def Info: ../pics/grab1.jpg  used on input line 625.
+Package pdftex.def Info: ../pics/grab1.jpg  used on input line 662.
 (pdftex.def)             Requested size: 204.85844pt x 204.85425pt.
-<../pics/grab2.jpg, id=554, 480.29437pt x 480.29437pt>
+<../pics/grab2.jpg, id=583, 480.29437pt x 480.29437pt>
 File: ../pics/grab2.jpg Graphic file (type jpg)
 <use ../pics/grab2.jpg>
-Package pdftex.def Info: ../pics/grab2.jpg  used on input line 631.
+Package pdftex.def Info: ../pics/grab2.jpg  used on input line 668.
 (pdftex.def)             Requested size: 204.85844pt x 204.85893pt.
  [30] [31 <../pics/grab1.jpg> <../pics/grab2.jpg>]
-Overfull \hbox (56.06389pt too wide) in paragraph at lines 653--654
-\T1/ptm/m/n/10.95 ranged into the panel trig-ger-ing con-tin-u-ous vi-bra-tion 
-feed-back. I added a vec-tor [][][]
+<../pics/contest.png, id=594, 602.25pt x 255.95625pt>
+File: ../pics/contest.png Graphic file (type png)
+<use ../pics/contest.png>
+Package pdftex.def Info: ../pics/contest.png  used on input line 717.
+(pdftex.def)             Requested size: 227.62204pt x 96.74103pt.
+
+
+Package caption Warning: The type was already set to `table'
+(caption)                 on input line 718.
+See the caption package documentation for explanation.
+
+
+Overfull \hbox (2.0805pt too wide) in paragraph at lines 697--721
+[]$[]$  $[]$ 
  []
 
-(bachelor.tld [32]) (bachelor.sot [33
+[32 <../pics/contest.png>] [33]
+chapter 4.
+(bachelor.tld [34
+
+]) (bachelor.sot [35
 
 
-]) [34
+]) [36
 
 
 ] (bachelor.bbl
 chapter without number
-[35
+[37
 
 
-]) [36] [37
+]) [38] [39
 
 
 
 
-] [38
+] [40
 
 
 
 ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 660.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 660.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 744.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 744.
  (bachelor.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 660.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 660.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 744.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 744.
 Package rerunfilecheck Info: File `bachelor.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 660.
+
+
+LaTeX Warning: There were undefined references.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 744.
  )
 (\end occurred inside a group at level 1)
 
-### semi simple group (level 1) entered at line 56 (\begingroup)
+### semi simple group (level 1) entered at line 87 (\begingroup)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 19350 strings out of 480790
- 310222 string characters out of 2907056
- 766781 words of memory out of 3000000
- 34782 multiletter control sequences out of 15000+200000
- 595009 words of font info for 98 fonts, out of 3000000 for 9000
+ 19386 strings out of 480790
+ 310708 string characters out of 2907056
+ 769781 words of memory out of 3000000
+ 34808 multiletter control sequences out of 15000+200000
+ 599508 words of font info for 101 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,12n,77p,10113b,3709s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 60i,12n,77p,10113b,3725s stack positions out of 5000i,500n,10000p,200000b,50000s
 pdfTeX warning (dest): name{glo:CGV} has been referenced but do
 es not exist, replaced by a fixed one
 
@@ -1595,9 +1629,9 @@ b8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Program
  Files/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Program Files/MiKTeX/font
 s/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utm
 r8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on bachelor.pdf (42 pages, 3077193 bytes).
+Output written on bachelor.pdf (45 pages, 3107133 bytes).
 PDF statistics:
- 860 PDF objects out of 1000 (max. 8388607)
- 179 named destinations out of 1000 (max. 500000)
- 397 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 922 PDF objects out of 1000 (max. 8388607)
+ 187 named destinations out of 1000 (max. 500000)
+ 418 words of extra memory for PDF output out of 10000 (max. 10000000)
 

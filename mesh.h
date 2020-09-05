@@ -5,7 +5,7 @@
 
 using namespace cgv::render;
 
-const char* bridge_mesh_file = "bridge_cleaned.obj";
+const char* bridge_mesh_file = "bridge.obj";
 render_types::mat4 bridge_view_mat = cgv::math::rotate4(vec3(0, 180, 0));
 
 class mesh

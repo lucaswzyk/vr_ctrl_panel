@@ -18,9 +18,9 @@
 \contentsline {subsection}{\numberline {2.3.3}Space, Targets and Phasers}{20}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Control Panel}{21}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Hands}{21}{subsection.2.3.5}%
-\contentsline {subsection}{\numberline {2.3.6}Headup Display}{21}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.6}Headup Display}{22}{subsection.2.3.6}%
 \contentsline {section}{\numberline {2.4}Calibration}{22}{section.2.4}%
-\contentsline {section}{\numberline {2.5}Space, Targets and Phasers}{24}{section.2.5}%
+\contentsline {section}{\numberline {2.5}Space, Targets and Phasers}{25}{section.2.5}%
 \contentsline {chapter}{\numberline {3}Evaluation}{28}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Participating Subjects and Preparation}{28}{section.3.1}%
 \contentsline {section}{\numberline {3.2}Qualitative Evaluations and Suggestions}{28}{section.3.2}%
@@ -29,4 +29,6 @@
 \contentsline {subsection}{\numberline {3.2.3}Timing}{30}{subsection.3.2.3}%
 \contentsline {subsection}{\numberline {3.2.4}Intuitive Grabbing and Lever Reaction}{30}{subsection.3.2.4}%
 \contentsline {subsection}{\numberline {3.2.5}Other Adjustments}{31}{subsection.3.2.5}%
-\contentsline {chapter}{\nonumberline Bibliography}{35}{chapter*.24}%
+\contentsline {section}{\numberline {3.3}Quanitative Evaluation}{32}{section.3.3}%
+\contentsline {chapter}{\numberline {4}Conclusion}{34}{chapter.4}%
+\contentsline {chapter}{\nonumberline Bibliography}{37}{chapter*.25}%
