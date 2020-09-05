@@ -24,4 +24,9 @@
 \contentsline {chapter}{\numberline {3}Evaluation}{28}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Participating Subjects and Preparation}{28}{section.3.1}%
 \contentsline {section}{\numberline {3.2}Qualitative Evaluations and Suggestions}{28}{section.3.2}%
-\contentsline {chapter}{\nonumberline Bibliography}{32}{chapter*.22}%
+\contentsline {subsection}{\numberline {3.2.1}Usage of the \Gls {AVR}}{28}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Haptip Feedback}{30}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Timing}{30}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Intuitive Grabbing and Lever Reaction}{30}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}Other Adjustments}{31}{subsection.3.2.5}%
+\contentsline {chapter}{\nonumberline Bibliography}{35}{chapter*.24}%

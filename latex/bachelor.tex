@@ -410,10 +410,12 @@ In its \lstinline|draw()| method, \lstinline|conn_panel| queries the current pan
 
 Each \lstinline|panel_node| is represented as a box or combinations of boxes placed relative to their parent element. During an \lstinline|on_touch()| call, the non-trivial derived classes (\lstinline|button|, \lstinline|hold_button|, \lstinline|slider|, \lstinline|pos_neg_slider| and \lstinline|lever|) use their callback function to manipulate the \lstinline|controlled_space|. 
 
-\subsection{Hands}
+\subsection{Hands} \label{sec:devel:structure:hands}
 Interaction with the \Gls{AVR} is managed by the singleton \lstinline|nd_handler| which can be used to pass function calls through to an instance of \lstinline|NDAPI|. This is frequently done in \lstinline|nd_device|, a class for querying sensor data from the gloves and converting it for better compatibility with \lstinline|cgv| and \gls{VCP}, e.g. the sign flip explained at the end of section \ref{sec:hand_model}.
 
 Finally, the representation of the user's hands is implemented in \lstinline|hand|. It keeps track of several points and joints the details of which are described in section \ref{sec:hand_model}. During a \lstinline|draw()| call, \lstinline|vr_ctrl_panel| passes a pointer to its \lstinline|conn_panel| to each \lstinline|hand| which then passes on information about the current hand geometry wrapped as \lstinline|containment_info| to the \lstinline|conn_panel| for containment check. Each \lstinline|panel_node| containing some hand part can then react with its \lstinline|on_touch()| method. A \lstinline|map<int, float>| describing the contained positions and suggested vibration strengths is returned to the hand, enabling it to react as well.
+
+The vibration strengths are calculated as fractions of a maximum value. When a joint gets closer to the panel than the size of the sphere representing it is represented by, the vibration strength linearly increases as the joint sphere moves into the panel until it reaches the maximum value with the joint position (sphere midpoint) entering the panel.
 
 \subsection{Headup Display} \label{sec:hd}
 To convey written information to the user, a rectangular white region showing black text can be displayed in front of their eyes. This is implemented in \lstinline|headup_display| which uses \lstinline|label_manager| provided by \lstinline|cgv|. Its visibility can be controlled by setting an empty text (invisible) or a non-empty text (visible).
@@ -559,25 +561,98 @@ If a target has been hit, it is mirrored at the user position removing it from t
 
 \chapter{Evaluation}
 \section{Participating Subjects and Preparation}
-For the purpose of a user study, I chose two Star Trek Fans (female, 21 and male, 48; called \emph{Trekkies}) and two people not familiar with the franchise (both female, 49 and 11; called \emph{Non-Trekkies}). All of them were instructed how to wear the \Gls{AVR} and the \acrshort{hmd}, and had approximately $ 15min $ to familiarize themselves with the environment, i.e. the conn panel, wearing the \acrshort{hmd}, moving through space and eliminating targets. 
+For the purpose of a user study, I chose two Star Trek Fans (A: female, 21 years; B: male, 48 years; called \emph{Trekkies}) and two people not familiar with the franchise (C: female, 49 years; D: female, 11 years; called \emph{Non-Trekkies}). All of them were instructed how to wear the \Gls{AVR} and the \acrshort{hmd}, and had approximately $ 15min $ to familiarize themselves with the environment, i.e. the conn panel, wearing the \acrshort{hmd}, moving through space and eliminating targets. 
 
 \section{Qualitative Evaluations and Suggestions}
-The subjects were then asked for their opinion and suggestions regarding the design and behavior of the plugin which are summarized below:
+The subjects were then asked for their opinion and suggestions regarding the design and behavior of the plugin which are summarized below.
+
+\subsection{Usage of the \Gls{AVR}}
+\begin{figure}
+	\centering
+	\begin{subfigure}{.3\linewidth}
+		\includegraphics[width=\linewidth]{../pics/glove_cal1}
+		\caption{Right after calibration}
+		\label{fig:glove_cal:trivial}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.3\linewidth}
+		\includegraphics[width=\linewidth]{../pics/glove_cal2}
+		\caption{After putting on the glove}
+		\label{fig:glove_cal:puton}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.3\linewidth}
+		\includegraphics[width=\linewidth]{../pics/glove_cal3}
+		\caption{After waiting an additional $ 60s $}
+		\label{fig:glove_cal:minute}
+	\end{subfigure}
+	\caption{"Motion" tab of \acrshort{nd} Suite at different times after the \Gls{AVR}'s intrinsic calibration; middle and right picture taken after calibration as suggested by the producer}
+	\label{fig:glove_cal}
+\end{figure}
+
+The \Gls{AVR} has an inner and an outer layer between which the electrical components are situated. The inner layer is made from a stretch fabric, probably to adjust to different hand sizes. However, the fabric does not slide onto the hand well and the layers are only sparsely connected, allowing them to shift against each other. This made it difficult for the subjects to put on the glove for the first time. It took about $ 30s $, not counting the time needed to correctly place the actuators on the fingers. With some practice, the whole process can be completed in about $ 10s $. Putting on a second glove, locking the wrist band, and activating the gloves usually required outside help. 
+
+When activating the glove, an internal calibration sets the current pose of each \acrshort{imu} to a trivial one as shown in figure \ref{fig:glove_cal:trivial}. The producer\newcite{nd} actually intends for the gloves to be calibrated while laying on a flat surface. However, when putting the glove on after this and laying the respective hand on the same surface in a similar pose, the measured orientations exhibit a noticeable difference from the user's hand pose as shown in figure \ref{fig:glove_cal:puton}. 
+
+Furthermore, after performing some movements with the glove, the measured orientations sometimes keep changing, even when resting the glove on a surface again. The stronger the accelerations during these movements are (e.g. during shaking), the stronger this drifting effect becomes. Figure \ref{fig:glove_cal:minute} shows the measured orientations after resting the hand for $ 60s $ which implies that even putting on the glove carefully involves sufficient motion for drifting to occur.
+
+In my experience, putting on the gloves first and activating them afterwards yields a more stable result, so the subjects were asked to do that. Then however, th gloves should not move during calibration time which most of the subjects found hard to achieve.
+
+The recalibration of the glove described in section \ref{sec:cal} can compensate for the absolute difference between the user's hand pose and the measured orientations, but not for the drifting effect. As it is the only way to trigger an intrinsic calibration, the gloves needed to be switched off and back on frequently. 
+
+Since the computer used during the study does not have Bluetooth capabilities, an additional USB Bluetooth connector was used to establish a connection with the gloves. However, this proved unstable for a single glove which disconnected in a matter of minutes or when moving further than $ 1m $ away from the connector, and it was almost impossible to connect both gloves at the same time. One possible explanation might be an insuffiency of the external connector, as the connection was stable for a longer time on a device with integrated Bluetooth capabilities. Also, the Bluetooth capable Vive trackers placed directly on the glove might have an interfering influence.
+
+To avoid interruptions, the gloves were connected to the computer via Micro USB for the user study. The cables had to be fixed on the users' arms with a sweatband to relieve the physical strain on the gloves' Micro USB ports.
+
+The subjects described the gloves as "restrictive" when touching physical objects which can be attributed especially to the actuators that are situated on the most sensitive spots of the skin. However, usage in VR was regarded "unhindered". Subject A mentioned that a grabbing motion is slightly obstructed. The glove is light and, generally, the fabric moves easily. 
+
+\subsection{Haptip Feedback}
+As an essential part of the whole project, the haptic feedback strength (see part \ref{sec:devel:structure:hands}) was adjusted in discussion with the subjects. After that, all subjects regarded the feedback when touching a virtual surface as "strangely realistic" or similar. 
+
+I then applied different maximum vibration strengths for various panel components which was evaluated as "unrealistic" and "confusing", so I went back to the original approach of a single maximum vibration strength throughout the whole panel. A good value for this strength in terms of the \Gls{AVR} seems to be $ .2 $.
+
+When asked to reach through the conn panel, the subjects described a sense of intuitive hesitation that I could also see in their movements. Apparently, their brain had somewhat accepted the physical barrier formed by the virtual panel. 
+
+\subsection{Timing}
+During all sessions, the plugin ran smoothly. The calculation took around $ 2-5ms $ per frame which is significantly lower than the $ 11.1ms $ ensuring $ 90fps $. None of the subjects mentioned glitches or holds. 
+
+To test the reaction time of the glove actuators, the conn panel was calibrated right onto a table edge. This was possible with the see-through function of the \acrshort{hmd} that is meant to keep users from running into physical objects, like a wall. All but one subject (D) found the time difference between touching the table edge and haptic feedback from the gloves negligible, i.e. not sensible. During simulation, all subjects regarded the reaction time when touching a virtual object as negligible.
+
+\subsection{Intuitive Grabbing and Lever Reaction}
+\begin{figure}
+	\centering
+	\begin{subfigure}{.45\linewidth}
+		\includegraphics[width=\linewidth]{../pics/grab1}
+		\caption{Medial view}
+		\label{fig:grab:medial}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.45\linewidth}
+		\includegraphics[width=\linewidth]{../pics/grab2}
+		\caption{Palmar view}
+		\label{fig:grab:palmar}
+	\end{subfigure}
+	\caption{Intiutive grabbing performed by three of four subjects; index folds onto thumb instead of palmar below thumb}
+	\label{fig:grab}
+\end{figure}
+
+Three of four subjects (except B) performed a grabbing motion intuitively as shown in figure \ref{fig:grab} with the index folding onto the thumb, above the contact on the palm. When designing the lever on the conn panel, I had anticipated a more palmar grabbing and therefore required both index and middle to be joined with the palm contact for the lever to become responsive. This is meant to keep the lever from changing its angle and value when incidentally touching it and rather require an active grabbing to use it. However, it made the lever responsiveness unintuitive for these subjects.
+
+To compensate, the condition of joined index and palm contacts was deleted. This does not significantly undermine the requirement of an intentional grabbing, as index extension combined with flexion of the other fingers is a difficult motion. The grabbing can thus still be sufficiently recognized by the middle and palm contacts. 
+
+Subjects A, C and D described the adjusted lever control as "much simpler" and "more natural". Subject B stated that he did not feel a difference, supporting the statements above.
+
+\subsection{Other Adjustments}
 \vspace{.3cm}
 \begin{itemize}
-	\item As an essential part of the whole project the haptic feedback strength was adjusted in discussion with the subjects. After that, all subjects regarded the feedback when touching a virtual surface as "strangely realistic" or similar. I then applied different vibration strengths for various panel components which was evaluated as "unrealistic" and "confusing", so I went back to the original approach of a single vibration strength throughout the whole panel. A good value for this strength set as \lstinline|level| in the \lstinline|NDAPI| method \lstinline|set_actuator_pulse()| seems to be $ .1 $.
-	
-	When asked to reach through the conn panel, they described a sense of intuitive hesitation because their brain had apparently somewhat accepted the physical barrier formed by the virtual panel.
-	
-	\item The target color was changed from red to green increasing the contrast to the orange phasers. The phaser color, position, and direction was adjusted to match the Trekkies impression of a phaser from the movies.
-	\item The "Toggle Targets" button was changed to stay green while the targets are active.
 	\item In the initial implementation, the sliders on the left side of the panel had been designed to react only to touches close to their current setting. This was meant to give the impression of a slider rather than buttons. However, the participants found it hard to match the current setting which resulted in problems with changing the slider value. This was adjusted so the user can tap anywhere on the slider to immediately change its value. A field was added in the middle of the slider that can be used to set its value exactly to $ 0 $. 
+	\item The target color was changed from red to green increasing the contrast to the orange phasers. The phaser color, position, and direction was adjusted to match the Trekkies impression of a phaser from the movies.
+	\item The size of the targets represented by \lstinline|target_radius| above was adjusted until the subjects found it challenging, but possible to eliminate them.
+	\item The "Toggle Targets" button was changed to stay green while the targets are active.
 	\item Instructions on the headup display during calibration lead to misunderstandings and miscalibrations. They were discussed with the users and adjusted until agreed upon.
 	\item Irritation was expressed when the panel reappeared during calibration because the user's hands ranged into the panel triggering continuous vibration feedback. I added a vector \lstinline|hand_vs_panel_for_calibration| in the \lstinline|calibration| struct which moves the panel below the hands during calibration to avoid this.
-	\item The size of the targets represented by \lstinline|target_radius| above was adjusted until the subjects found it challenging, but possible to eliminate them.
 \end{itemize}
 
-The calibration is necessary because the \Gls{AVR} does not give sufficiently accurate measurements for a period longer than a few minutes. Since the device apparently accumulates quaternions from instantaneous acceleration rates, the resulting rotations tend to diverge quickly from the actual hand pose. This effect is significant if the device was moved even slightly during its intrinsic calibration at startup time and becomes stronger when executing movements with high accelerations, e.g. shaking.
 
 
 \printglossary[type=gloss_terms]

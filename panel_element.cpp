@@ -88,7 +88,7 @@ map<int, float> panel_node::check_containments(containment_info ci, int hand_loc
 		dist = distance(ci.positions[i]);
 		if (dist < ci.tolerance)
 		{
-			ind_map[i] = (1.0f - dist / ci.tolerance) * max_vibration_strength;
+			ind_map[i] = pow(1.0f - dist / ci.tolerance, 4) * max_vibration_strength;
 		}
 	}
 
