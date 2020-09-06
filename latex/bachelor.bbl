@@ -1,6 +1,10 @@
 \newcommand{\etalchar}[1]{$^{#1}$}
 \begin{thebibliography}{ZWW{\etalchar{+}}18}
 
+\bibitem[imu]{imu}
+Inertial measurement unit.
+\newblock accessed 06 Sep 2020.
+
 \bibitem[KS18]{kakoty18}
 Nayan~M. Kakoty and Manalee~Dev Sharma.
 \newblock Recognition of sign language alphabets and numbers based on hand
@@ -18,6 +22,9 @@ Yang LI, Jin HUANG, Feng TIAN, Hong-An WANG, and Guo-Zhong DAI.
 \newblock Gesture interaction in virtual reality.
 \newblock {\em Virtual Reality \& Intelligent Hardware}, 1(1):84 -- 112, 2019.
 
+\bibitem[lig]{lighthouse}
+Steamvr, lighthouse.
+
 \bibitem[MRB{\etalchar{+}}19]{maitre19}
 Julien Maitre, Clément Rendu, Kévin Bouchard, Bruno Bouchard, and Sébastien
   Gaboury.
@@ -29,6 +36,10 @@ Julien Maitre, Clément Rendu, Kévin Bouchard, Bruno Bouchard, and Sébastien
 
 \bibitem[nd]{nd}
 Neurodigital technologies, s. l.
+
+\bibitem[pha]{phantom}
+Phantom desktop device, 3d systems inc.
+\newblock accessed 06 Sep 2020.
 
 \bibitem[qua]{quat_to_euler}
 Conversion between quaternions and euler angles.

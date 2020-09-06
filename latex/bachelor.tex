@@ -40,8 +40,10 @@ The goal of this bachelor's thesis is the design, implementation and evaluation 
 	\item Real-time coupling of AvatarVR finger tracking with Lighthouse-based tracking of the glove position and orientation, and generation of haptic feedback from the tracking results
 	\item Stylized rendering of the user's hand(s) using suitable Framework facilities (e.g. \lstinline|box_renderer|)
 	\item Qualitative evaluation:
-	\subitem Tracking precision and quality of generated hand poses
-	\subitem User performance when interacting with the interface
+	\begin{itemize}
+		\item Tracking precision and quality of generated hand poses
+		\item User performance when interacting with the interface
+	\end{itemize}
 	\item Quantitative evaluation of tracking performance (e.g. latency)
 \end{itemize}
 
@@ -49,8 +51,10 @@ The goal of this bachelor's thesis is the design, implementation and evaluation 
 \vspace{.3cm}
 \begin{itemize}
 	\item Comparative Evaluation:
-	\subitem Controller-based interaction, e.g. via some controller-tailored abstract interface, or pointing and grabbing of the natural interface
-	\subitem Full hand tracking via Leap Motion sensor
+	\begin{itemize}
+		\item Controller-based interaction, e.g. via some controller-tailored abstract interface, or pointing and grabbing of the natural interface
+		\item Full hand tracking via Leap Motion sensor
+	\end{itemize}
 	\item Incorporation of real-world objects into the natural user interface (e.g. a real table on which the virtual controls are situated) and analysis of the effect on perception of the controls
 	\item Design and implementation of additional natural interaction modes not based on direct manipulation, e.g. gesture recognition
 	\item Rendering of the user's hand(s) as skinned mesh
@@ -93,9 +97,9 @@ In their review \emph{Haptic display for virtual reality: progress and challenge
 There has been a multitude of approaches to making interaction with virtual environments possible\newcite{li19}. Touch screens and stylus pens have become quite common in everyday life. Devices capable of capturing scene depth like Microsoft Kinect and Leap Motion make touchless interaction possible, e.g. during games. This thesis focuses especially on wearable devices called \emph{data gloves}.
 
 \section{Principles of Data Gloves}
-The general principles of data gloves can be divided into two main parts: sensing and actuation. The first part deals with the issue of capturing a user's hand poses and motions and relaying that information to a computer for further processing. In most cases, a fabric glove is equipped with an \acrfull{imu} placed on each rigid hand part or flex sensors placed on joints. The latter have the advantage of measuring absolute values which, however, are only scalar and need further interpretation involving anatomical knowledge ("Something is happening: we have a $ .7 $."). An \acrfull{imu}, on the other hand, usually accumulates an absolute measurement from instantaneous rates of change, but can be designed to return 3D rotations and positions ("The index is facing upwards.").
+The general principles of data gloves can be divided into two main parts: sensing and actuation. The first part deals with the issue of capturing a user's hand poses and motions and relaying that information to a computer for further processing. In most cases, a fabric glove is equipped with an \acrfull{imu} placed on each rigid hand part or flex sensors placed on joints. The latter have the advantage of measuring absolute values which, however, are only scalar and need further interpretation involving anatomical knowledge, e.g. that a sensor value of $ .7 $ corresponds to joint flexion of $ 45^{\circ} $. An \acrfull{imu}, on the other hand, usually measures instantaneous rates of change, like accelerations, but can be designed to return 3D rotations and positions by accumulating these measurements\newcite{imu}.
 
-The matter of actuation belongs to the broader field of haptic feedback. According to Wang et al.\newcite{wang19}, the visual and auditory feedback of \acrshort{vr} systems has become fairly realistic over time. However, haptic feedback is still rather poor even though it is "$\dots$ indespensable for enhancing immersion, interaction and imagination of \acrshort{vr} systems. Interaction can be enhanced by haptic feedback as users can directly manipulate virtual objects, and obtain immediate haptic feedback. Immersion of the \acrshort{vr} system can be enhanced in terms of providing more realistic sensation to mimic the physical interaction process. Imagination of users can be inspired when haptics can provide more cues for user[s] to mentally construct an imagined virtual world beyond spatial and or temporal limitations."
+The matter of actuation belongs to the broader field of haptic feedback. According to Wang et al.\newcite{wang19}, the visual and auditory feedback of \acrshort{vr} systems has become fairly realistic over time. However, haptic feedback is still rather poor even though it is "[$\dots$] indespensable for enhancing immersion, interaction and imagination of \acrshort{vr} systems. Interaction can be enhanced by haptic feedback as users can directly manipulate virtual objects, and obtain immediate haptic feedback. Immersion of the \acrshort{vr} system can be enhanced in terms of providing more realistic sensation to mimic the physical interaction process. Imagination of users can be inspired when haptics can provide more cues for user[s] to mentally construct an imagined virtual world beyond spatial and / or temporal limitations."
 
 \begin{figure}
 	\centering
@@ -105,13 +109,14 @@ The matter of actuation belongs to the broader field of haptic feedback. Accordi
 \end{figure}
 
 A schematic of the general paradigm of haptic human computer interfaces is shown in figure \ref{fig:hci}. It consists of three main components:
+\vspace{.3cm}
 \begin{itemize}
 	\item the user, who perceives virtual objects through biological receptors, processes them in the somatosensory and motor cortex, and requests manipulation by mechanical movement,
 	\item the interface device which causes perception via actuation and collects information about requested manipulation with its sensors,
 	\item the virtual environment which evaluates the interface device's data, realizes the manipulation of virtual objects with possible constraints, and motivates actuation in the interface device via haptic feedback.
 \end{itemize}
 
-As the following examples will demonstrate, not all data gloves are designed with the capability of both sensing and actuation. Some are only used to evaluate the user's hand pose, and it is conceivable to deal only with the issue of actuation and utilize an external device for sensing, such as Leap Motion. However, actuation on its own does not seem useful for VR applications, as it needs to be variable based on the current hand pose for which tracking of the user's hand pose is required.
+As the following examples will demonstrate, not all data gloves are designed with the capability of both sensing and actuation. Some are only used to evaluate the user's hand pose, and it is conceivable to deal only with the issue of actuation and utilize an external device for sensing, such as Leap Motion. However, actuation on its own does not seem useful for VR applications, as it needs to be variable based on the current hand pose for which tracking of the user's hand is required.
 
 \section{Examples and Applications of Data Gloves} \label{sec:ex}
 \subsection{Sign Language Recognition}
@@ -140,7 +145,7 @@ A preprocessing unit as in figure \ref{fig:kakoty_principle} handles the convers
 With an average recognition rate of 96.7\%, this approach achieves similar results as previous projects while recognizing more alphabets. Kakoty et al. further conclude that their approach "[$\dots$] overcomes the limitations of vision based systems. [$\dots$] An extension of the presented work for sentence-based sign language recognition will lead to an enterprising device; which is part of on-going research."
 
 \subsection{Daily Activity Recognition}
-Alzheimer's disease is a common cause for the loss of cognitive abilities amongst the elderly. Well known symptoms include language problems, loss of memory and degrading functioning of the hand. To better understand the latter, Maitre et al. investigated a method to recognize daily activities using a data glove developed over the course of the project\newcite{maitre19}.
+Alzheimer's disease is a common cause for the loss of cognitive abilities amongst the elderly. Well known symptoms include language problems, loss of memory and degrading functioning of the hand. To better understand the latter, Maitre et al. investigated a method to recognize daily activities using a data glove developed specifically for that project\newcite{maitre19}.
 
 \begin{figure}
 	\begin{subfigure}{.57\linewidth}
@@ -166,6 +171,7 @@ Alzheimer's disease is a common cause for the loss of cognitive abilities amongs
 \end{figure}
 
 Several reasons are named as motivation to develop the device from scratch:
+\vspace{.3cm}
 \begin{itemize}
 	\item Prices for commercial data gloves are situated between ca. 600 USD and several thousand USD. The authors propose a design that can be recreated for only about 220 USD.
 	\item Commercial gloves are generally only compatible with Windows, but the SDK is not suitable for many other sensors.
@@ -174,7 +180,7 @@ Several reasons are named as motivation to develop the device from scratch:
 
 Discerning a daily activity is based on recognizing the involved item, e.g. a plate for the task \emph{Hold a plate}. For this, the presence of an object needs to be detected and information about its shape is required. Figure \ref{fig:maitre_sensors} shows the resulting sensor locations, where red and yellow mark flex sensors and blue marks force sensors. A prototype device can be seen in figure \ref{fig:maitre_glove}. 
 
-A group of nine participants was asked to perform the daily activities listed in the evaluation tables in figure \ref{fig:maitre_results}. The acquired data sets were used to train (70\%) and test (30\%) a k Nearest Neighbours (k-NN) model whose precision (P), recall (R) and f-score (F) can be found in the left table, and a random forest (RF) to which the right table refers.
+A group of nine participants was asked to perform the daily activities listed in the evaluation tables in \ref{fig:maitre_results}. The acquired data sets were used to train (70\%) and test (30\%) a k Nearest Neighbours (k-NN) model whose precision (P), recall (R) and f-score (F) can be found in the left table, and a random forest (RF) to which the right table refers.
 
 Maitre et al. conclude that the performance of their approach is "[$\dots$] almost perfect [$\dots$]. This result is surprising and encouraging [$\dots$]." Another experiment shows that both models perform significantly worse on data collected from a person that was not recorded during training. The authors therefore suggest to train the models with data from a patient that is supposed to use the system. The device can then even be worn in the comfort of the patient's home to monitor their hand activity.
 
@@ -198,19 +204,19 @@ Maitre et al. conclude that the performance of their approach is "[$\dots$] almo
 		\caption{Recognition results of phantom hand movements for a subject with congenital failure of formation (Subject F)}
 		\label{fig:amputees:f}
 	\end{subfigure}
-	\caption[Hand poses used in \cite{sebelius05} and recognition results]{Hand poses used in \cite{sebelius05} and recognition results; in (b) and (c), grey bars depict average performance, black depicts best-session performance and white the reference glove performance}
+	\caption[Hand poses used in \cite{sebelius05} and recognition results]{Hand poses used in \cite{sebelius05} and recognition results; in (b) and (c), grey bars depict average performance, black depicts best-session performance and white the reference glove performance; from \cite{sebelius05}}
 	\label{fig:amputees}
 \end{figure}
 
-A group of PhD students in Sweden trained an \acrfull{ann} to recognize myoelectric activity of below-elbow amputees as certain hand poses\newcite{sebelius05}. To generate training data, a group of five subjects with a traumatic amputation and one subject with a congenital failure of formation was asked to perform the movements shown in figure \ref{fig:amputees:poses} with their healthy hand and their phantom hand simultaneously.
+A group of PhD students in Sweden trained an \acrfull{ann} to recognize myoelectric activity of below-elbow amputees as certain hand poses\newcite{sebelius05}. To generate training data, five subjects with a traumatic amputation and one subject with a congenital failure of formation were asked to perform the movements shown in figure \ref{fig:amputees:poses} with their healthy hand and their phantom hand simultaneously.
 
-The healthy hand was therewhile tracked with a data glove to match the performed movement to one of M1 - M10. The arm stump on the side of the amputation was covered with considerably many electrodes to record detailed information about the remaining myoelectric activity. The (pre-processed) data was then used to train a tree-structured \acrshort{ann}.
+The healthy hand was therewhile tracked with a data glove to match the performed movement to one of M1 - M10. The arm stump on the side of the amputation was covered with relatively many electrodes to record detailed information about the remaining myoelectric activity. The (pre-processed) data was then used to train a tree-structured \acrshort{ann}.
 
-As shown in figure \ref{fig:amputees} and more diagrams from the original paper, certain poses were recognized especially well or badly for certain subjects. An interesting process to see was how the performance of the subjects became more accurate over the course of the experiment. As this could be seen within minutes, the authors theorized, it might be due to unmasking of existing brain structures instead of the formation of new ones. 
+As shown in figure \ref{fig:amputees} and more diagrams from the original paper, certain poses were recognized especially well or badly for certain subjects. An interesting process to see was how the performance of the subjects became more accurate over the course of the experiment. As this revealed itself within minutes of a session, the authors theorized, it might be due to unmasking of existing brain structures instead of the formation of new ones. 
 
 The subject with congenital failure was of special interest because it showed that some movements could be accurately induced in the phantom hand even though they had never been executed before, possibly indicating the awakening of sleeping motor cortical areas in the brain that had been present since birth. Among the subjects with traumatic amputations, the accuracy and training effect did not seem related to the time since the amputation.
 
-An important aspect for the training effect might be the simultaneous execution of movements with the healthy hand, as suggested in the original paper. The authors moreover suppose that a subject's performance might increase with visual feedback of a virtual phantom hand that was not present during these experiments. This thesis might be useful for this purpose, as it describes the use of a well established hand model in section \ref{sec:hand_model}. Work in this direction was continued by the authors of the original paper\newcite{sebelius06}.
+An important aspect for the training effect might be the simultaneous execution of movements with both the healthy and the phantom hand, as suggested in the original paper. The authors moreover suppose that a subject's performance might increase with visual feedback of a virtual phantom hand that was not given during these experiments. This thesis might be useful for that purpose, as it defines a virtual hand model for the use with data gloves, based on a well established hand model, in section \ref{sec:hand_model}. Work in this direction was continued by the authors of the original paper\newcite{sebelius06}.
 
 \subsection{A Lightweight Force-Feedback Glove}
 \begin{figure}
@@ -222,10 +228,10 @@ An important aspect for the training effect might be the simultaneous execution 
 \end{figure}
 
 In terms of haptic feedback, a recent project is the \emph{Design of a Lightweight Force-Feedback Glove with a Large Workspace}\newcite{zheng18}. From their review of existing technology, the authors of the respective paper conclude the following "[$\dots$] requirements of ideal force feedback for VR interaction":
-
+\vspace{.3cm}
 \begin{itemize}
-	\item The device weight should not exceed $ 100g $. This value is based on the success of desktop force-feedback devices, e.g. the PHANTOM Desktop. The prototype shown in figure \ref{fig:force_feedback_proto} has a final mass of $ 245g $ which was achieved by a pneumatically actuated design with an outsourced construction for air compression and regulation. Force can be excerted onto the fingers by releasing compressed air into the pneumatic pistons (silver) which then pull back the links (black). Special materials were chosen for weight reduction: the links are made from $ 2mm $ thick carbon. Lightweight plastic was used for the base parts and finger caps (white).
-	\item Typical grasping motions should be possible to simulate realistically. The device should therefor have a large motion and force range. The form of the links is specifically designed to ensure the necessary freedom of motion and makes it possible to mount the construction on the dorsal side of the hand. The authors emphasize that the key to obtaining optimal normal force at the finger cap while ensuring free movement of the finger joints is the curved profile of the sliding slot connecting the base components to the links. Its design and the respective calculations are described in detail in the original paper.
+	\item The device weight should not exceed $ 100g $. This value is based on the success of desktop force-feedback devices, e.g. the PHANTOM Desktop\newcite{phantom}. The prototype shown in figure \ref{fig:force_feedback_proto} has a final mass of $ 245g $ which was achieved by a pneumatically actuated design with an outsourced construction for air compression and regulation. Force can be excerted onto the fingers by releasing compressed air into the pneumatic pistons (silver) which then pull back the links (black). Special materials were chosen for weight reduction: the links are made from $ 2mm $ thick carbon. Lightweight plastic was used for the base parts and finger caps (white).
+	\item Typical grasping motions should be possible to simulate realistically. The device should therefore have a large motion and force range. The form of the links is specifically designed to ensure the necessary freedom of motion and makes it possible to mount the construction on the dorsal side of the hand. The authors emphasize that the key to obtaining optimal normal force at the finger cap while ensuring free movement of the finger joints is the curved profile of the sliding slot connecting the base components to the links. Its design and the respective calculations are described in detail in the original paper.
 	\item "[$\dots$] the gloves should be easy to put on and remove, and should be adaptable for users with different hand sizes." This could, however, not be achieved and is suggested for future work.
 \end{itemize}
 
@@ -251,7 +257,7 @@ Numerous types of data gloves have been available on the market over the past ye
 	\centering
 	\begin{tabularx}{\textwidth}{llXXXXXX}		
 		\toprule[2pt] \midrule
-		Device name & Company & Motion tracking DoF & Force feedback & Tactile feedback & Actuation principle & Sensing principle & Typical features\\
+		\textbf{Device name} & \textbf{Company} & \textbf{Motion tracking DoF} & \textbf{Force feedback} & \textbf{Tactile feedback} & \textbf{Actuation principle} & \textbf{Sensing principle} & \textbf{Typical features}\\
 		\midrule
 		CyberGrasp & Immersion & --- & One actuator per finger & --- & Electric motor & 22-sensor Cyber-Glove device & Feel the size and shape \\
 		\midrule
@@ -398,6 +404,72 @@ Since the interphalangeal joints act as revolute joints, only a roll component c
 	recursive_rotations[finger][DISTAL] = quat(x, min(1.4f, rot_split.z() * roll));
 \end{lstlisting}
 
+Figure \ref{fig:hand_correspondences} shows correspondences of user hand positions with virtual hand positions. A good approximation is reached, however, the resulting hand pose is not unique. For example, figure \ref{fig:nat_fake} shows two user hand positions that lead to approximately the same outcome as the virtual hand pose shown in the middle line of figure \ref{fig:hand_correspondences}. This issue cannot be fixed because the \Gls{AVR} does not provide more information about the finger poses.
+
+\begin{figure}
+	\begin{subfigure}{.235\linewidth}
+		\includegraphics[width=\linewidth]{../pics/hand_radial_flat}
+	\end{subfigure}
+	\vspace{.1cm}
+	\hspace{.01cm}
+	\begin{subfigure}{.235\linewidth}
+		\includegraphics[width=\linewidth]{../pics/model_radial_flat}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.235\linewidth}
+		\includegraphics[width=\linewidth]{../pics/hand_dorsal_flat}
+	\end{subfigure}
+	\hspace{.01cm}
+	\begin{subfigure}{.235\linewidth}
+		\includegraphics[width=\linewidth]{../pics/model_dorsal_flat}
+	\end{subfigure}
+	\vspace{.1cm}
+	\begin{subfigure}{.235\linewidth}
+		\includegraphics[width=\linewidth]{../pics/hand_radial_nat}
+	\end{subfigure}
+	\hspace{.01cm}
+	\begin{subfigure}{.235\linewidth}
+		\includegraphics[width=\linewidth]{../pics/model_radial_nat}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.235\linewidth}
+		\includegraphics[width=\linewidth]{../pics/hand_dorsal_nat}
+	\end{subfigure}
+	\hspace{.01cm}
+	\begin{subfigure}{.235\linewidth}
+		\includegraphics[width=\linewidth]{../pics/model_dorsal_nat}
+	\end{subfigure}
+	\begin{subfigure}{.235\linewidth}
+		\includegraphics[width=\linewidth]{../pics/hand_radial_ball}
+	\end{subfigure}
+	\hspace{.01cm}
+	\begin{subfigure}{.235\linewidth}
+		\includegraphics[width=\linewidth]{../pics/model_radial_ball}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.235\linewidth}
+		\includegraphics[width=\linewidth]{../pics/hand_dorsal_ball}
+	\end{subfigure}
+	\hspace{.01cm}
+	\begin{subfigure}{.235\linewidth}
+		\includegraphics[width=\linewidth]{../pics/model_dorsal_ball}
+	\end{subfigure}
+	\caption{Example pose correspondences of user and virtual hand; one pose per line; columns f.l.t.r: user hand radial, virtual hand radial, user hand dorsal, virtual hand dorsal}
+	\label{fig:hand_correspondences}
+\end{figure}
+
+\begin{figure}
+	\begin{subfigure}{.4\linewidth}
+		\includegraphics[width=\linewidth]{../pics/hand_radial_natfake1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.4\linewidth}
+		\includegraphics[width=\linewidth]{../pics/hand_radial_natfake2}
+	\end{subfigure}
+	\caption{Radial view of two user hand poses corresponding to a similar handpose as the one in the middle line of figure \ref{fig:hand_correspondences}}
+	\label{fig:natfake}
+\end{figure}
+
 \section{Project Idea and Structure}
 \begin{figure}
 	\includegraphics[width=\linewidth]{../pics/uml}
@@ -406,18 +478,6 @@ Since the interphalangeal joints act as revolute joints, only a roll component c
 \end{figure}
 
 To give the VR user interface some context rather than just moving boxes, I decided to design it as a conn panel on the USS Voyager (Star Trek). The term \emph{conn} is short for \emph{control and navigation}, meaning the panel is used to stear the ship. The classes used to implement this and their interaction are shown in figure \ref{fig:uml}.
-
-\begin{figure}
-	\begin{subfigure}{.49\linewidth}
-		\includegraphics[width=\linewidth]{../pics/panel}
-		\label{fig:panel}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{.49\linewidth}
-		\includegraphics[width=\linewidth]{../pics/firing}
-		\label{fig:firing}
-	\end{subfigure}
-\end{figure}
 
 \subsection{Main class}
 The main class and entry point carries the same name as the plugin itself. It is derived from the \gls{CGV} classes \lstinline|base|, \lstinline|drawable|, \lstinline|event_handler| and \lstinline|provider|, and is used for scene management and interaction with the framework functionalities.
@@ -440,9 +500,26 @@ Around the bridge, space is simulated by a spherical shell filled with stars imp
 	}
 \end{lstlisting}
 
-The method needs to be static so it is possible to set it as callback method in objects outside this class. Analogous methods exist for all three rotational speeds. This class also manages targets whose visibility can be toggled with \lstinline|toggle_targets()| and that can be eliminated with phasers (laser canons) via the \lstinline|static_fire()| method. 
+The method needs to be static so it is possible to set it as callback method in objects outside this class. Analogous methods exist for all three rotational speeds that are named as for planes, i.e. pitch around the $ x $-axis, yaw around the $ y $-axis, and roll around the $ z $-axis. 
+
+This class also manages targets whose visibility can be toggled with \lstinline|toggle_targets()| and that can be eliminated with phasers (laser canons) via the \lstinline|static_fire()| method. 
 
 More details and the geometry behind this class are described in section \ref{sec:space}.
+
+\begin{figure}
+	\begin{subfigure}{.49\linewidth}
+		\includegraphics[width=\linewidth]{../pics/panel}
+		\caption{Panel configuration with explanatory annotations (added manually, not visible in \gls{VCP})}
+		\label{fig:panel}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.49\linewidth}
+		\includegraphics[width=\linewidth]{../pics/firing}
+		\caption{Screenshot of \lstinline|cgv_viewer| showing bridge with conn panel and view screen while firing on targets}
+		\label{fig:firing}
+	\end{subfigure}
+	\caption{Setup of conn panel and bridge}
+\end{figure}
 
 \subsection{Control Panel}
 The actual interface is built and drawn by \lstinline|conn_panel|. This passes the \lstinline|controlled_space| and a callback function on to each \lstinline|panel_node| during construction and the \lstinline|containment_info| coming from a \lstinline|hand| during \lstinline|check_containments()|. 
@@ -450,6 +527,8 @@ The actual interface is built and drawn by \lstinline|conn_panel|. This passes t
 In its \lstinline|draw()| method, \lstinline|conn_panel| queries the current panel geometry with \lstinline|panel_tree->get_geometry_rec()| and renders the result with a \lstinline|box_renderer| provided by \lstinline|cgv|. The \lstinline|conn_panel| is positioned right on top of the mesh's conn.
 
 Each \lstinline|panel_node| is represented as a box or combinations of boxes placed relative to their parent element. During an \lstinline|on_touch()| call, the non-trivial derived classes (\lstinline|button|, \lstinline|hold_button|, \lstinline|slider|, \lstinline|pos_neg_slider| and \lstinline|lever|) use their callback function to manipulate the \lstinline|controlled_space|. 
+
+The \lstinline|conn_panel| configuration used in \gls{VCP} is shown in figure \ref{fig:panel}. The pitch and yaw slider behave like a control onboard a plane, e.g. sliding the pitch away from the user initiates downward rotation. Figure \ref{fig:firing} shows a screenshot of the panel in action, while a user is trying to hit a target.
 
 \subsection{Hands} \label{sec:devel:structure:hands}
 Interaction with the \Gls{AVR} is managed by the singleton \lstinline|nd_handler| which can be used to pass function calls through to an instance of \lstinline|NDAPI|. This is frequently done in \lstinline|nd_device|, a class for querying sensor data from the gloves and converting it for better compatibility with \lstinline|cgv| and \gls{VCP}, e.g. the sign flip explained at the end of section \ref{sec:hand_model}.
@@ -672,8 +751,8 @@ To test the reaction time of the glove actuators, the conn panel was calibrated 
 	\centering
 	\begin{subfigure}{.45\linewidth}
 		\includegraphics[width=\linewidth]{../pics/grab1}
-		\caption{Medial view}
-		\label{fig:grab:medial}
+		\caption{Radial view}
+		\label{fig:grab:radial}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{.45\linewidth}
@@ -691,15 +770,13 @@ To compensate, the condition of joined index and palm contacts was deleted. This
 
 Subjects A, C and D described the adjusted lever control as "much simpler" and "more natural". Subject B stated that he did not feel a difference, supporting the statements above.
 
-\subsection{Other Adjustments}
+\subsection{Slider Reaction}
 In the initial implementation, the sliders on the left side of the panel had been designed to react only to touches close to their current setting. This was meant to give the impression of a slider rather than buttons. However, the participants found it hard to match the current setting which resulted in problems with changing the slider value. This was adjusted so the user can tap anywhere on the slider to immediately change its value. A field was added in the middle of the slider that can be used to set its value exactly to $ 0 $. 
 
-The target color was changed from red to green increasing the contrast to the orange phasers. The phaser color, position, and direction was adjusted to match the Trekkies impression of a phaser from the movies.
+\subsection{Targets and Phasers}
+The target color was changed from red to green increasing the contrast to the orange phasers. The phaser color, position, and direction were adjusted to match the Trekkies impression of a phaser from the movies. The size of the targets represented by \lstinline|target_radius| above was adjusted until the subjects found it challenging, but possible to eliminate them. The "Toggle Targets" button was changed to stay green while the targets are active. The maximum rotation speed was adjusted until the subjects were comfortable with the resulting slider sensitivity.
 
-The size of the targets represented by \lstinline|target_radius| above was adjusted until the subjects found it challenging, but possible to eliminate them.
-
-The "Toggle Targets" button was changed to stay green while the targets are active.
-
+\subsection{Calibration}
 Instructions on the headup display during calibration lead to misunderstandings and miscalibrations. They were discussed with the users and adjusted until agreed upon.
 
 Irritation was expressed when the panel reappeared during calibration because the user's hands ranged into the panel triggering continuous vibration feedback. I added a vector \lstinline|hand_vs_panel_for_calibration| in the \lstinline|calibration| struct which moves the panel below the hands during calibration to avoid this.
