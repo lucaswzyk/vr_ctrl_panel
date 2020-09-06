@@ -407,6 +407,18 @@ Since the interphalangeal joints act as revolute joints, only a roll component c
 
 To give the VR user interface some context rather than just moving boxes, I decided to design it as a conn panel on the USS Voyager (Star Trek). The term \emph{conn} is short for \emph{control and navigation}, meaning the panel is used to stear the ship. The classes used to implement this and their interaction are shown in figure \ref{fig:uml}.
 
+\begin{figure}
+	\begin{subfigure}{.49\linewidth}
+		\includegraphics[width=\linewidth]{../pics/panel}
+		\label{fig:panel}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.49\linewidth}
+		\includegraphics[width=\linewidth]{../pics/firing}
+		\label{fig:firing}
+	\end{subfigure}
+\end{figure}
+
 \subsection{Main class}
 The main class and entry point carries the same name as the plugin itself. It is derived from the \gls{CGV} classes \lstinline|base|, \lstinline|drawable|, \lstinline|event_handler| and \lstinline|provider|, and is used for scene management and interaction with the framework functionalities.
 

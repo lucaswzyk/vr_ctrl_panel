@@ -114,7 +114,7 @@ protected:
 	pulse_kind current_pulse;
 	int num_delivered_pulses;
 	const int num_part_pulses_abort = 3, 
-		duration_done_pulse_ms = 700, 
+		duration_done_pulse_ms = 1000, 
 		duration_abort_pulse = 600;
 
 	// rendering

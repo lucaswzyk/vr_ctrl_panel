@@ -300,7 +300,7 @@ void vr_ctrl_panel::next_calibration_stage(bool set_interactive_pulse, bool inva
 
 void vr_ctrl_panel::reset_calibration_stage()
 {
-	if (c.stage > REQUESTED)
+	if (c.stage != NOT_CALIBRATING && c.stage != REQUESTED)
 	{
 		for (auto loc : existing_hand_locs)
 		{
@@ -317,16 +317,16 @@ void vr_ctrl_panel::reset_calibration_stage()
 
 void vr_ctrl_panel::abort_calibration(bool restore)
 {
-	for (auto loc : existing_hand_locs)
+	reset_calibration_stage();
+	if (restore)
 	{
-		if (restore)
+		c = last_cal;
+		for (auto loc : existing_hand_locs)
 		{
 			hands[loc]->restore_last_calibration();
 		}
 	}
-	c = last_cal;
 	update_all_members();
-	reset_calibration_stage();
 }
 
 void vr_ctrl_panel::calibrate_new_z(const vr::vr_kit_state& state)

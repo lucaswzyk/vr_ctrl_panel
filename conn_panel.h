@@ -34,22 +34,22 @@ public:
 			left_rot, rgb(0), 
 			panel_tree
 		);
-		pos_neg_slider* pitch_slider = new pos_neg_slider(
+		pos_neg_slider* yaw_slider = new pos_neg_slider(
 			vec3(-.1f, .0f, -.05f), vec3(.05f, 0, .15f), vec3(0),
-			vec3(.0f, -90.0f, .0f), rgb(.0f, .06f, .93f), rgb(1.0f, .6f, .0f),
+			vec3(.0f, 90.0f, .0f), rgb(.0f, .06f, .93f), rgb(1.0f, .6f, .0f),
+			controlled_space, space::set_speed_yaw,
+			left_panel
+		);
+		pos_neg_slider* pitch_slider = new pos_neg_slider(
+			vec3(.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
+			vec3(.0f, 0.0f, .0f), rgb(.0f, .06f, .93f), rgb(1.0f, .6f, .0f),
 			controlled_space, space::set_speed_pitch,
 			left_panel
 		);
 		pos_neg_slider* roll_slider = new pos_neg_slider(
-			vec3(.1f, .0f, .0f), vec3(.05f, 0, .15f), vec3(0),
-			vec3(.0f, 180.0f, .0f), rgb(.0f, .06f, .93f), rgb(1.0f, .6f, .0f),
-			controlled_space, space::set_speed_roll,
-			left_panel
-		);
-		pos_neg_slider* yaw_slider = new pos_neg_slider(
 			vec3(-.1f, .0f, .05f), vec3(.05f, 0, .15f), vec3(0),
 			vec3(.0f, -90.0f, .0f), rgb(.0f, .06f, .93f), rgb(1.0f, .6f, .0f),
-			controlled_space, space::set_speed_yaw,
+			controlled_space, space::set_speed_roll,
 			left_panel
 		);
 

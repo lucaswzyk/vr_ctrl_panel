@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  5 SEP 2020 22:41
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.6.29) (preloaded format=pdflatex 2020.7.1)  6 SEP 2020 11:52
 entering extended mode
 **./bachelor.tex
 (bachelor.tex
@@ -1479,85 +1479,95 @@ File: ../pics/uml.png Graphic file (type png)
 <use ../pics/uml.png>
 Package pdftex.def Info: ../pics/uml.png  used on input line 403.
 (pdftex.def)             Requested size: 455.24408pt x 638.60907pt.
+<../pics/panel.png, id=411, 1053.9375pt x 593.96906pt>
+File: ../pics/panel.png Graphic file (type png)
+<use ../pics/panel.png>
+Package pdftex.def Info: ../pics/panel.png  used on input line 412.
+(pdftex.def)             Requested size: 223.0721pt x 125.716pt.
+<../pics/firing.png, id=412, 1395.71437pt x 786.68906pt>
+File: ../pics/firing.png Graphic file (type png)
+<use ../pics/firing.png>
+Package pdftex.def Info: ../pics/firing.png  used on input line 417.
+(pdftex.def)             Requested size: 223.0721pt x 125.72878pt.
 [18] [19 <../pics/uml.png>]
-Overfull \hbox (1.73502pt too wide) in paragraph at lines 415--416
+Overfull \hbox (1.73502pt too wide) in paragraph at lines 427--428
 []\T1/ptm/m/n/10.95 It dis-tributes [][][][] com-mands among all rel-e-vant mem
 -bers ([][][], [][][], [][][], and [][][]).
  []
 
-[20]
-Overfull \hbox (4.18672pt too wide) in paragraph at lines 438--439
+[20 <../pics/panel.png> <../pics/firing.png>]
+Overfull \hbox (4.18672pt too wide) in paragraph at lines 450--451
 []\T1/ptm/m/n/10.95 In its [][][][] method, [][][] queries the cur-rent panel g
 e-om-e-try with [][][][][][]
  []
 
 [21]
-<../pics/calibration.png, id=459, 613.29124pt x 944.52875pt>
+<../pics/calibration.png, id=461, 613.29124pt x 944.52875pt>
 File: ../pics/calibration.png Graphic file (type png)
 <use ../pics/calibration.png>
-Package pdftex.def Info: ../pics/calibration.png  used on input line 468.
+Package pdftex.def Info: ../pics/calibration.png  used on input line 480.
 (pdftex.def)             Requested size: 432.48048pt x 666.06581pt.
- [22] [23 <../pics/calibration.png>]
-<../pics/stars_sphere_schema.png, id=479, 1551.7975pt x 1513.655pt>
+ [22] [23 <../pics/calibration.png>] [24]
+<../pics/stars_sphere_schema.png, id=510, 1551.7975pt x 1513.655pt>
 File: ../pics/stars_sphere_schema.png Graphic file (type png)
 <use ../pics/stars_sphere_schema.png>
-Package pdftex.def Info: ../pics/stars_sphere_schema.png  used on input line 53
-2.
+Package pdftex.def Info: ../pics/stars_sphere_schema.png  used on input line 54
+4.
 (pdftex.def)             Requested size: 273.14922pt x 266.41795pt.
-<../pics/phasers.png, id=480, 226.8475pt x 509.905pt>
+<../pics/phasers.png, id=511, 226.8475pt x 509.905pt>
 File: ../pics/phasers.png Graphic file (type png)
 <use ../pics/phasers.png>
-Package pdftex.def Info: ../pics/phasers.png  used on input line 538.
+Package pdftex.def Info: ../pics/phasers.png  used on input line 550.
 (pdftex.def)             Requested size: 119.95671pt x 269.6337pt.
- [24] [25 <../pics/stars_sphere_schema.png> <../pics/phasers.png>] [26] [27]
+ [25 <../pics/stars_sphere_schema.png> <../pics/phasers.png>] [26] [27]
 chapter 3.
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\Gls' on input line 604.
+(hyperref)                removing `\Gls' on input line 616.
 
-<../pics/glove_cal1.png, id=547, 463.7325pt x 463.7325pt>
+<../pics/glove_cal1.png, id=552, 463.7325pt x 463.7325pt>
 File: ../pics/glove_cal1.png Graphic file (type png)
 <use ../pics/glove_cal1.png>
-Package pdftex.def Info: ../pics/glove_cal1.png  used on input line 608.
+Package pdftex.def Info: ../pics/glove_cal1.png  used on input line 620.
 (pdftex.def)             Requested size: 136.5746pt x 136.57346pt.
-<../pics/glove_cal2.png, id=548, 460.72125pt x 460.72125pt>
+<../pics/glove_cal2.png, id=553, 460.72125pt x 460.72125pt>
 File: ../pics/glove_cal2.png Graphic file (type png)
 <use ../pics/glove_cal2.png>
-Package pdftex.def Info: ../pics/glove_cal2.png  used on input line 614.
+Package pdftex.def Info: ../pics/glove_cal2.png  used on input line 626.
 (pdftex.def)             Requested size: 136.5746pt x 136.5724pt.
-<../pics/glove_cal3.png, id=549, 462.22687pt x 461.47406pt>
+<../pics/glove_cal3.png, id=554, 462.22687pt x 461.47406pt>
 File: ../pics/glove_cal3.png Graphic file (type png)
 <use ../pics/glove_cal3.png>
-Package pdftex.def Info: ../pics/glove_cal3.png  used on input line 620.
+Package pdftex.def Info: ../pics/glove_cal3.png  used on input line 632.
 (pdftex.def)             Requested size: 136.5746pt x 136.35194pt.
 [28
 
 ] [29 <../pics/glove_cal1.png> <../pics/glove_cal2.png> <../pics/glove_cal3.png
 >]
-<../pics/grab1.jpg, id=582, 432.11438pt x 432.11438pt>
+<../pics/grab1.jpg, id=587, 432.11438pt x 432.11438pt>
 File: ../pics/grab1.jpg Graphic file (type jpg)
 <use ../pics/grab1.jpg>
-Package pdftex.def Info: ../pics/grab1.jpg  used on input line 662.
+Package pdftex.def Info: ../pics/grab1.jpg  used on input line 674.
 (pdftex.def)             Requested size: 204.85844pt x 204.85425pt.
-<../pics/grab2.jpg, id=583, 480.29437pt x 480.29437pt>
+<../pics/grab2.jpg, id=588, 480.29437pt x 480.29437pt>
 File: ../pics/grab2.jpg Graphic file (type jpg)
 <use ../pics/grab2.jpg>
-Package pdftex.def Info: ../pics/grab2.jpg  used on input line 668.
+Package pdftex.def Info: ../pics/grab2.jpg  used on input line 680.
 (pdftex.def)             Requested size: 204.85844pt x 204.85893pt.
  [30] [31 <../pics/grab1.jpg> <../pics/grab2.jpg>]
-<../pics/contest.png, id=594, 602.25pt x 255.95625pt>
+<../pics/contest.png, id=599, 602.25pt x 255.95625pt>
 File: ../pics/contest.png Graphic file (type png)
 <use ../pics/contest.png>
-Package pdftex.def Info: ../pics/contest.png  used on input line 717.
+Package pdftex.def Info: ../pics/contest.png  used on input line 729.
 (pdftex.def)             Requested size: 227.62204pt x 96.74103pt.
 
 
 Package caption Warning: The type was already set to `table'
-(caption)                 on input line 718.
+(caption)                 on input line 730.
 See the caption package documentation for explanation.
 
 
-Overfull \hbox (2.0805pt too wide) in paragraph at lines 697--721
+Overfull \hbox (2.0805pt too wide) in paragraph at lines 709--733
 []$[]$  $[]$ 
  []
 
@@ -1586,31 +1596,31 @@ chapter without number
 
 
 ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 744.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 744.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 756.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 756.
  (bachelor.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 744.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 744.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 756.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 756.
 Package rerunfilecheck Info: File `bachelor.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
 
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 744.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 756.
  )
 (\end occurred inside a group at level 1)
 
 ### semi simple group (level 1) entered at line 87 (\begingroup)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 19386 strings out of 480790
- 310708 string characters out of 2907056
+ 19407 strings out of 480790
+ 311073 string characters out of 2907056
  769781 words of memory out of 3000000
- 34808 multiletter control sequences out of 15000+200000
+ 34826 multiletter control sequences out of 15000+200000
  599508 words of font info for 101 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,12n,77p,10113b,3725s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 60i,12n,77p,10113b,3723s stack positions out of 5000i,500n,10000p,200000b,50000s
 pdfTeX warning (dest): name{glo:CGV} has been referenced but do
 es not exist, replaced by a fixed one
 
@@ -1629,9 +1639,9 @@ b8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Program
  Files/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Program Files/MiKTeX/font
 s/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utm
 r8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on bachelor.pdf (45 pages, 3107133 bytes).
+Output written on bachelor.pdf (45 pages, 3264081 bytes).
 PDF statistics:
- 922 PDF objects out of 1000 (max. 8388607)
- 187 named destinations out of 1000 (max. 500000)
- 418 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 927 PDF objects out of 1000 (max. 8388607)
+ 188 named destinations out of 1000 (max. 500000)
+ 428 words of extra memory for PDF output out of 10000 (max. 10000000)
 

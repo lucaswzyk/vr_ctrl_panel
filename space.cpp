@@ -7,7 +7,7 @@ void space::update()
 	float ms_elapsed = chrono::duration_cast<chrono::milliseconds>(now - last_update).count();
 
 	float distance_elapsed = speed_ahead * ms_elapsed;
-	vec3 angles = vec3(speed_roll, speed_pitch, speed_yaw);
+	vec3 angles = vec3(speed_pitch, speed_yaw, speed_roll);
 	mat3 rotation = cgv::math::rotate3(ms_elapsed * angles),
 		inv_rotation = cgv::math::rotate3(-2 * r_out * angles);
 

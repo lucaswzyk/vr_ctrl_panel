@@ -34,7 +34,10 @@ class space
 	int num_targets;
 
 	// for updating 
-	float speed_ahead, speed_pitch, speed_yaw, speed_roll;
+	float speed_ahead, 
+	// rotations as for planes, which for our coord sys means
+	// x - pitch, y - yaw, z - roll
+		  speed_pitch, speed_yaw, speed_roll;
 	chrono::steady_clock::time_point last_update;
 	mt19937 gen;
 	uniform_real_distribution<float> dis_angles;
