@@ -49,10 +49,14 @@ inline void vr_ctrl_panel::draw(cgv::render::context& ctx)
 	ctx.mul_modelview_matrix(c.model_view_mat);
 
 	//auto t0 = std::chrono::steady_clock::now();
-	for (auto loc : existing_hand_locs)
+	if (c.render_hands)
 	{
-		hands[loc]->update_and_draw(ctx, panel, hand_positions[loc], hand_orientations[loc]);
+		for (auto loc : existing_hand_locs)
+			{
+				hands[loc]->update_and_draw(ctx, panel, hand_positions[loc], hand_orientations[loc]);
+			}
 	}
+	
 	//auto t1 = std::chrono::steady_clock::now();
 
 	if (c.render_bridge)
@@ -501,7 +505,6 @@ void vr_ctrl_panel::load_calibration()
 			float foo;
 			for (size_t j = 0; j < 3; j++)
 			{
-				cal_file >> foo;
 				cal_file >> c.tracker_refs[1](i, j);
 			}
 		}

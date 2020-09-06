@@ -298,13 +298,13 @@ This chapter names the technology used for this project, defines a skeletal hand
 
 For the purpose of thesis, I used a pair of haptic gloves called Avatar VR which is a registered trademark of NeuroDigital Technologies, S. L.\newcite{nd}, referred to as \acrshort{nd} hereafter..
 
-To use the Avatar VR on a computer, one needs to download, install and run the \acrshort{nd} Suite. This program provides a background service and GUI for managing and accessing the devices. A connection can be established via Bluetooth after which all sensor data is graphically displayed in the GUI.
+To use the Avatar VR on a computer, one needs to download, install and run the \acrshort{nd} Suite. This program provides a background service and GUI for managing and accessing the devices. A connection between device and computer can be established via Bluetooth after which all sensor data is graphically displayed in the GUI.
 
-\acrshort{nd} also supplies a developer's API in the form of three files (\lstinline|NDAPI.h|, \lstinline|NDAPI_x64.lib| and \lstinline|NDAPI_x64.dll| or \lstinline|x86| respectively) which need to be included in the project in a suitable manner. An instance of the \lstinline|NDAPI.h| can be used to access the data of devices connected to \acrshort{nd} Suite.
+\acrshort{nd} also supplies a developer's API in the form of three files (\lstinline|NDAPI.h|, \lstinline|NDAPI_x64.lib| and \lstinline|NDAPI_x64.dll| or \lstinline|x86| respectively) which need to be included in the project in a suitable manner. An instance of the \lstinline|NDAPI| defined in the header file can be used to access the sensors and actuators of devices connected to \acrshort{nd} Suite.
 
-Additionally, a \Gls{VIVE} tracker was used to determine the user's hand position and orientation. The Avatar VR can be mechanically connected to the tracker using a coupling that needs to be acquired separately. The devices named so far and the way of coupling them can be seen in figure \ref{fig:devices}.
+Additionally, a \Gls{VIVE} tracker\newcite{lighthouse} was used to determine the user's hand position and orientation. The Avatar VR can be mechanically connected to the tracker using a coupling that needs to be acquired separately. The devices named so far and the way of coupling them is shown in figure \ref{fig:devices}.
 
-The foundation for the graphics software I developed is implemented in the \gls{CGV} framework provided by the chair of computer graphics and visualization at TU Dresden. A user can view the plugin on a computer screen with the \lstinline|cgv_viewer| or on a \Gls{VIVE} \acrfull{hmd} simply by connecting one to the computer. The framework automatically interacts with the SteamVR and Lighthouse\newcite{lighthouse} technology required to determine position and orientation of the \Gls{VIVE} trackers and \acrshort{hmd}.
+The foundation for the graphics software I developed is implemented in the \gls{CGV} framework provided by the chair of computer graphics and visualization at TU Dresden. A user can view the \gls{VCP} plugin on a computer screen with the \lstinline|cgv_viewer| or on a \Gls{VIVE} \acrfull{hmd} simply by connecting one to the computer. The framework automatically interacts with the SteamVR and Lighthouse\newcite{lighthouse} technology required to determine position and orientation of the \Gls{VIVE} trackers and \acrshort{hmd}.
 
 \section{Skeletal Hand Model for the Avatar VR Haptic Glove} \label{sec:hand_model}
 \subsection{Abstraction of the Human Hand Skeleton}
@@ -326,7 +326,7 @@ The foundation for the graphics software I developed is implemented in the \gls{
 
 The human hand can be roughly divided into the parts shown in figure \ref{fig:hand_model:anat}, i.e. the \emph{\glspl{MC}}, \emph{\glspl{PPh}}, \emph{\glspl{IPh}}, and \emph{\glspl{DPh}}. A joint connecting a \gls{MC} to a \gls{PPh} is called \emph{\gls{MPJ}}, and followed by a \emph{\gls{PIJ}} and a \emph{\gls{DIJ}}.
 
-Even though the carpals (grey in figure \ref{fig:hand_model:anat}) are physiologically quite relevant for hand movement, they stay relatively fixed compared to the other bone sets, and can thus be omitted in our simplified model. In anataomical nomenclature, the thumb is composed of \gls{PPh} and \gls{DPh} only and follows a \gls{MC}. However, this model assumes a missing \gls{MC} and existing \gls{IPh} instead which will be modelled by a 0-length \gls{MC} for uniformity reasons.
+Even though the carpals (grey in figure \ref{fig:hand_model:anat}) are physiologically quite relevant for hand movement, they stay relatively fixed compared to the other bone sets, and can thus be omitted in our simplified model. In anatomical nomenclature, the thumb is composed of \gls{PPh} and \gls{DPh} only and follows a \gls{MC}. However, this model assumes a missing \gls{MC} and an existing \gls{IPh} instead which will be modelled by a 0-length \gls{MC} for uniformity reasons.
 
 The Leap Motion API version 2.0\newcite{leaphand} uses the abstraction described above and adds
 \vspace{.3cm}
@@ -365,7 +365,7 @@ The most common representation includes cylinders for the bones and spheres for 
 The Avatar VR is equipped with three kinds of sensors: 
 \vspace{.3cm}
 \begin{itemize}
-	\item An \emph{\acrfull{imu}} is located on the \gls{IPh} of each finger to measure its 3D rotation. The thumb is even equipped with two \acrshort{imu}s (one per phalanx) and the palm with an \acrshort{imu} that can measure both 3D acceleration and 3D rotation. The "Motion" tab of \acrshort{nd} Suite shown in figure \ref{fig:av_tech:imus} depicts the resulting orientations as orthonormal bases. 
+	\item An \emph{\acrfull{imu}} is located on the \gls{IPh} of each finger to measure its 3D rotation. The thumb is even equipped with two \acrshort{imu}s (one per phalanx) and the palm with an \acrshort{imu} that can measure both 3D acceleration and 3D rotation. The "Motion" tab of \acrshort{nd} Suite shown in figure \ref{fig:av_tech:imus} depicts the measured orientations as orthonormal bases. 
 	\item At the locations marked in blue in figure \ref{fig:av_tech:contacts}, the fabric is made of an electrically conductive material. These parts are used as contact sensors (short: contacts) to determine which of the marked locations are joined.
 	\item The thumb has a flex sensor, that will not be relevant for this thesis.
 \end{itemize}
@@ -373,7 +373,7 @@ The Avatar VR is equipped with three kinds of sensors:
 Furthermore, there are actuators at the locations marked in blue in figure \ref{fig:av_tech:actuators}. These can be used to generate vibrations of variable intensity as haptic feedback in a way that "[$\dots$] the brain perceives it as 'Real Touch' input", according to the producer.
 
 \subsection{Using Data From the Avatar VR to Visualize the User's Hand} \label{subsec:avr_to_hand}
-The same model used by the Leap Motion API version 2.0 will also be used here. Leap captures absolute joint positions and optimizes them for visualization. In contrast, my approach for the Avatar VR is to use a fixed resting state geometry of the user's hand (bone lengths and resting state joint positions). At the time of a \lstinline|draw()| command, the geometry is adjusted according to the data given by the glove and the \Gls{VIVE} tracker. This is done with the help of the struct shown in figure \ref{fig:joint_positions} (only most important parts included).
+The same model used by the Leap Motion API version 2.0 will also be used here. Leap captures absolute joint positions and optimizes them for visualization. In contrast, my approach for the Avatar VR is to use a fixed resting state geometry of the user's hand (bone lengths and resting state joint positions). At the time of a \lstinline|draw()| command, the current geometry is constructed according to the data given by the glove and the \Gls{VIVE} tracker. This is done with the help of the \lstinline|joint_positions| struct, an excerpt of which is shown in figure \ref{fig:joint_positions}.
 
 \begin{figure}
 	\includegraphics[width=.4\linewidth]{../pics/joint_positions}
@@ -381,9 +381,11 @@ The same model used by the Leap Motion API version 2.0 will also be used here. L
 	\label{fig:joint_positions}
 \end{figure}
 
-First, the palm joints' positions are rotated according to the orientation given by the \Gls{VIVE} tracker and saved in \lstinline|positions|. The construction of each finger begins at the end joint of the \gls{DPh} which is initialized in \lstinline|positions| as $ (0, 0, 0) $, translated along the negative $ z $-axis by the hard-coded length of the \gls{DPh} and rotated by the respective quaternion (see below). The other phalanges are constructed in the same manner, before the whole finger is translated to its \gls{MPJ}. Finally, the whole hand is scaled to model view space and translated to the model view position of the \Gls{VIVE} tracker.
+First, the palm joints' positions are rotated according to the orientation given by the \Gls{VIVE} tracker and saved in \lstinline|positions|. The construction of each finger begins at the end joint of the \gls{DPh} which is initialized in \lstinline|positions| as $ (0, 0, 0) $, translated along the negative $ z $-axis by the hard-coded length of the \gls{DPh} and rotated by the respective quaternion (see below). To make a recursive translation possible later on, the method \lstinline|rotate()| applies the quaternion to the whole finger.
 
-Because the Avatar VR only returns one quaternion per finger (except for the thumb), I had to think of a way to distribute the orientation along all three phalanges: First, the Euler angles are calculated from the quaternion\newcite{quat_to_euler}
+The other phalanges are constructed in the same manner, before the finger is translated to its \gls{MPJ}. Finally, the whole hand is scaled to model view space and translated to the model view position of the \Gls{VIVE} tracker.
+
+Because the Avatar VR only returns one quaternion per finger (except for the thumb), I had to think of a way to distribute the orientation along all three phalanges: First, the Euler angles are calculated from the quaternion\newcite{quat_to_euler}:
 \begin{align*}
 \alpha \quad&=\quad \mbox{arctan} \frac {2(q_0 q_1 + q_2 q_3)} {1 - 2(q_1^2 + q_2^2)} \\
 \beta \quad&=\quad \mbox{arcsin} (2(q_0 q_2 - q_3 q_1)) \\
@@ -393,9 +395,10 @@ where $ \alpha $ is the roll angle, $ \beta $ the pitch angle and $ \gamma $ the
 
 The \lstinline|NDAPI| quaternions live in a space where the $ x $-axis points to the right, the $ y $-axis points upwards, and the $ z $-axis points into the picture. In terms of geometry, the coordinates are negatively oriented. One might know this as the "left hand rule". 
 
-However, \gls{VCP} is oriented with the negative $ z $-axis pointing out of the picture (positively oriented, "right hand rule"). This results in opposite senses of rotation around the $ x $- and $ y $-axes in the two coordinate systems, so $ q_{1} $ and $ q_{2} $ from \lstinline|NDAPI| need to be negated before use with \lstinline|cgv|. Then roll corresponds to bending the finger (flexion / extension), pitch to a left-right-motion (abduction / adduction) and yaw to a twisting motion humans can hardly perform with their fingers (pronation / supination).
+However, \gls{VCP} is oriented with the $ z $-axis pointing out of the picture (positively oriented, "right hand rule"). This results in opposite senses of rotation around the $ x $- and $ y $-axes in the two coordinate systems, so $ q_{1} $ and $ q_{2} $ from \lstinline|NDAPI| need to be negated before use with \lstinline|cgv|. Then roll corresponds to bending the finger (flexion / extension), pitch to a left-right-motion (abduction / adduction) and yaw to a twisting motion humans can hardly perform with their fingers (pronation / supination).
 
-Since the interphalangeal joints act as revolute joints, only a roll component can be applied to them. As shown in the code below, the roll angle is distributed according to three floats (\lstinline|rot_split|). After some experimenting, $ (.5, .5, .25) $ is an option for these numbers that gives a good approximation of most actual hand poses. It corresponds to phalanx rotation during grabbing. Yaw and pitch are completely executed in the \gls{MPJ}. 
+Since the interphalangeal joints act as revolute joints, only a roll component can be applied to them. As shown in the code below, the roll angle is distributed according to three floats (\lstinline|rot_split|). I could not find a reference for physiologically plausible values of these numbers, but after some experimenting, $ (.5, .5, .25) $ is an option that gives a good approximation of most actual hand poses. It corresponds to phalanx rotation during grabbing. Yaw and pitch are completely executed in the \gls{MPJ} which is a spherical joint. 
+
 \begin{lstlisting}
 	vec3 x(1, 0, 0), y(0, 1, 0), z(0, 0, 1);
 	recursive_rotations[finger][PROXIMAL] = palm_rotation
@@ -404,7 +407,7 @@ Since the interphalangeal joints act as revolute joints, only a roll component c
 	recursive_rotations[finger][DISTAL] = quat(x, min(1.4f, rot_split.z() * roll));
 \end{lstlisting}
 
-Figure \ref{fig:hand_correspondences} shows correspondences of user hand positions with virtual hand positions. A good approximation is reached, however, the resulting hand pose is not unique. For example, figure \ref{fig:nat_fake} shows two user hand positions that lead to approximately the same outcome as the virtual hand pose shown in the middle line of figure \ref{fig:hand_correspondences}. This issue cannot be fixed because the \Gls{AVR} does not provide more information about the finger poses.
+Figure \ref{fig:hand_correspondences} shows correspondences of user hand poses with virtual hand poses. A good approximation is reached, however, the virtual hand poses are not unique. For example, figure \ref{fig:natfake} shows two user hand poses that lead to approximately the same outcome as the one shown in the middle line of figure \ref{fig:hand_correspondences} because of the similar orientations of their \gls{IPh}. This issue cannot be fixed because the \Gls{AVR} does not provide information about the other phalanges.
 
 \begin{figure}
 	\begin{subfigure}{.235\linewidth}
@@ -477,22 +480,23 @@ Figure \ref{fig:hand_correspondences} shows correspondences of user hand positio
 	\label{fig:uml}
 \end{figure}
 
-To give the VR user interface some context rather than just moving boxes, I decided to design it as a conn panel on the USS Voyager (Star Trek). The term \emph{conn} is short for \emph{control and navigation}, meaning the panel is used to stear the ship. The classes used to implement this and their interaction are shown in figure \ref{fig:uml}.
+To give the VR user interface some context rather than just moving boxes, I decided to design it as a conn panel on the USS Voyager (Star Trek). The term \emph{conn} is short for \emph{control and navigation}\newcite{memalpha}, meaning the panel is used to stear the ship. The classes used to implement this and their interaction are shown in figure \ref{fig:uml}.
 
 \subsection{Main class}
 The main class and entry point carries the same name as the plugin itself. It is derived from the \gls{CGV} classes \lstinline|base|, \lstinline|drawable|, \lstinline|event_handler| and \lstinline|provider|, and is used for scene management and interaction with the framework functionalities.
 
-Its capability to handle \lstinline|vr_pose_events| is used to catch tracker poses and \acrshort{hmd} poses (position and orientation) which are forwarded to the \lstinline|hands| (see section \ref{sec:hand_model}) and \lstinline|head_up_display| (see part \ref{sec:hd}) respectively during the \lstinline|draw()| call. 
+Its capability to handle \lstinline|vr_pose_events| is used to catch tracker poses and \acrshort{hmd} poses (position and orientation) which are forwarded to the \lstinline|hands| and \lstinline|head_up_display| (see below) respectively during the \lstinline|draw()| call. 
 
-It distributes \lstinline|draw()| commands among all relevant members (\lstinline|hand|, \lstinline|conn_panel|, \lstinline|mesh|, and \lstinline|headup_display|). In the process, it passes on the necessary arguments which ensures laziness: recalculations of geometry and containment checks are only done when they are necessary.
+It distributes \lstinline|draw()| commands among all relevant members (\lstinline|hand|, \lstinline|conn_panel|, \lstinline|mesh|, and \lstinline|headup_display|). In the process, it passes on the necessary function arguments which ensures laziness: recalculations of geometry and containment checks are only done when necessary.
 
 This class further manages the calibration routine (see section \ref{sec:cal}). It is the only class registered via object registration.
 
 \subsection{Bridge}
-The \lstinline|mesh| class renders the Voyager bridge. It uses the basic functionality of \lstinline|mesh_render_info| provided in \gls{CGV} to load and draw. A triangular mesh was provided by Chainsaw\_NL and Star trek Meshes (see Copyright). The faces belonging to the viewscreen were deleted to enable a view to the outside.
+The \lstinline|mesh| class renders the Voyager bridge. It uses the basic functionality of \lstinline|mesh_render_info| provided in \gls{CGV} to load and draw. A triangular mesh was provided by Chainsaw\_NL and StarTrek Meshes (see Copyright). The faces belonging to the viewscreen were deleted to make place for a view to the outside.
 
 \subsection{Space, Targets and Phasers}
-Around the bridge, space is simulated by a spherical shell filled with stars implemented in \lstinline|space|. The user never actually changes position in model space. Instead, stars are moved in the opposite direction of the simulated motion. The speed ahead can be set via the following method: 
+Around the bridge, space is simulated by a spherical shell filled with stars which is implemented in \lstinline|space|. The user never actually changes position in model space. Instead, the stars are moved in the opposite direction of the simulated motion. The speed ahead can be set via the following method: 
+\vspace{.3cm}
 \begin{lstlisting}
 	static void set_speed_ahead(space* s, float val) 
 	{ 
@@ -500,7 +504,7 @@ Around the bridge, space is simulated by a spherical shell filled with stars imp
 	}
 \end{lstlisting}
 
-The method needs to be static so it is possible to set it as callback method in objects outside this class. Analogous methods exist for all three rotational speeds that are named as for planes, i.e. pitch around the $ x $-axis, yaw around the $ y $-axis, and roll around the $ z $-axis. 
+This needs to be static so it is possible to set it as callback method in objects outside the \lstinline|space| class. Analogous methods and variables exist for all three rotational speeds that are named as in aeronautics, i.e. pitch around the $ x $-axis, yaw around the $ y $-axis, and roll around the $ z $-axis. 
 
 This class also manages targets whose visibility can be toggled with \lstinline|toggle_targets()| and that can be eliminated with phasers (laser canons) via the \lstinline|static_fire()| method. 
 
@@ -524,7 +528,7 @@ More details and the geometry behind this class are described in section \ref{se
 \subsection{Control Panel}
 The actual interface is built and drawn by \lstinline|conn_panel|. This passes the \lstinline|controlled_space| and a callback function on to each \lstinline|panel_node| during construction and the \lstinline|containment_info| coming from a \lstinline|hand| during \lstinline|check_containments()|. 
 
-In its \lstinline|draw()| method, \lstinline|conn_panel| queries the current panel geometry with \lstinline|panel_tree->get_geometry_rec()| and renders the result with a \lstinline|box_renderer| provided by \lstinline|cgv|. The \lstinline|conn_panel| is positioned right on top of the mesh's conn.
+In its \lstinline|draw()| method, \lstinline|conn_panel| queries the current panel geometry with \lstinline|panel_tree->get_geometry_rec()| and renders the result with a \lstinline|box_renderer| provided by \lstinline|cgv|. Each \lstinline|panel_node| saves the last geometry of itself and its children as \lstinline|group_geometry|, that is only updated when a change occurs, e.g. a child button is pushed and changes color. The \lstinline|conn_panel| is positioned right on top of the mesh's conn.
 
 Each \lstinline|panel_node| is represented as a box or combinations of boxes placed relative to their parent element. During an \lstinline|on_touch()| call, the non-trivial derived classes (\lstinline|button|, \lstinline|hold_button|, \lstinline|slider|, \lstinline|pos_neg_slider| and \lstinline|lever|) use their callback function to manipulate the \lstinline|controlled_space|. 
 
@@ -547,6 +551,7 @@ where \lstinline|dist| is the distance between the joint and the panel and \lsti
 To convey written information to the user, a rectangular white region showing black text can be displayed in front of their eyes. This is implemented in \lstinline|headup_display| which uses \lstinline|label_manager| provided by \lstinline|cgv|. Its visibility can be controlled by setting an empty text (invisible) or a non-empty text (visible).
 
 Whenever the display is invisible, its \lstinline|draw(context& ctx, vec3 p, mat3 ori)| call simply returns. Otherwise, its position and orientation are updated so it is rendered $ .6 $ units in front of and $ .1 $ units above the user's eye position:
+\vspace{.3cm}
 \begin{lstlisting}
 	vec3 vs_hmd = ori * vec3(.0f, .1f, -.6f);
 	position = pos + vs_hmd;
@@ -574,11 +579,12 @@ The routine can be activated by joining index and thumb of one hand for three se
 
 While in the "requested" stage, the headup display shows a countdown until calibration. After that, none of the objects in the scene are rendered anymore. The user is asked whether the their position should be taken from the \acrshort{hmd} or set manually. In case of the latter, one can tap thumb and index above their head to set the position from the current tracker pose.
 
-After that, the hands are rendered again and a countdown of $ 3s $ is displayed. The user is instructed to hold their hands straight with the fingers pointing forward. During this countdown, the hands and the model view matrix are constantly recalibrated as the following pseudo code shows:
-
+After that, the hands are rendered again and a countdown of $ 5s $ is displayed. The user is instructed to hold their hands straight with the fingers pointing forward. During this countdown, the hands and the model view matrix are constantly recalibrated:
+\vspace{.3cm}
 \begin{lstlisting}
-	vec3 panel_origin = tracker_pos_average;
+	vec3 panel_origin = average of tracker positions;
 	vec3 new_z = user_pos - panel_origin;
+	new_z.y() = 0;
 	new_z.normalize();
 	float angle_y = angle between new_z and (0, 0, 1);
 	

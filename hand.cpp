@@ -71,8 +71,11 @@ inline vector<vec3> hand::joint_positions::make_array()
 	return result;
 }
 
-void hand::init()
+void hand::init(mat3 a_palm_ref)
 {
+	palm_ref = quat(a_palm_ref).inverse();
+	last_palm_ref = palm_ref;
+
 	vector<quat> identity_vec(NUM_BONES_PER_FINGER, quat(1, 0, 0, 0));
 	recursive_rotations = vector<vector<quat>>(NUM_HAND_PARTS, identity_vec);
 
@@ -348,7 +351,7 @@ inline void hand::deliver_interactive_pulse()
 		{
 			for (auto p : anat_to_actuators)
 			{
-				device.set_actuator_pulse(p.second, .5f);
+				device.set_actuator_pulse(p.second, .3f);
 			}
 			num_delivered_pulses++;
 		}

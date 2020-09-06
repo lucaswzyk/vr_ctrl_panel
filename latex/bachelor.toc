@@ -8,18 +8,18 @@
 \contentsline {subsection}{\numberline {1.2.5}Commercial Products}{11}{subsection.1.2.5}%
 \contentsline {chapter}{\numberline {2}Development}{13}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Devices and Software}{13}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Skeletal Hand Model for the Avatar VR Haptic Glove}{15}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}Abstraction of the Human Hand Skeleton}{15}{subsection.2.2.1}%
+\contentsline {section}{\numberline {2.2}Skeletal Hand Model for the Avatar VR Haptic Glove}{14}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Abstraction of the Human Hand Skeleton}{14}{subsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.2.2}Technology and Function of the Avatar VR}{15}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}Using Data From the Avatar VR to Visualize the User's Hand}{17}{subsection.2.2.3}%
-\contentsline {section}{\numberline {2.3}Project Idea and Structure}{21}{section.2.3}%
+\contentsline {subsection}{\numberline {2.2.3}Using Data From the Avatar VR to Visualize the User's Hand}{15}{subsection.2.2.3}%
+\contentsline {section}{\numberline {2.3}Project Idea and Structure}{18}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Main class}{21}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Bridge}{21}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Space, Targets and Phasers}{21}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Control Panel}{22}{subsection.2.3.4}%
-\contentsline {subsection}{\numberline {2.3.5}Hands}{23}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.5}Hands}{22}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Headup Display}{23}{subsection.2.3.6}%
-\contentsline {section}{\numberline {2.4}Calibration}{24}{section.2.4}%
+\contentsline {section}{\numberline {2.4}Calibration}{23}{section.2.4}%
 \contentsline {section}{\numberline {2.5}Space, Targets and Phasers}{26}{section.2.5}%
 \contentsline {chapter}{\numberline {3}Evaluation}{29}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Participating Subjects and Preparation}{29}{section.3.1}%

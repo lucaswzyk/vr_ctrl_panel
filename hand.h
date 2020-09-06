@@ -129,9 +129,7 @@ public:
 		: current_pulse(NONE)
 	{
 		device = nd_device(location);
-		calibrate_to_mat(a_palm_ref);
-		last_palm_ref = palm_ref;
-		init();
+		init(a_palm_ref);
 	}
 
 	string get_type_name(void) const
@@ -139,7 +137,7 @@ public:
 		return "hand";
 	}
 
-	void init();
+	void init(mat3 a_palm_ref);
 
 	void update_and_draw(cgv::render::context& ctx, const conn_panel& cp, vec3 pos, mat3 ori);
 
