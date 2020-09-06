@@ -1,7 +1,7 @@
 This is makeindex, version 2.15 [MiKTeX 20.6.29].
 Scanning style file ./bachelor.ist.............................done (29 attributes redefined, 0 ignored).
-Scanning input file bachelor.stn....done (30 entries accepted, 0 rejected).
-Sorting entries....done (156 comparisons).
-Generating output file bachelor.sot....done (20 lines written, 0 warnings).
+Scanning input file bachelor.stn....done (42 entries accepted, 0 rejected).
+Sorting entries....done (243 comparisons).
+Generating output file bachelor.sot....done (32 lines written, 0 warnings).
 Output written in bachelor.sot.
 Transcript written in bachelor.slg.
