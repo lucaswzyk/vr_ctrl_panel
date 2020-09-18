@@ -1,8 +1,4 @@
-This is makeindex, version 2.15 [MiKTeX 20.6.29].
-Scanning style file ./bachelor.ist.............................done (29 attributes redefined, 0 ignored).
-Scanning input file bachelor.gls...
-!! Input index error (file = bachelor.gls, line = 1):
-   -- Missing arguments -- need two (premature LFD).
-done (0 entries accepted, 1 rejected).
-Nothing written in bachelor.glg.
-Transcript written in bachelor.glg.
+Warning: File 'bachelor.glo' is empty.
+Have you used any entries defined in glossary 'main'?
+Remember to use package option 'nomain' if you
+don't want to use the main glossary.

@@ -22,7 +22,7 @@
 \birthday{26. April 1998}
 \placeofbirth{Bad Langensalza}
 \matno{4686687}
-\betreuer{Prof. Stefan Gumhold}
+\betreuer{Benjamin Russig}
 \bibfiles{lib.bib}
 \problem{
 \textbf{Motivation:} Interaction within a VR environment -- be it with application controls or the environment itself -- is usually mapped to the manipulation of some controller in current consumer-grade VR systems and applications. This causes an additional level of abstraction from the virtual world that can be detrimental to immersion. However, an increasing number of alternative controllers, usually in the form of gloves, that more closely match the interaction modes of the user's own hands are becoming available. They enable more accurate tracking of hand poses than is possible with affordable optical tracking technology while also being capable of providing haptic feedback.
@@ -70,12 +70,16 @@ Any images produced with this mesh do NOT have to be credited to the
 mesh author. But it would be nice.
 
 Star Trek and Enterprise are copyright Paramount Pictures.}
-\acknowledgments{I'd like to thank...}
+\acknowledgments{I'd like to thank Mr. Russig and Prof. Gumhold for their flexibility, creativity and availability. It was a pleasure to work on this together, sharing ideas and solutions.
+
+I'd further like to thank my study participants and the many friends who gave their feedback during development - for their support, honesty and patience.
+
+All of you made it possible to boldly do what no man had done before.}
 \abstracten{
-	Data gloves are a technology that can be useful in many areas, especially because of the option of combined sensing and haptic feedback. Several projects have utilized them for scientific purposes, and numerous products are commercially available. This thesis gives an insight into their principles and some examples of applications. A VR scenario using the \Gls{AVR} and Lighthouse tracking is developped which places the user on the bridge of the USS Voyager (StarTrek) where they can control a virtual panel with the \Gls{AVR} to move through space and eliminate targets with phasers. A user study is used to evaluate the scenario and technology.
+	Data Gloves are a technology that can be useful in many areas, especially because of the option of combined sensing and haptic feedback. Several projects have utilized them for scientific purposes, and numerous products are commercially available. This thesis gives an insight into their principles and some examples of applications. A VR scenario using the \Gls{AVR} and Lighthouse tracking is developped which places the user on the bridge of the USS Voyager (StarTrek) where they can control a virtual panel with the \Gls{AVR} to move through space and shoot at targets with phasers. A user study is performed to evaluate the scenario and technology.
 }
 \abstractde{
-	Data gloves sind eine Technologie, die in vielen Gebieten n\"utzlich sein kann, vor allem wegen der M\"oglichkeit gleichzeitiger Messung und haptischen Feedbacks. Verschiedene Projekte haben sie zu wissenschaftlichen Zwecken eingesetzt und zahlreiche Produkte sind kommerziell verf\"ugbar. Diese Arbeit gibt einen Einlick in ihre Prinzipien und einige Beispiele von Anwendungen. Ein VR-Szenario wird entwickelt, welches den \Gls{AVR} und Lighthouse tracking verwendet. Es sendet Nutzer auf die Br\"ucke der USS Voyager (StarTrek), wo sie ein virtuelles Panel mit dem \Gls{AVR} steuern k\"onnen, um sich durch das Weltall zu bewegen und Ziele mit Phasern zu elimieren. Eine Nutzerstudie wird durchgef\"uhrt, um das Szenario und die Technologie zu evaluieren.
+	Data Gloves sind eine Technologie, die in vielen Gebieten n\"utzlich sein kann, vor allem wegen der M\"oglichkeit gleichzeitiger Messung und haptischen Feedbacks. Verschiedene Projekte haben sie zu wissenschaftlichen Zwecken eingesetzt und zahlreiche Produkte sind kommerziell verf\"ugbar. Diese Arbeit gibt einen Einblick in ihre Prinzipien und einige Beispiele von Anwendungen. Ein VR-Szenario wird entwickelt, welches den \Gls{AVR} und Lighthouse-Tracking verwendet. Es versetzt Nutzer auf die Br\"ucke der USS Voyager (StarTrek), wo sie ein virtuelles Panel mit dem \Gls{AVR} steuern k\"onnen, um sich durch das Weltall zu bewegen und Ziele mit Phasern zu beschie\ss en. Eine Nutzerstudie wird durchgef\"uhrt, um das Szenario und die Technologie zu evaluieren.
 }
 
 \usepackage{subcaption}
@@ -101,10 +105,10 @@ Star Trek and Enterprise are copyright Paramount Pictures.}
 \chapter{Introduction}
 In their review \emph{Haptic display for virtual reality: progress and challenges}\newcite{wang19}, Wang et al. state that \gls{vr} was born in 1965 with Ivan Sutherlands proposal of a concept named "The Ultimate Display"\newcite{sutherland65}. In that report of the IFIP Congress, Sutherland names immersion, interaction and imagination as three important features of \acrshort{vr}. 
 
-There has been a multitude of approaches to making interaction with virtual environments possible\newcite{li19}. Touch screens and stylus pens have become quite common in everyday life. Devices capable of capturing scene depth like Microsoft Kinect and Leap Motion make touchless interaction possible, e.g. during games. This thesis focuses especially on wearable devices called \emph{data gloves}.
+There has been a multitude of approaches to making interaction with virtual environments possible\newcite{li19}. Touch screens and stylus pens have become quite common in everyday life. Devices capable of capturing scene depth like Microsoft Kinect and Leap Motion make touchless interaction possible, e.g. during games. This thesis focuses especially on wearable devices called \emph{Data Gloves}.
 
 \section{Principles of Data Gloves}
-The general principles of data gloves can be divided into two main parts: sensing and actuation. The first part deals with the issue of capturing a user's hand poses and motions and relaying that information to a computer for further processing. In most cases, a fabric glove is equipped with an \acrfull{imu} placed on each rigid hand part or flex sensors placed on joints. The latter have the advantage of measuring absolute values which, however, are only scalar and need further interpretation involving anatomical knowledge, e.g. that a sensor value of $ .7 $ corresponds to joint flexion of $ 45^{\circ} $. An \acrfull{imu}, on the other hand, usually measures instantaneous rates of change, like accelerations, but can be designed to return 3D rotations and positions by accumulating these measurements\newcite{imu}.
+The general principles of Data Gloves can be divided into two main parts: sensing and actuation. The first part deals with the issue of capturing a user's hand poses and motions and relaying that information to a computer for further processing. In most cases, a fabric glove is equipped with an \acrfull{imu} placed on each rigid hand part or flex sensors placed on joints. The latter have the advantage of measuring absolute values which, however, are only scalar and need further interpretation involving anatomical knowledge, e.g. that a sensor value of $ .7 $ corresponds to joint flexion of $ 45^{\circ} $. An \acrfull{imu}, on the other hand, usually measures instantaneous rates of change, like accelerations, but can be designed to return 3D rotations and positions by accumulating these measurements\newcite{imu}.
 
 The matter of actuation belongs to the broader field of haptic feedback. According to Wang et al.\newcite{wang19}, the visual and auditory feedback of \acrshort{vr} systems has become fairly realistic over time. However, haptic feedback is still rather poor even though it is "[$\dots$] indespensable for enhancing immersion, interaction and imagination of \acrshort{vr} systems. Interaction can be enhanced by haptic feedback as users can directly manipulate virtual objects, and obtain immediate haptic feedback. Immersion of the \acrshort{vr} system can be enhanced in terms of providing more realistic sensation to mimic the physical interaction process. Imagination of users can be inspired when haptics can provide more cues for user[s] to mentally construct an imagined virtual world beyond spatial and / or temporal limitations."
 
@@ -123,7 +127,7 @@ A schematic of the general paradigm of haptic human computer interfaces is shown
 	\item the virtual environment which evaluates the interface device's data, realizes the manipulation of virtual objects with possible constraints, and motivates actuation in the interface device via haptic feedback.
 \end{itemize}
 
-As the following examples will demonstrate, not all data gloves are designed with the capability of both sensing and actuation. Some are only used to evaluate the user's hand pose, and it is conceivable to deal only with the issue of actuation and utilize an external device for sensing, such as Leap Motion. However, actuation on its own does not seem useful for VR applications, as it needs to be variable based on the current hand pose for which tracking of the user's hand is required.
+As the following examples will demonstrate, not all Data Gloves are designed with the capability of both sensing and actuation. Some are only used to evaluate the user's hand pose, and it is conceivable to deal only with the issue of actuation and utilize an external device for sensing, such as Leap Motion. However, actuation on its own does not seem useful for VR applications, as it needs to be variable based on the current hand pose for which tracking of the user's hand is required.
 
 \section{Examples and Applications of Data Gloves} \label{sec:ex}
 \subsection{Sign Language Recognition}
@@ -181,7 +185,7 @@ Alzheimer's disease is a common cause for the loss of cognitive abilities amongs
 Several reasons are named as motivation to develop the device from scratch:
 \vspace{.3cm}
 \begin{itemize}
-	\item Prices for commercial data gloves are situated between ca. 600 USD and several thousand USD. The authors propose a design that can be recreated for only about 220 USD.
+	\item Prices for commercial Data Gloves are situated between ca. 600 USD and several thousand USD. The authors propose a design that can be recreated for only about 220 USD.
 	\item Commercial gloves are generally only compatible with Windows, but the SDK is not suitable for many other sensors.
 	\item The new design can be specialized for recognizing the required types of grasp.
 \end{itemize}
@@ -224,7 +228,7 @@ As shown in figure \ref{fig:amputees} and more diagrams from the original paper,
 
 The subject with congenital failure was of special interest because it showed that some movements could be accurately induced in the phantom hand even though they had never been executed before, possibly indicating the awakening of sleeping motor cortical areas in the brain that had been present since birth. Among the subjects with traumatic amputations, the accuracy and training effect did not seem related to the time since the amputation.
 
-An important aspect for the training effect might be the simultaneous execution of movements with both the healthy and the phantom hand, as suggested in the original paper. The authors moreover suppose that a subject's performance might increase with visual feedback of a virtual phantom hand that was not given during these experiments. This thesis might be useful for that purpose, as it defines a virtual hand model for the use with data gloves, based on a well established hand model, in section \ref{sec:hand_model}. Work in this direction was continued by the authors of the original paper\newcite{sebelius06}.
+An important aspect for the training effect might be the simultaneous execution of movements with both the healthy and the phantom hand, as suggested in the original paper. The authors moreover suppose that a subject's performance might increase with visual feedback of a virtual phantom hand that was not given during these experiments. This thesis might be useful for that purpose, as it defines a virtual hand model for the use with Data Gloves, based on a well established hand model, in section \ref{sec:hand_model}. Work in this direction was continued by the authors of the original paper\newcite{sebelius06}.
 
 \subsection{A Lightweight Force-Feedback Glove}
 \begin{figure}
@@ -246,18 +250,18 @@ In terms of haptic feedback, a recent project is the \emph{Design of a Lightweig
 
 A commercial data glove was used to track the user's hand. The pose was then evaluated by a PC that coordinated the release of air from the compression system into the pistons via a microcontroller. 
 
-Experiments showed that the prototype developed by the Zheng et al. can excert forces between $ 0.1N $ during free motion of the finger joints and $ 4N $ for constrained space simulation. It does indeed have a large working space in which a minimal virtual sphere with a diameter of $ 30mm $ can be simulated.
+Experiments showed that the prototype developed by Zheng et al. can excert forces between $ 0.1N $ during free motion of the finger joints and $ 4N $ for constrained space simulation. It does indeed have a large working space in which a minimal virtual sphere with a diameter of $ 30mm $ can be simulated.
 
 However, the normal force at the finger cap could not be controlled accurately. According to the authors, a possible solution might be the use of a force sensor at the finger tip to design a closed-loop control system. Moreover, the force-feedback showed significant delay due to the time of airflow between compression system and pistons.
 
 For future work, the original paper suggests the development of new control hardware and software. They see the possibility of integrating the glove with a \acrfull{hmd} for novel applications such as e-shopping and plan to add components for haptic feedback on the hand palm as well.
 
 \subsection{Commercial Products}
-Numerous types of data gloves have been available on the market over the past years. Some examples capable of haptic feedback are shown in figure \ref{fig:commercial_gloves} and a summary of their technological properties is compiled in table \ref{tab:commercial_gloves}. Another example is the Avatar VR glove which will be used for the purposes of this thesis and explained in more detail in chapter \ref{ch:devel}.
+Numerous types of Data Gloves have been available on the market over the past years. Some examples capable of haptic feedback are shown in figure \ref{fig:commercial_gloves} and a summary of their technological properties is compiled in table \ref{tab:commercial_gloves}. Another example is the Avatar VR glove which will be used for the purposes of this thesis and explained in more detail in chapter \ref{ch:devel}.
 
 \begin{figure}[b!]
 	\includegraphics[width=\linewidth]{../pics/commercial_gloves}
-	\caption{Examples of commercial data gloves as named in table \ref{tab:commercial_gloves} (fltr, top-row first); from \cite{wang19}}
+	\caption{Examples of commercial Data Gloves as named in table \ref{tab:commercial_gloves} (fltr, top-row first); from \cite{wang19}}
 	\label{fig:commercial_gloves}
 \end{figure}
 
@@ -270,7 +274,7 @@ Numerous types of data gloves have been available on the market over the past ye
 		\midrule
 		CyberGrasp & Immersion & --- & One actuator per finger & --- & Electric motor & 22-sensor Cyber-Glove device & Feel the size and shape \\
 		\midrule
-		H-glove & Haption & Each finger posesses 3 DoF & Force feedback on 3 fingers & --- & Electric motor & --- & Can be attached to a Virtuose 6D\\
+		H-glove & Haption & Each finger posesses 3 DoF & Force feedback on 3 fingers & --- & Electric motor & --- & Can be attached to a Virtuose 6D\newcite{virtuose6d}\\
 		\midrule
 		Dexmo & DextaRobotics & Tracking 11 DoF for hand & Force feedback on 5 fingers & Three linear resonant actuators & Electric motor & Rotary sensors & Feel the shape, size and stiffness \\
 		\midrule
@@ -313,7 +317,7 @@ To use the Avatar VR on a computer, one needs to download, install and run the \
 
 Additionally, a \Gls{VIVE} tracker\newcite{lighthouse} was used to determine the user's hand position and orientation. The Avatar VR can be mechanically connected to the tracker using a coupling that needs to be acquired separately. The devices named so far and the way of coupling them is shown in figure \ref{fig:devices}.
 
-The foundation for the graphics software I developed is implemented in the \gls{CGV} framework provided by the chair of computer graphics and visualization at TU Dresden. A user can view the \gls{VCP} plugin on a computer screen with the \lstinline|cgv_viewer| or on a \Gls{VIVE} \acrfull{hmd} simply by connecting one to the computer. The framework automatically interacts with the SteamVR and Lighthouse\newcite{lighthouse} technology required to determine position and orientation of the \Gls{VIVE} trackers and \acrshort{hmd}.
+The foundation for the graphics software I developed is implemented in the \gls{CGV} framework provided by the chair of Computer Graphics and Visualization at TU Dresden. A user can view the \gls{VCP} plugin on a computer screen with the \lstinline|cgv_viewer| or on a \Gls{VIVE} \acrfull{hmd} simply by connecting one to the computer. The framework automatically interacts with the SteamVR and Lighthouse\newcite{lighthouse} technology required to determine position and orientation of the \Gls{VIVE} trackers and \acrshort{hmd}.
 
 \section{Skeletal Hand Model for the Avatar VR Haptic Glove} \label{sec:hand_model}
 \subsection{Abstraction of the Human Hand Skeleton}
@@ -379,7 +383,7 @@ The Avatar VR is equipped with three kinds of sensors:
 	\item The thumb has a flex sensor, that will not be relevant for this thesis.
 \end{itemize}
 
-Furthermore, there are actuators at the locations marked in blue in figure \ref{fig:av_tech:actuators}. These can be used to generate vibrations of variable intensity as haptic feedback in a way that "[$\dots$] the brain perceives it as 'Real Touch' input", according to the producer.
+Furthermore, there are actuators at the locations marked in blue in figure \ref{fig:av_tech:actuators}. These can be used to generate vibrations of variable intensity as haptic feedback in a way that "[$\dots$] the brain perceives it as 'Real Touch' input", according to the manufacturer.
 
 \subsection{Using Data From the Avatar VR to Visualize the User's Hand} \label{subsec:avr_to_hand}
 \begin{wrapfigure}{R}{7cm}
@@ -469,6 +473,8 @@ Since the interphalangeal joints act as revolute joints, only a roll component c
 	\label{fig:hand_correspondences}
 \end{figure}
 Figure \ref{fig:hand_correspondences} shows correspondences of user hand poses with virtual hand poses. A good approximation is reached, however, the virtual hand poses are not unique. For example, figure \ref{fig:natfake} shows two user hand poses that lead to approximately the same outcome as the one shown in the middle line of figure \ref{fig:hand_correspondences} because of the similar orientations of their \gls{IPh}. This issue cannot be fixed because the \Gls{AVR} does not provide information about the other phalanges.
+
+The \Gls{AVR}'s actuators give the user haptic feedback when one of the joint spheres collides with a virtual object. The details are explained in \ref{sec:devel:structure:hands}.
 
 \begin{figure}
 	\centering
@@ -732,13 +738,13 @@ The subjects were then asked for their opinion and suggestions regarding the des
 		\caption{After waiting an additional $ 60s $}
 		\label{fig:glove_cal:minute}
 	\end{subfigure}
-	\caption{"Motion" tab of \acrshort{nd} Suite at different times after the \Gls{AVR}'s intrinsic calibration; middle and right picture taken after calibration as suggested by the producer}
+	\caption{"Motion" tab of \acrshort{nd} Suite at different times after the \Gls{AVR}'s intrinsic calibration; middle and right picture taken after calibration as suggested by the manufacturer}
 	\label{fig:glove_cal}
 \end{figure}
 
 The \Gls{AVR} has an inner and an outer layer between which the electrical components are situated. The inner layer is made from a stretch fabric, probably to adjust to different hand sizes. However, the fabric does not slide onto the hand well and the layers are only sparsely connected, allowing them to shift against each other. This made it difficult for the subjects to put on the glove for the first time. It took about $ 30s $, not counting the time needed to correctly place the actuators on the fingers. With some practice, the whole process can be completed in about $ 10s $. Putting on a second glove, locking the wrist band, and activating the gloves usually required outside help. 
 
-When activating the glove, an internal calibration sets the current pose of each \acrshort{imu} to a trivial one as shown in figure \ref{fig:glove_cal:trivial}. The producer\newcite{nd} actually intends for the gloves to be calibrated while laying on a flat surface. However, when putting the glove on after this and laying the respective hand on the same surface in a similar pose, the measured orientations exhibit a noticeable difference from the user's hand pose as shown in figure \ref{fig:glove_cal:puton}. 
+When activating the glove, an internal calibration sets the current pose of each \acrshort{imu} to a trivial one as shown in figure \ref{fig:glove_cal:trivial}. The manufacturer\newcite{nd} actually intends for the gloves to be calibrated while laying on a flat surface. However, when putting the glove on after this and laying the respective hand on the same surface in a similar pose, the measured orientations exhibit a noticeable difference from the user's hand pose as shown in figure \ref{fig:glove_cal:puton}. 
 
 Furthermore, after performing some movements with the glove, the measured orientations sometimes keep changing, even when resting the glove on a surface again. The stronger the accelerations during these movements are (e.g. during shaking), the stronger this drifting effect becomes. Figure \ref{fig:glove_cal:minute} shows the measured orientations after resting the hand for $ 60s $ which implies that even putting on the glove carefully involves sufficient motion for drifting to occur.
 
@@ -803,7 +809,7 @@ Instructions on the headup display during calibration lead to misunderstandings 
 
 Irritation was expressed because the subjects' hands ranged into the conn panel when it reappeared during calibration, triggering continuous vibration feedback. I added a vector \lstinline|hand_vs_panel_for_calibration| in the \lstinline|calibration| struct which moves the panel below the hands during calibration to avoid this.
 
-\section{Quanitative Evaluation}
+\section{Quantitative Evaluation}
 \begin{table}[b!]
 	\begin{minipage}{.5\linewidth}
 		\vspace{.47cm}
@@ -840,7 +846,7 @@ Table \ref{tab:contest} and figure \ref{fig:contest} display the results of this
 The overall improvement of the session times despite an earlier familiarization with the plugin might be due to the change of situation and the associated time pressure. In any case, the results prove an acceptable usability of the plugin.
 
 \chapter{Conclusion}
-For this thesis, I extensively reviewed literature on the principles of data gloves, available technology and some applications. There have been numerous, quite diverse approaches to human computer interaction involving only the user's hands. Many already are or might yet become useful, not only for VR, but medical and other projects as well. A few of them are summarized in section \ref{sec:ex}.
+For this thesis, I extensively reviewed literature on the principles of Data Gloves, available technology and some applications. There have been numerous, quite diverse approaches to human computer interaction involving only the user's hands. Many already are or might yet become useful, not only for VR, but medical and other projects as well. A few of them are summarized in section \ref{sec:ex}.
 
 Furthermore, I familiarized myself with the \Gls{AVR} as well as tools to connect it to a computer, access its sensor data and control its actuators (\acrshort{nd} Suite and \lstinline|NDAPI|). A plugin coupling \Gls{AVR} finger tracking and Lighthouse position and orientation tracking was developed. It uses a hand model designed on the basis of human anatomy and the model used in Leap motion API version 2.0. 
 
@@ -848,7 +854,7 @@ The plugin scenario sends the user to the bridge of the USS Voyager where they c
 
 Some issues regarding the \Gls{AVR} can be found in part \ref{subsec:avr}. Especially the fact that it has only one \acrshort{imu} per finger made it challenging to recreate the user's hand pose realistically, which was possible by distributing the orientation of the \gls{IPh} onto the other phalanges in a physiologically plausible way. However, the device is most likely unfit for applications requiring more precision, e.g. the use with virtual musical instruments. In total, the glove was quite difficult to handle, already because of its instable connection to the computer and the drifting effect. 
 
-Nonetheless, I could personally gain a lot from this project. It gave me an insight into scientific applications of data gloves. It  further deepened my understanding of programming in C++ and my knowledge about the \gls{CGV} framework which has even more features than I expected. The development of \gls{VCP} was an interesting challenge, the result of which works satisfyingly well and is even fun to use.
+Nonetheless, I could personally gain a lot from this project. It gave me an insight into scientific applications of Data Gloves. It  further deepened my understanding of programming in C++ and my knowledge about the \gls{CGV} framework which has even more features than I expected. The development of \gls{VCP} was an interesting challenge, the result of which works satisfyingly well and is even fun to use.
 
 \printglossary[type=gloss_terms]
 \printglossary[type=gloss_acr]

@@ -10,47 +10,48 @@ Warning--to sort, need author or key in lighthouse
 Warning--to sort, need author or key in leaphand
 Warning--to sort, need author or key in imu
 Warning--to sort, need author or key in phantom
+Warning--to sort, need author or key in virtuose6d
 Warning--to sort, need author or key in quat_to_euler
 Warning--to sort, need author or key in memalpha
-You've used 15 entries,
+You've used 16 entries,
             2543 wiz_defined-function locations,
-            627 strings with 6489 characters,
-and the built_in function-call counts, 5387 in all, are:
-= -- 518
-> -- 240
+            630 strings with 6530 characters,
+and the built_in function-call counts, 5594 in all, are:
+= -- 538
+> -- 241
 < -- 2
 + -- 86
 - -- 85
-* -- 405
-:= -- 814
-add.period$ -- 38
-call.type$ -- 15
-change.case$ -- 92
-chr.to.int$ -- 15
-cite$ -- 29
-duplicate$ -- 195
-empty$ -- 445
+* -- 415
+:= -- 835
+add.period$ -- 40
+call.type$ -- 16
+change.case$ -- 96
+chr.to.int$ -- 16
+cite$ -- 32
+duplicate$ -- 205
+empty$ -- 472
 format.name$ -- 90
-if$ -- 1129
+if$ -- 1178
 int.to.chr$ -- 1
 int.to.str$ -- 0
 missing$ -- 8
-newline$ -- 72
+newline$ -- 76
 num.names$ -- 24
-pop$ -- 129
+pop$ -- 142
 preamble$ -- 1
-purify$ -- 107
+purify$ -- 112
 quote$ -- 0
-skip$ -- 169
+skip$ -- 177
 stack$ -- 0
-substring$ -- 304
-swap$ -- 25
+substring$ -- 312
+swap$ -- 26
 text.length$ -- 2
 text.prefix$ -- 1
 top$ -- 0
-type$ -- 120
-warning$ -- 7
+type$ -- 128
+warning$ -- 8
 while$ -- 33
-width$ -- 16
-write$ -- 170
-(There were 7 warnings)
+width$ -- 17
+write$ -- 179
+(There were 8 warnings)

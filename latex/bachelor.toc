@@ -31,6 +31,6 @@
 \contentsline {subsection}{\numberline {3.2.5}Slider Reaction}{32}{subsection.3.2.5}%
 \contentsline {subsection}{\numberline {3.2.6}Targets and Phasers}{33}{subsection.3.2.6}%
 \contentsline {subsection}{\numberline {3.2.7}Calibration}{33}{subsection.3.2.7}%
-\contentsline {section}{\numberline {3.3}Quanitative Evaluation}{33}{section.3.3}%
+\contentsline {section}{\numberline {3.3}Quantitative Evaluation}{33}{section.3.3}%
 \contentsline {chapter}{\numberline {4}Conclusion}{35}{chapter.4}%
 \contentsline {chapter}{\nonumberline Bibliography}{38}{chapter*.28}%
