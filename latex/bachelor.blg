@@ -15,16 +15,16 @@ Warning--to sort, need author or key in quat_to_euler
 Warning--to sort, need author or key in memalpha
 You've used 16 entries,
             2543 wiz_defined-function locations,
-            630 strings with 6530 characters,
-and the built_in function-call counts, 5594 in all, are:
-= -- 538
+            634 strings with 7094 characters,
+and the built_in function-call counts, 5612 in all, are:
+= -- 542
 > -- 241
 < -- 2
 + -- 86
 - -- 85
 * -- 415
-:= -- 835
-add.period$ -- 40
+:= -- 839
+add.period$ -- 42
 call.type$ -- 16
 change.case$ -- 96
 chr.to.int$ -- 16
@@ -32,17 +32,17 @@ cite$ -- 32
 duplicate$ -- 205
 empty$ -- 472
 format.name$ -- 90
-if$ -- 1178
+if$ -- 1182
 int.to.chr$ -- 1
 int.to.str$ -- 0
 missing$ -- 8
-newline$ -- 76
+newline$ -- 78
 num.names$ -- 24
-pop$ -- 142
+pop$ -- 148
 preamble$ -- 1
 purify$ -- 112
 quote$ -- 0
-skip$ -- 177
+skip$ -- 169
 stack$ -- 0
 substring$ -- 312
 swap$ -- 26
@@ -53,5 +53,5 @@ type$ -- 128
 warning$ -- 8
 while$ -- 33
 width$ -- 17
-write$ -- 179
+write$ -- 183
 (There were 8 warnings)
